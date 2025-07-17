@@ -5,6 +5,7 @@
 package com.vmct.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,73 +16,76 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
-@Table(name = "post_comments")
+@Table(name = "posts")
 @NamedQueries({
-    @NamedQuery(name = "PostComments.findAll", query = "SELECT p FROM PostComments p"),
-    @NamedQuery(name = "PostComments.findByCommentId", query = "SELECT p FROM PostComments p WHERE p.commentId = :commentId"),
-    @NamedQuery(name = "PostComments.findByCreatedAt", query = "SELECT p FROM PostComments p WHERE p.createdAt = :createdAt"),
-    @NamedQuery(name = "PostComments.findByUpdatedAt", query = "SELECT p FROM PostComments p WHERE p.updatedAt = :updatedAt")})
-public class PostComments implements Serializable {
+    @NamedQuery(name = "Posts.findAll", query = "SELECT p FROM Posts p"),
+    @NamedQuery(name = "Posts.findById", query = "SELECT p FROM Posts p WHERE p.id = :id"),
+    @NamedQuery(name = "Posts.findByIsCommentLocked", query = "SELECT p FROM Posts p WHERE p.isCommentLocked = :isCommentLocked"),
+    @NamedQuery(name = "Posts.findByCreatedAt", query = "SELECT p FROM Posts p WHERE p.createdAt = :createdAt"),
+    @NamedQuery(name = "Posts.findByUpdatedAt", query = "SELECT p FROM Posts p WHERE p.updatedAt = :updatedAt")})
+public class Posts implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "comment_id")
-    private Integer commentId;
+    @Column(name = "id")
+    private Long id;
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "content")
     private String content;
-    @Basic(optional = false)
-    @NotNull
+    @Column(name = "is_comment_locked")
+    private Boolean isCommentLocked;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
+    private Collection<Comments> commentsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
+    private Collection<Reactions> reactionsCollection;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private PostItems postId;
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @ManyToOne(optional = false)
-    private UserAccounts userId;
+    private Users userId;
 
-    public PostComments() {
+    public Posts() {
     }
 
-    public PostComments(Integer commentId) {
-        this.commentId = commentId;
+    public Posts(Long id) {
+        this.id = id;
     }
 
-    public PostComments(Integer commentId, String content, Date createdAt) {
-        this.commentId = commentId;
+    public Posts(Long id, String content) {
+        this.id = id;
         this.content = content;
-        this.createdAt = createdAt;
     }
 
-    public Integer getCommentId() {
-        return commentId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCommentId(Integer commentId) {
-        this.commentId = commentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -90,6 +94,14 @@ public class PostComments implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Boolean getIsCommentLocked() {
+        return isCommentLocked;
+    }
+
+    public void setIsCommentLocked(Boolean isCommentLocked) {
+        this.isCommentLocked = isCommentLocked;
     }
 
     public Date getCreatedAt() {
@@ -108,37 +120,45 @@ public class PostComments implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public PostItems getPostId() {
-        return postId;
+    public Collection<Comments> getCommentsCollection() {
+        return commentsCollection;
     }
 
-    public void setPostId(PostItems postId) {
-        this.postId = postId;
+    public void setCommentsCollection(Collection<Comments> commentsCollection) {
+        this.commentsCollection = commentsCollection;
     }
 
-    public UserAccounts getUserId() {
+    public Collection<Reactions> getReactionsCollection() {
+        return reactionsCollection;
+    }
+
+    public void setReactionsCollection(Collection<Reactions> reactionsCollection) {
+        this.reactionsCollection = reactionsCollection;
+    }
+
+    public Users getUserId() {
         return userId;
     }
 
-    public void setUserId(UserAccounts userId) {
+    public void setUserId(Users userId) {
         this.userId = userId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (commentId != null ? commentId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PostComments)) {
+        if (!(object instanceof Posts)) {
             return false;
         }
-        PostComments other = (PostComments) object;
-        if ((this.commentId == null && other.commentId != null) || (this.commentId != null && !this.commentId.equals(other.commentId))) {
+        Posts other = (Posts) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -146,7 +166,7 @@ public class PostComments implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.PostComments[ commentId=" + commentId + " ]";
+        return "com.vmct.pojo.Posts[ id=" + id + " ]";
     }
     
 }

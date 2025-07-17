@@ -4,12 +4,17 @@
  */
 package com.vmct.repositories;
 
+import com.vmct.pojo.Posts;
 import java.util.List;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
-public interface SystemStatisticsRepository {
-    List<SystemStatistics> getStatisticsByTypeAndPeriod(String type, String period);
+public interface PostRepository {
+    Posts getPostById(Long id);
+    boolean addOrUpdatePost(Posts post);
+    boolean deletePost(Long id);
+    List<Posts> getPostsByUserId(Long userId);
+    List<Posts> getAllPosts();
 }

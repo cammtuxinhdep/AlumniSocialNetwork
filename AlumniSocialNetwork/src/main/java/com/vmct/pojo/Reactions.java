@@ -18,57 +18,70 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
-@Table(name = "survey_votes")
+@Table(name = "reactions")
 @NamedQueries({
-    @NamedQuery(name = "SurveyVotes.findAll", query = "SELECT s FROM SurveyVotes s"),
-    @NamedQuery(name = "SurveyVotes.findByVoteId", query = "SELECT s FROM SurveyVotes s WHERE s.voteId = :voteId"),
-    @NamedQuery(name = "SurveyVotes.findByCreatedAt", query = "SELECT s FROM SurveyVotes s WHERE s.createdAt = :createdAt")})
-public class SurveyVotes implements Serializable {
+    @NamedQuery(name = "Reactions.findAll", query = "SELECT r FROM Reactions r"),
+    @NamedQuery(name = "Reactions.findById", query = "SELECT r FROM Reactions r WHERE r.id = :id"),
+    @NamedQuery(name = "Reactions.findByType", query = "SELECT r FROM Reactions r WHERE r.type = :type"),
+    @NamedQuery(name = "Reactions.findByCreatedAt", query = "SELECT r FROM Reactions r WHERE r.createdAt = :createdAt")})
+public class Reactions implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "vote_id")
-    private Integer voteId;
+    @Column(name = "id")
+    private Long id;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 5)
+    @Column(name = "type")
+    private String type;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @JoinColumn(name = "option_id", referencedColumnName = "option_id")
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private SurveyOptions optionId;
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private Posts postId;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private UserAccounts userId;
+    private Users userId;
 
-    public SurveyVotes() {
+    public Reactions() {
     }
 
-    public SurveyVotes(Integer voteId) {
-        this.voteId = voteId;
+    public Reactions(Long id) {
+        this.id = id;
     }
 
-    public SurveyVotes(Integer voteId, Date createdAt) {
-        this.voteId = voteId;
-        this.createdAt = createdAt;
+    public Reactions(Long id, String type) {
+        this.id = id;
+        this.type = type;
     }
 
-    public Integer getVoteId() {
-        return voteId;
+    public Long getId() {
+        return id;
     }
 
-    public void setVoteId(Integer voteId) {
-        this.voteId = voteId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Date getCreatedAt() {
@@ -79,37 +92,37 @@ public class SurveyVotes implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public SurveyOptions getOptionId() {
-        return optionId;
+    public Posts getPostId() {
+        return postId;
     }
 
-    public void setOptionId(SurveyOptions optionId) {
-        this.optionId = optionId;
+    public void setPostId(Posts postId) {
+        this.postId = postId;
     }
 
-    public UserAccounts getUserId() {
+    public Users getUserId() {
         return userId;
     }
 
-    public void setUserId(UserAccounts userId) {
+    public void setUserId(Users userId) {
         this.userId = userId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (voteId != null ? voteId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof SurveyVotes)) {
+        if (!(object instanceof Reactions)) {
             return false;
         }
-        SurveyVotes other = (SurveyVotes) object;
-        if ((this.voteId == null && other.voteId != null) || (this.voteId != null && !this.voteId.equals(other.voteId))) {
+        Reactions other = (Reactions) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -117,7 +130,7 @@ public class SurveyVotes implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.SurveyVotes[ voteId=" + voteId + " ]";
+        return "com.vmct.pojo.Reactions[ id=" + id + " ]";
     }
     
 }
