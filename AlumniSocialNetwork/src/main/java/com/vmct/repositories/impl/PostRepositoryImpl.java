@@ -30,8 +30,8 @@ public class PostRepositoryImpl implements PostRepository {
         Query<Post> query = s.createQuery(
                 "SELECT DISTINCT p FROM Post p "
                 + "LEFT JOIN FETCH p.userId "
-                + "LEFT JOIN FETCH p.commentsCollection c "
-                + "LEFT JOIN FETCH c.commentsCollection "
+                + "LEFT JOIN FETCH p.commentSet c "
+                + "LEFT JOIN FETCH c.commentSet "
                 + "LEFT JOIN FETCH c.userId "
                 + "WHERE p.id = :pid", Post.class);
         query.setParameter("pid", id);
@@ -76,8 +76,8 @@ public class PostRepositoryImpl implements PostRepository {
         Query<Post> query = s.createQuery(
                 "SELECT DISTINCT p FROM Post p "
                 + "LEFT JOIN FETCH p.userId "
-                + "LEFT JOIN FETCH p.commentsCollection c "
-                + "LEFT JOIN FETCH c.commentsCollection "
+                + "LEFT JOIN FETCH p.commentSet c "
+                + "LEFT JOIN FETCH c.commentSet "
                 + "LEFT JOIN FETCH c.userId "
                 + "WHERE p.userId.id = :uid", Post.class);
         query.setParameter("uid", userId);

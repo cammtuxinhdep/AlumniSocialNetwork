@@ -28,13 +28,12 @@ public class PostDTO {
                 : null;
         this.comments = (post.getCommentSet() != null && Hibernate.isInitialized(post.getCommentSet()))
                 ? post.getCommentSet().stream()
-                      .filter(c -> c.getParentId() == null) // Chỉ lấy bình luận cấp 1
+                      .filter(c -> c.getParentId() == null) 
                       .map(CommentDTO::new)
                       .collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
-    // Getters và setters (giữ nguyên như mã hiện tại)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getContent() { return content; }

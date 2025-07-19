@@ -5,7 +5,6 @@
 package com.vmct.pojo;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -21,7 +19,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 /**
  *
@@ -32,7 +29,6 @@ import java.util.Set;
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
-    @NamedQuery(name = "User.findByFullName", query = "SELECT u FROM User u WHERE u.fullName = :fullName"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByStudentId", query = "SELECT u FROM User u WHERE u.studentId = :studentId"),
@@ -41,7 +37,10 @@ import java.util.Set;
     @NamedQuery(name = "User.findByCover", query = "SELECT u FROM User u WHERE u.cover = :cover"),
     @NamedQuery(name = "User.findByIsLocked", query = "SELECT u FROM User u WHERE u.isLocked = :isLocked"),
     @NamedQuery(name = "User.findByPasswordChangeDeadline", query = "SELECT u FROM User u WHERE u.passwordChangeDeadline = :passwordChangeDeadline"),
-    @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt")})
+    @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt"),
+    @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
+    @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,11 +49,6 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "full_name")
-    private String fullName;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
@@ -88,18 +82,15 @@ public class User implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Set<SurveyResponse> surveyResponseSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Set<Reaction> reactionSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Set<Post> postSet;
-    @OneToMany(mappedBy = "userId")
-    private Set<NotificationRecipient> notificationRecipientSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Set<Comment> commentSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Set<GroupMember> groupMemberSet;
+    @Size(max = 100)
+    @Column(name = "first_name")
+    private String firstName;
+    @Size(max = 100)
+    @Column(name = "last_name")
+    private String lastName;
+    @Size(max = 100)
+    @Column(name = "username")
+    private String username;
 
     public User() {
     }
@@ -108,9 +99,8 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Long id, String fullName, String email, String password, String userRole) {
+    public User(Long id, String email, String password, String userRole) {
         this.id = id;
-        this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.userRole = userRole;
@@ -122,14 +112,6 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -204,52 +186,28 @@ public class User implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Set<SurveyResponse> getSurveyResponseSet() {
-        return surveyResponseSet;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setSurveyResponseSet(Set<SurveyResponse> surveyResponseSet) {
-        this.surveyResponseSet = surveyResponseSet;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public Set<Reaction> getReactionSet() {
-        return reactionSet;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setReactionSet(Set<Reaction> reactionSet) {
-        this.reactionSet = reactionSet;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public Set<Post> getPostSet() {
-        return postSet;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPostSet(Set<Post> postSet) {
-        this.postSet = postSet;
-    }
-
-    public Set<NotificationRecipient> getNotificationRecipientSet() {
-        return notificationRecipientSet;
-    }
-
-    public void setNotificationRecipientSet(Set<NotificationRecipient> notificationRecipientSet) {
-        this.notificationRecipientSet = notificationRecipientSet;
-    }
-
-    public Set<Comment> getCommentSet() {
-        return commentSet;
-    }
-
-    public void setCommentSet(Set<Comment> commentSet) {
-        this.commentSet = commentSet;
-    }
-
-    public Set<GroupMember> getGroupMemberSet() {
-        return groupMemberSet;
-    }
-
-    public void setGroupMemberSet(Set<GroupMember> groupMemberSet) {
-        this.groupMemberSet = groupMemberSet;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
