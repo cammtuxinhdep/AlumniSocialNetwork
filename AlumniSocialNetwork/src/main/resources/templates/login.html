@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Đăng nhập</title>
+    <th:context th:replace="base :: resources"></th:context>
+</head>
+<body style="background-color: lightsteelblue">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <div class="container-fluid">
+            <span class="navbar-text">ALUMNI SOCIAL NETWORK</span>
+        </div>
+    </nav>
+    <main class="container">
+        <form method="post" th:action="@{/login}" style="width: 70%; background-color: #959CA4; margin: 3rem auto; padding: 2rem;">
+            <h1 style="text-align: center; color: #555">LOGIN</h1>
+
+            <div class="mb-3 mt-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="username" placeholder="Nhập tên đăng nhập" name="username">
+            </div>
+            <div class="mb-3">
+                <label for="pwd" class="form-label">Mật khẩu:</label>
+                <input type="password" class="form-control" id="pwd" placeholder="Nhập mật khẩu" name="password">
+            </div>
+            <button type="submit" style="background-color: #555; color: white" class="btn mt-2">Đăng nhập</button>
+        </form>
+    </main>
+</body>
+</html>

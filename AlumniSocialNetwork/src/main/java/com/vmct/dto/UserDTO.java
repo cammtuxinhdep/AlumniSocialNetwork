@@ -9,7 +9,7 @@ public class UserDTO {
 
     public UserDTO(User user) {
         this.id = user.getId();
-        this.fullName = user.getFullName();
+        //this.fullName = user.getFullName();
         this.email = user.getEmail();
     }
 
