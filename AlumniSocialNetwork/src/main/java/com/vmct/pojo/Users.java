@@ -36,7 +36,7 @@ import java.util.Date;
     @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
     @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
     @NamedQuery(name = "Users.findByStudentId", query = "SELECT u FROM Users u WHERE u.studentId = :studentId"),
-    @NamedQuery(name = "Users.findByRole", query = "SELECT u FROM Users u WHERE u.role = :role"),
+    @NamedQuery(name = "Users.findByUserRole", query = "SELECT u FROM Users u WHERE u.userRole = :userRole"),
     @NamedQuery(name = "Users.findByAvatar", query = "SELECT u FROM Users u WHERE u.avatar = :avatar"),
     @NamedQuery(name = "Users.findByCover", query = "SELECT u FROM Users u WHERE u.cover = :cover"),
     @NamedQuery(name = "Users.findByIsLocked", query = "SELECT u FROM Users u WHERE u.isLocked = :isLocked"),
@@ -71,9 +71,9 @@ public class Users implements Serializable {
     private String studentId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 8)
-    @Column(name = "role")
-    private String role;
+    @Size(min = 1, max = 13)
+    @Column(name = "user_role")
+    private String userRole;
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
@@ -94,10 +94,6 @@ public class Users implements Serializable {
     private Collection<Comments> commentsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<GroupMembers> groupMembersCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "senderId")
-    private Collection<Chats> chatsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiverId")
-    private Collection<Chats> chatsCollection1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<Reactions> reactionsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -112,12 +108,12 @@ public class Users implements Serializable {
         this.id = id;
     }
 
-    public Users(Long id, String fullName, String email, String password, String role) {
+    public Users(Long id, String fullName, String email, String password, String userRole) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.userRole = userRole;
     }
 
     public Long getId() {
@@ -160,12 +156,12 @@ public class Users implements Serializable {
         this.studentId = studentId;
     }
 
-    public String getRole() {
-        return role;
+    public String getUserRole() {
+        return userRole;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
     }
 
     public String getAvatar() {
@@ -230,22 +226,6 @@ public class Users implements Serializable {
 
     public void setGroupMembersCollection(Collection<GroupMembers> groupMembersCollection) {
         this.groupMembersCollection = groupMembersCollection;
-    }
-
-    public Collection<Chats> getChatsCollection() {
-        return chatsCollection;
-    }
-
-    public void setChatsCollection(Collection<Chats> chatsCollection) {
-        this.chatsCollection = chatsCollection;
-    }
-
-    public Collection<Chats> getChatsCollection1() {
-        return chatsCollection1;
-    }
-
-    public void setChatsCollection1(Collection<Chats> chatsCollection1) {
-        this.chatsCollection1 = chatsCollection1;
     }
 
     public Collection<Reactions> getReactionsCollection() {

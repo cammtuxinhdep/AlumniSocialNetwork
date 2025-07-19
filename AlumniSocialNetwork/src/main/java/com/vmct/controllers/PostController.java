@@ -1,58 +1,54 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.vmct.controllers;
 
-/**
- *
- * @author Thanh Nhat
- */
+import com.vmct.pojo.Posts;
+import com.vmct.services.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 @Controller
-@RequestMapping("/posts")
 public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/")
+    @GetMapping("/posts")
     public String listPosts(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
-        return "posts/list";
-    }
-
-    @GetMapping("/add")
-    public String addPostForm(Model model) {
         model.addAttribute("post", new Posts());
-        return "posts/add";
+        model.addAttribute("posts", postService.getAllPosts());
+        return "posts";
     }
 
-    @PostMapping("/add")
-    public String addPost(@ModelAttribute("post") @Valid Posts post, BindingResult rs) {
-        if (!rs.hasErrors()) {
-            postService.addPost(post);
-            return "redirect:/posts/";
-        }
-        return "posts/add";
+    @PostMapping("/posts")
+    public String addPost(@ModelAttribute("post") Posts post) {
+        postService.createPost(post);
+        return "redirect:/posts";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editPostForm(Model model, @PathVariable Long id) {
-        model.addAttribute("post", postService.getPostById(id));
-        return "posts/edit";
+    @GetMapping("/posts/{postId}")
+    public String updatePostForm(Model model, @PathVariable("postId") Long id) {
+        Posts post = postService.getPostById(id);
+        model.addAttribute("post", post != null ? post : new Posts());
+        model.addAttribute("posts", postService.getAllPosts());
+        return "posts";
     }
 
-    @PostMapping("/edit/{id}")
-    public String editPost(@ModelAttribute("post") @Valid Posts post, BindingResult rs) {
-        if (!rs.hasErrors()) {
-            postService.updatePost(post);
-            return "redirect:/posts/";
-        }
-        return "posts/edit";
+    @PostMapping("/posts/{postId}")
+    public String updatePost(@PathVariable("postId") Long id, @ModelAttribute("post") Posts post) {
+        post.setId(id);
+        postService.updatePost(post);
+        return "redirect:/posts";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deletePost(@PathVariable Long id) {
+    @GetMapping("/posts/delete/{postId}")
+    public String deletePost(@PathVariable("postId") Long id) {
         postService.deletePost(id);
-        return "redirect:/posts/";
+        return "redirect:/posts";
+    }
+
+    @PostMapping("/posts/{postId}/lock-comments")
+    public String lockComments(@PathVariable("postId") Long postId, @RequestParam("lock") boolean lock) {
+        postService.lockComments(postId, lock);
+        return "redirect:/posts";
     }
 }

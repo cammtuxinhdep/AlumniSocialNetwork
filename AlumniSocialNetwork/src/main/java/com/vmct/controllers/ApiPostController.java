@@ -1,31 +1,55 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.vmct.controllers;
 
-/**
- *
- * @author Thanh Nhat
- */
+import com.vmct.pojo.Posts;
+import com.vmct.services.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api")
+@CrossOrigin
 public class ApiPostController {
-     @Autowired
+    @Autowired
     private PostService postService;
 
-    @GetMapping("/")
-    public ResponseEntity<List<Posts>> getAll() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    @GetMapping("/posts")
+    public ResponseEntity<List<Posts>> listPosts() {
+        return new ResponseEntity<>(postService.getAllPosts(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Posts> getPost(@PathVariable Long id) {
-        return ResponseEntity.ok(postService.getPostById(id));
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<Posts> getPost(@PathVariable("postId") Long id) {
+        Posts post = postService.getPostById(id);
+        if (post == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
+    @PostMapping("/posts")
+    public ResponseEntity<Posts> createPost(@RequestBody Posts post) {
+        Posts created = postService.createPost(post);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity<Void> updatePost(@PathVariable("postId") Long id, @RequestBody Posts post) {
+        post.setId(id);
+        postService.updatePost(post);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable("postId") Long id) {
         postService.deletePost(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/posts/{postId}/lock-comments")
+    public ResponseEntity<Void> lockComments(@PathVariable("postId") Long postId, @RequestParam("lock") boolean lock) {
+        postService.lockComments(postId, lock);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

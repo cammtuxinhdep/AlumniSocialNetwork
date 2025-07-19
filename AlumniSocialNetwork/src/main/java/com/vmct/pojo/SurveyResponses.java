@@ -11,15 +11,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -41,18 +38,15 @@ public class SurveyResponses implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Size(min = 1, max = 1073741824)
-    @Column(name = "responses")
-    private String responses;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JoinColumn(name = "survey_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Surveys surveyId;
+    private Survey surveyId;
+    @JoinColumn(name = "option_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private SurveyOption optionId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users userId;
@@ -64,25 +58,12 @@ public class SurveyResponses implements Serializable {
         this.id = id;
     }
 
-    public SurveyResponses(Long id, String responses) {
-        this.id = id;
-        this.responses = responses;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getResponses() {
-        return responses;
-    }
-
-    public void setResponses(String responses) {
-        this.responses = responses;
     }
 
     public Date getCreatedAt() {
@@ -93,12 +74,20 @@ public class SurveyResponses implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Surveys getSurveyId() {
+    public Survey getSurveyId() {
         return surveyId;
     }
 
-    public void setSurveyId(Surveys surveyId) {
+    public void setSurveyId(Survey surveyId) {
         this.surveyId = surveyId;
+    }
+
+    public SurveyOption getOptionId() {
+        return optionId;
+    }
+
+    public void setOptionId(SurveyOption optionId) {
+        this.optionId = optionId;
     }
 
     public Users getUserId() {

@@ -16,7 +16,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  *
@@ -27,7 +26,6 @@ import java.math.BigInteger;
 @NamedQueries({
     @NamedQuery(name = "NotificationRecipients.findAll", query = "SELECT n FROM NotificationRecipients n"),
     @NamedQuery(name = "NotificationRecipients.findById", query = "SELECT n FROM NotificationRecipients n WHERE n.id = :id"),
-    @NamedQuery(name = "NotificationRecipients.findByGroupId", query = "SELECT n FROM NotificationRecipients n WHERE n.groupId = :groupId"),
     @NamedQuery(name = "NotificationRecipients.findByIsAll", query = "SELECT n FROM NotificationRecipients n WHERE n.isAll = :isAll")})
 public class NotificationRecipients implements Serializable {
 
@@ -37,13 +35,14 @@ public class NotificationRecipients implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Column(name = "group_id")
-    private BigInteger groupId;
     @Column(name = "is_all")
     private Boolean isAll;
     @JoinColumn(name = "notification_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Notifications notificationId;
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @ManyToOne
+    private UserGroup groupId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private Users userId;
@@ -63,14 +62,6 @@ public class NotificationRecipients implements Serializable {
         this.id = id;
     }
 
-    public BigInteger getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(BigInteger groupId) {
-        this.groupId = groupId;
-    }
-
     public Boolean getIsAll() {
         return isAll;
     }
@@ -85,6 +76,14 @@ public class NotificationRecipients implements Serializable {
 
     public void setNotificationId(Notifications notificationId) {
         this.notificationId = notificationId;
+    }
+
+    public UserGroup getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(UserGroup groupId) {
+        this.groupId = groupId;
     }
 
     public Users getUserId() {

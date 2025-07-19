@@ -1,43 +1,73 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package com.vmct.controllers;
+package com.vmct.api;
 
+import com.vmct.pojo.Comments;
+import com.vmct.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-/**
- *
- * @author Thanh Nhat
- */
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comments")
-@CrossOrigin
 public class ApiCommentController {
 
     @Autowired
     private CommentService commentService;
 
+    // Lấy danh sách bình luận theo bài viết
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Comments>> getCommentsByPost(@PathVariable Long postId) {
-        return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
+    public ResponseEntity<List<Comments>> getCommentsByPost(@PathVariable("postId") Long postId) {
+        List<Comments> comments = commentService.findByPostId(postId);
+        return ResponseEntity.ok(comments);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<Comments> addComment(@RequestBody Comments comment, HttpSession session) {
-        Users currentUser = (Users) session.getAttribute("currentUser");
-        comment.setUserId(currentUser);
-        return ResponseEntity.ok(commentService.addComment(comment));
+    // Lấy 1 bình luận theo id
+    @GetMapping("/{id}")
+    public ResponseEntity<Comments> getCommentById(@PathVariable("id") Long id) {
+        Comments comment = commentService.findById(id);
+        if (comment != null)
+            return ResponseEntity.ok(comment);
+        else
+            return ResponseEntity.notFound().build();
     }
 
+    // Thêm mới bình luận
+    @PostMapping("/")
+    public ResponseEntity<?> createComment(@RequestBody Comments comment) {
+        boolean result = commentService.save(comment);
+        if (result)
+            return ResponseEntity.ok(comment);
+        else
+            return ResponseEntity.badRequest().body("Failed to save comment");
+    }
+
+    // Cập nhật bình luận
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comments updatedComment) {
+        Comments existing = commentService.findById(id);
+        if (existing == null)
+            return ResponseEntity.notFound().build();
+
+        updatedComment.setId(id);
+        boolean result = commentService.save(updatedComment);
+        if (result)
+            return ResponseEntity.ok(updatedComment);
+        else
+            return ResponseEntity.badRequest().body("Update failed");
+    }
+
+    // Xoá bình luận
     @DeleteMapping("/{id}")
-    public void deleteComment(@PathVariable Long id, HttpSession session) {
-        Users currentUser = (Users) session.getAttribute("currentUser");
-        Comments c = commentService.getCommentById(id);
-        if (c.getUserId().getId().equals(currentUser.getId()))
-            commentService.deleteComment(id);
+    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
+        Comments existing = commentService.findById(id);
+        if (existing == null)
+            return ResponseEntity.notFound().build();
+
+        boolean result = commentService.delete(id);
+        if (result)
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.status(500).body("Delete failed");
     }
 }

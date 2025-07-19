@@ -29,13 +29,13 @@ import java.util.Date;
  * @author Thanh Nhat
  */
 @Entity
-@Table(name = "surveys")
+@Table(name = "survey")
 @NamedQueries({
-    @NamedQuery(name = "Surveys.findAll", query = "SELECT s FROM Surveys s"),
-    @NamedQuery(name = "Surveys.findById", query = "SELECT s FROM Surveys s WHERE s.id = :id"),
-    @NamedQuery(name = "Surveys.findByTitle", query = "SELECT s FROM Surveys s WHERE s.title = :title"),
-    @NamedQuery(name = "Surveys.findByCreatedAt", query = "SELECT s FROM Surveys s WHERE s.createdAt = :createdAt")})
-public class Surveys implements Serializable {
+    @NamedQuery(name = "Survey.findAll", query = "SELECT s FROM Survey s"),
+    @NamedQuery(name = "Survey.findById", query = "SELECT s FROM Survey s WHERE s.id = :id"),
+    @NamedQuery(name = "Survey.findByTitle", query = "SELECT s FROM Survey s WHERE s.title = :title"),
+    @NamedQuery(name = "Survey.findByCreatedAt", query = "SELECT s FROM Survey s WHERE s.createdAt = :createdAt")})
+public class Survey implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -48,29 +48,28 @@ public class Surveys implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "title")
     private String title;
-    @Basic(optional = false)
-    @NotNull
     @Lob
-    @Size(min = 1, max = 1073741824)
-    @Column(name = "questions")
-    private String questions;
+    @Size(max = 65535)
+    @Column(name = "description")
+    private String description;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
+    private Collection<SurveyOption> surveyOptionCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
     private Collection<SurveyResponses> surveyResponsesCollection;
 
-    public Surveys() {
+    public Survey() {
     }
 
-    public Surveys(Long id) {
+    public Survey(Long id) {
         this.id = id;
     }
 
-    public Surveys(Long id, String title, String questions) {
+    public Survey(Long id, String title) {
         this.id = id;
         this.title = title;
-        this.questions = questions;
     }
 
     public Long getId() {
@@ -89,12 +88,12 @@ public class Surveys implements Serializable {
         this.title = title;
     }
 
-    public String getQuestions() {
-        return questions;
+    public String getDescription() {
+        return description;
     }
 
-    public void setQuestions(String questions) {
-        this.questions = questions;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getCreatedAt() {
@@ -103,6 +102,14 @@ public class Surveys implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Collection<SurveyOption> getSurveyOptionCollection() {
+        return surveyOptionCollection;
+    }
+
+    public void setSurveyOptionCollection(Collection<SurveyOption> surveyOptionCollection) {
+        this.surveyOptionCollection = surveyOptionCollection;
     }
 
     public Collection<SurveyResponses> getSurveyResponsesCollection() {
@@ -123,10 +130,10 @@ public class Surveys implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Surveys)) {
+        if (!(object instanceof Survey)) {
             return false;
         }
-        Surveys other = (Surveys) object;
+        Survey other = (Survey) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -135,7 +142,7 @@ public class Surveys implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Surveys[ id=" + id + " ]";
+        return "com.vmct.pojo.Survey[ id=" + id + " ]";
     }
     
 }

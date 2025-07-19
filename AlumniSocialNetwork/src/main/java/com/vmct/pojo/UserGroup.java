@@ -50,6 +50,8 @@ public class UserGroup implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @OneToMany(mappedBy = "groupId")
+    private Collection<NotificationRecipients> notificationRecipientsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "groupId")
     private Collection<GroupMembers> groupMembersCollection;
 
@@ -87,6 +89,14 @@ public class UserGroup implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Collection<NotificationRecipients> getNotificationRecipientsCollection() {
+        return notificationRecipientsCollection;
+    }
+
+    public void setNotificationRecipientsCollection(Collection<NotificationRecipients> notificationRecipientsCollection) {
+        this.notificationRecipientsCollection = notificationRecipientsCollection;
     }
 
     public Collection<GroupMembers> getGroupMembersCollection() {

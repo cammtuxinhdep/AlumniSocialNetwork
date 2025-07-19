@@ -21,5 +21,7 @@
     <class>com.vmct.pojo.UserGroup</class>
     <class>com.vmct.pojo.Comments</class>
     <class>com.vmct.pojo.Posts</class>
+    <class>com.vmct.pojo.Survey</class>
+    <class>com.vmct.pojo.SurveyOption</class>
   </persistence-unit>
 </persistence>

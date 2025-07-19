@@ -15,12 +15,14 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -54,6 +56,11 @@ public class Comments implements Serializable {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+    @OneToMany(mappedBy = "parentId")
+    private Collection<Comments> commentsCollection;
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @ManyToOne
+    private Comments parentId;
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Posts postId;
@@ -103,6 +110,22 @@ public class Comments implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Collection<Comments> getCommentsCollection() {
+        return commentsCollection;
+    }
+
+    public void setCommentsCollection(Collection<Comments> commentsCollection) {
+        this.commentsCollection = commentsCollection;
+    }
+
+    public Comments getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Comments parentId) {
+        this.parentId = parentId;
     }
 
     public Posts getPostId() {
