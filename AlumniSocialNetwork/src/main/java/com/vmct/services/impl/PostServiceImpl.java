@@ -1,13 +1,10 @@
 package com.vmct.services.impl;
 
-import com.vmct.pojo.Comments;
 import com.vmct.pojo.Posts;
 import com.vmct.pojo.Users;
-import com.vmct.repositories.CommentRepository;
 import com.vmct.repositories.PostRepository;
 import com.vmct.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,10 +25,16 @@ public class PostServiceImpl implements PostService {
         try {
             p.setCreatedAt(new Date());
             p.setIsCommentLocked(false);
+
+            // GÁN MẪU USER để tránh lỗi null (chỉ dùng khi test)
+            Users u = new Users();
+            u.setId(1L); // Giả sử user có ID = 1 tồn tại trong DB
+            p.setUserId(u);
+
             if (postRepo.addOrUpdatePost(p)) {
                 return p;
             }
-            return null; // Trả về null nếu thêm thất bại
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

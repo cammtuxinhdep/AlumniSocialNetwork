@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.vmct.repositories.impl;
 
 import com.vmct.pojo.Posts;
@@ -16,11 +12,9 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author Thanh Nhat
- */
 @Repository
 @Transactional
 public class PostRepositoryImpl implements PostRepository {
@@ -28,10 +22,21 @@ public class PostRepositoryImpl implements PostRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
+    private static final Logger logger = LoggerFactory.getLogger(PostRepositoryImpl.class);
+
     @Override
     public Posts getPostById(Long id) {
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(Posts.class, id);
+        Query<Posts> query = s.createQuery(
+                "SELECT DISTINCT p FROM Posts p "
+                + "LEFT JOIN FETCH p.userId "
+                + "LEFT JOIN FETCH p.commentsCollection c "
+                + "LEFT JOIN FETCH c.commentsCollection "
+                + "LEFT JOIN FETCH c.userId "
+                + "WHERE p.id = :pid", Posts.class);
+        query.setParameter("pid", id);
+
+        return query.uniqueResultOptional().orElse(null);
     }
 
     @Override
@@ -45,6 +50,7 @@ public class PostRepositoryImpl implements PostRepository {
             }
             return true;
         } catch (Exception e) {
+            logger.error("Error saving or updating post", e);
             return false;
         }
     }
@@ -55,10 +61,11 @@ public class PostRepositoryImpl implements PostRepository {
             Session s = this.factory.getObject().getCurrentSession();
             Posts post = getPostById(id);
             if (post != null) {
-                s.remove(post);
+                s.remove(s.contains(post) ? post : s.merge(post));
             }
             return true;
         } catch (Exception e) {
+            logger.error("Error deleting post with id {}", id, e);
             return false;
         }
     }
@@ -66,23 +73,23 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<Posts> getPostsByUserId(Long userId) {
         Session s = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = s.getCriteriaBuilder();
-        CriteriaQuery<Posts> q = b.createQuery(Posts.class);
-        Root<Posts> root = q.from(Posts.class);
-        q.select(root).where(b.equal(root.get("userId").get("id"), userId));
-        Query query = s.createQuery(q);
+        Query<Posts> query = s.createQuery(
+                "SELECT DISTINCT p FROM Posts p "
+                + "LEFT JOIN FETCH p.userId "
+                + "LEFT JOIN FETCH p.commentsCollection c "
+                + "LEFT JOIN FETCH c.commentsCollection "
+                + "LEFT JOIN FETCH c.userId "
+                + "WHERE p.userId.id = :uid", Posts.class);
+        query.setParameter("uid", userId);
         return query.getResultList();
     }
 
     @Override
     public List<Posts> getAllPosts() {
         Session s = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = s.getCriteriaBuilder();
-        CriteriaQuery<Posts> q = b.createQuery(Posts.class);
-        Root<Posts> root = q.from(Posts.class);
-        q.select(root);
-        Query query = s.createQuery(q);
+        Query<Posts> query = s.createQuery("FROM Posts p", Posts.class);
         return query.getResultList();
     }
 
 }
+

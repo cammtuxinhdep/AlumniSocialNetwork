@@ -27,7 +27,12 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public Comments findById(Long id) {
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(Comments.class, id);
+        Query query = s.createQuery("SELECT c FROM Comments c "
+                + "JOIN FETCH c.userId "
+                + "LEFT JOIN FETCH c.commentsCollection "
+                + "WHERE c.id = :id");
+        query.setParameter("id", id);
+        return (Comments) query.getSingleResult();
     }
 
     @Override

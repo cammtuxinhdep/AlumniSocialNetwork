@@ -24,6 +24,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -57,7 +59,8 @@ public class Comments implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @OneToMany(mappedBy = "parentId")
-    private Collection<Comments> commentsCollection;
+    private Set<Comments> commentsCollection = new HashSet<>();
+
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @ManyToOne
     private Comments parentId;
@@ -117,7 +120,7 @@ public class Comments implements Serializable {
     }
 
     public void setCommentsCollection(Collection<Comments> commentsCollection) {
-        this.commentsCollection = commentsCollection;
+        this.commentsCollection = (Set<Comments>) commentsCollection;
     }
 
     public Comments getParentId() {
@@ -168,5 +171,5 @@ public class Comments implements Serializable {
     public String toString() {
         return "com.vmct.pojo.Comments[ id=" + id + " ]";
     }
-    
+
 }
