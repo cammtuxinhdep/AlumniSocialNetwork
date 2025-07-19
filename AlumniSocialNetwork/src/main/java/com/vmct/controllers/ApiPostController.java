@@ -20,17 +20,17 @@ public class ApiPostController {
     private PostService postService;
 
     // Lấy danh sách tất cả bài đăng (dạng DTO)
-  @GetMapping("/posts")
+  @GetMapping("/post")
     public ResponseEntity<List<PostSummaryDTO>> listPost() {
-        List<Post> posts = postService.getAllPost();
-        List<PostSummaryDTO> postDTOs = posts.stream()
+        List<Post> post = postService.getAllPost();
+        List<PostSummaryDTO> postDTOs = post.stream()
                 .map(PostSummaryDTO::new)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
     }
 
     // Lấy chi tiết một bài đăng theo ID (dạng DTO)
-    @GetMapping("/posts/{postId}")
+    @GetMapping("/post/{postId}")
     public ResponseEntity<PostDTO> getPost(@PathVariable("postId") Long id) {
         Post post = postService.getPostById(id);
         if (post == null) {
@@ -40,14 +40,14 @@ public class ApiPostController {
     }
 
 // Tạo một bài đăng mới (vẫn nhận và trả về entity gốc)
-    @PostMapping("/posts")
+    @PostMapping("/post")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
         Post created = postService.createPost(post);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     // Cập nhật một bài đăng
-    @PutMapping("/posts/{postId}")
+    @PutMapping("/post/{postId}")
     public ResponseEntity<Void> updatePost(@PathVariable("postId") Long id, @RequestBody Post post) {
         post.setId(id);
         postService.updatePost(post);
@@ -55,14 +55,14 @@ public class ApiPostController {
     }
 
     // Xoá một bài đăng
-    @DeleteMapping("/posts/{postId}")
+    @DeleteMapping("/post/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable("postId") Long id) {
         postService.deletePost(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // Khoá hoặc mở comment cho bài đăng
-    @PostMapping("/posts/{postId}/lock-comments")
+    @PostMapping("/post/{postId}/lock-comments")
     public ResponseEntity<Void> lockComments(@PathVariable("postId") Long postId, @RequestParam("lock") boolean lock) {
         postService.lockComments(postId, lock);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
