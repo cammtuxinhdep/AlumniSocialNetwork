@@ -1,6 +1,6 @@
 package com.vmct.repositories.impl;
 
-import com.vmct.pojo.Posts;
+import com.vmct.pojo.Post;
 import com.vmct.repositories.PostRepository;
 import org.springframework.stereotype.Repository;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -25,22 +25,22 @@ public class PostRepositoryImpl implements PostRepository {
     private static final Logger logger = LoggerFactory.getLogger(PostRepositoryImpl.class);
 
     @Override
-    public Posts getPostById(Long id) {
+    public Post getPostById(Long id) {
         Session s = this.factory.getObject().getCurrentSession();
-        Query<Posts> query = s.createQuery(
-                "SELECT DISTINCT p FROM Posts p "
+        Query<Post> query = s.createQuery(
+                "SELECT DISTINCT p FROM Post p "
                 + "LEFT JOIN FETCH p.userId "
                 + "LEFT JOIN FETCH p.commentsCollection c "
                 + "LEFT JOIN FETCH c.commentsCollection "
                 + "LEFT JOIN FETCH c.userId "
-                + "WHERE p.id = :pid", Posts.class);
+                + "WHERE p.id = :pid", Post.class);
         query.setParameter("pid", id);
 
         return query.uniqueResultOptional().orElse(null);
     }
 
     @Override
-    public boolean addOrUpdatePost(Posts post) {
+    public boolean addOrUpdatePost(Post post) {
         try {
             Session s = this.factory.getObject().getCurrentSession();
             if (post.getId() == null) {
@@ -59,7 +59,7 @@ public class PostRepositoryImpl implements PostRepository {
     public boolean deletePost(Long id) {
         try {
             Session s = this.factory.getObject().getCurrentSession();
-            Posts post = getPostById(id);
+            Post post = getPostById(id);
             if (post != null) {
                 s.remove(s.contains(post) ? post : s.merge(post));
             }
@@ -71,23 +71,23 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Posts> getPostsByUserId(Long userId) {
+    public List<Post> getPostByUserId(Long userId) {
         Session s = this.factory.getObject().getCurrentSession();
-        Query<Posts> query = s.createQuery(
-                "SELECT DISTINCT p FROM Posts p "
+        Query<Post> query = s.createQuery(
+                "SELECT DISTINCT p FROM Post p "
                 + "LEFT JOIN FETCH p.userId "
                 + "LEFT JOIN FETCH p.commentsCollection c "
                 + "LEFT JOIN FETCH c.commentsCollection "
                 + "LEFT JOIN FETCH c.userId "
-                + "WHERE p.userId.id = :uid", Posts.class);
+                + "WHERE p.userId.id = :uid", Post.class);
         query.setParameter("uid", userId);
         return query.getResultList();
     }
 
     @Override
-    public List<Posts> getAllPosts() {
+    public List<Post> getAllPost() {
         Session s = this.factory.getObject().getCurrentSession();
-        Query<Posts> query = s.createQuery("FROM Posts p", Posts.class);
+        Query<Post> query = s.createQuery("FROM Post p", Post.class);
         return query.getResultList();
     }
 

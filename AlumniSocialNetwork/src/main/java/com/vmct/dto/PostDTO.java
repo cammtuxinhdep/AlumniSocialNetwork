@@ -1,6 +1,6 @@
 package com.vmct.dto;
 
-import com.vmct.pojo.Posts;
+import com.vmct.pojo.Post;
 import org.hibernate.Hibernate;
 
 import java.util.Collections;
@@ -17,7 +17,7 @@ public class PostDTO {
     private UserDTO user;
     private List<CommentDTO> comments;
 
-    public PostDTO(Posts post) {
+    public PostDTO(Post post) {
         this.id = post.getId();
         this.content = post.getContent();
         this.isCommentLocked = post.getIsCommentLocked();
@@ -26,8 +26,8 @@ public class PostDTO {
         this.user = (post.getUserId() != null && Hibernate.isInitialized(post.getUserId())) 
                 ? new UserDTO(post.getUserId()) 
                 : null;
-        this.comments = (post.getCommentsCollection() != null && Hibernate.isInitialized(post.getCommentsCollection()))
-                ? post.getCommentsCollection().stream()
+        this.comments = (post.getCommentSet() != null && Hibernate.isInitialized(post.getCommentSet()))
+                ? post.getCommentSet().stream()
                       .filter(c -> c.getParentId() == null) // Chỉ lấy bình luận cấp 1
                       .map(CommentDTO::new)
                       .collect(Collectors.toList())

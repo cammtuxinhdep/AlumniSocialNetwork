@@ -15,18 +15,25 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "group_members")
+@Table(name = "reaction")
 @NamedQueries({
-    @NamedQuery(name = "GroupMembers.findAll", query = "SELECT g FROM GroupMembers g"),
-    @NamedQuery(name = "GroupMembers.findById", query = "SELECT g FROM GroupMembers g WHERE g.id = :id")})
-public class GroupMembers implements Serializable {
+    @NamedQuery(name = "Reaction.findAll", query = "SELECT r FROM Reaction r"),
+    @NamedQuery(name = "Reaction.findById", query = "SELECT r FROM Reaction r WHERE r.id = :id"),
+    @NamedQuery(name = "Reaction.findByType", query = "SELECT r FROM Reaction r WHERE r.type = :type"),
+    @NamedQuery(name = "Reaction.findByCreatedAt", query = "SELECT r FROM Reaction r WHERE r.createdAt = :createdAt")})
+public class Reaction implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -34,18 +41,31 @@ public class GroupMembers implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 5)
+    @Column(name = "type")
+    private String type;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private UserGroup groupId;
+    private Post postId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private User userId;
 
-    public GroupMembers() {
+    public Reaction() {
     }
 
-    public GroupMembers(Long id) {
+    public Reaction(Long id) {
         this.id = id;
+    }
+
+    public Reaction(Long id, String type) {
+        this.id = id;
+        this.type = type;
     }
 
     public Long getId() {
@@ -56,19 +76,35 @@ public class GroupMembers implements Serializable {
         this.id = id;
     }
 
-    public UserGroup getGroupId() {
-        return groupId;
+    public String getType() {
+        return type;
     }
 
-    public void setGroupId(UserGroup groupId) {
-        this.groupId = groupId;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public Users getUserId() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Post getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Post postId) {
+        this.postId = postId;
+    }
+
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 
@@ -82,10 +118,10 @@ public class GroupMembers implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof GroupMembers)) {
+        if (!(object instanceof Reaction)) {
             return false;
         }
-        GroupMembers other = (GroupMembers) object;
+        Reaction other = (Reaction) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -94,7 +130,7 @@ public class GroupMembers implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.GroupMembers[ id=" + id + " ]";
+        return "com.vmct.pojo.Reaction[ id=" + id + " ]";
     }
     
 }

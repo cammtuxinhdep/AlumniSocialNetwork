@@ -1,6 +1,6 @@
 package com.vmct.dto;
 
-import com.vmct.pojo.Posts;
+import com.vmct.pojo.Post;
 import java.util.Date;
 
 public class PostSummaryDTO {
@@ -10,7 +10,7 @@ public class PostSummaryDTO {
     private Date createdAt;
     private Date updatedAt;
 
-    public PostSummaryDTO(Posts post) {
+    public PostSummaryDTO(Post post) {
         this.id = post.getId();
         this.content = post.getContent();
         this.isCommentLocked = post.getIsCommentLocked();

@@ -21,12 +21,12 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
 @Table(name = "survey")
@@ -56,9 +56,9 @@ public class Survey implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
-    private Collection<SurveyOption> surveyOptionCollection;
+    private Set<SurveyResponse> surveyResponseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
-    private Collection<SurveyResponses> surveyResponsesCollection;
+    private Set<SurveyOption> surveyOptionSet;
 
     public Survey() {
     }
@@ -104,20 +104,20 @@ public class Survey implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Collection<SurveyOption> getSurveyOptionCollection() {
-        return surveyOptionCollection;
+    public Set<SurveyResponse> getSurveyResponseSet() {
+        return surveyResponseSet;
     }
 
-    public void setSurveyOptionCollection(Collection<SurveyOption> surveyOptionCollection) {
-        this.surveyOptionCollection = surveyOptionCollection;
+    public void setSurveyResponseSet(Set<SurveyResponse> surveyResponseSet) {
+        this.surveyResponseSet = surveyResponseSet;
     }
 
-    public Collection<SurveyResponses> getSurveyResponsesCollection() {
-        return surveyResponsesCollection;
+    public Set<SurveyOption> getSurveyOptionSet() {
+        return surveyOptionSet;
     }
 
-    public void setSurveyResponsesCollection(Collection<SurveyResponses> surveyResponsesCollection) {
-        this.surveyResponsesCollection = surveyResponsesCollection;
+    public void setSurveyOptionSet(Set<SurveyOption> surveyOptionSet) {
+        this.surveyOptionSet = surveyOptionSet;
     }
 
     @Override

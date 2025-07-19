@@ -1,6 +1,6 @@
 package com.vmct.api;
 
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import com.vmct.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +17,15 @@ public class ApiCommentController {
 
     // Lấy danh sách bình luận theo bài viết
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Comments>> getCommentsByPost(@PathVariable("postId") Long postId) {
-        List<Comments> comments = commentService.findByPostId(postId);
+    public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable("postId") Long postId) {
+        List<Comment> comments = commentService.findByPostId(postId);
         return ResponseEntity.ok(comments);
     }
 
     // Lấy 1 bình luận theo id
     @GetMapping("/{id}")
-    public ResponseEntity<Comments> getCommentById(@PathVariable("id") Long id) {
-        Comments comment = commentService.findById(id);
+    public ResponseEntity<Comment> getCommentById(@PathVariable("id") Long id) {
+        Comment comment = commentService.findById(id);
         if (comment != null)
             return ResponseEntity.ok(comment);
         else
@@ -34,7 +34,7 @@ public class ApiCommentController {
 
     // Thêm mới bình luận
     @PostMapping("/")
-    public ResponseEntity<?> createComment(@RequestBody Comments comment) {
+    public ResponseEntity<?> createComment(@RequestBody Comment comment) {
         boolean result = commentService.save(comment);
         if (result)
             return ResponseEntity.ok(comment);
@@ -44,8 +44,8 @@ public class ApiCommentController {
 
     // Cập nhật bình luận
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comments updatedComment) {
-        Comments existing = commentService.findById(id);
+    public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comment updatedComment) {
+        Comment existing = commentService.findById(id);
         if (existing == null)
             return ResponseEntity.notFound().build();
 
@@ -60,7 +60,7 @@ public class ApiCommentController {
     // Xoá bình luận
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
-        Comments existing = commentService.findById(id);
+        Comment existing = commentService.findById(id);
         if (existing == null)
             return ResponseEntity.notFound().build();
 

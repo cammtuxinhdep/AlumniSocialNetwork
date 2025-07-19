@@ -2,7 +2,7 @@ package com.vmct.controllers;
 
 import com.vmct.dto.PostDTO;
 import com.vmct.dto.PostSummaryDTO;
-import com.vmct.pojo.Posts;
+import com.vmct.pojo.Post;
 import com.vmct.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -21,8 +21,8 @@ public class ApiPostController {
 
     // Lấy danh sách tất cả bài đăng (dạng DTO)
   @GetMapping("/posts")
-    public ResponseEntity<List<PostSummaryDTO>> listPosts() {
-        List<Posts> posts = postService.getAllPosts();
+    public ResponseEntity<List<PostSummaryDTO>> listPost() {
+        List<Post> posts = postService.getAllPost();
         List<PostSummaryDTO> postDTOs = posts.stream()
                 .map(PostSummaryDTO::new)
                 .collect(Collectors.toList());
@@ -32,7 +32,7 @@ public class ApiPostController {
     // Lấy chi tiết một bài đăng theo ID (dạng DTO)
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PostDTO> getPost(@PathVariable("postId") Long id) {
-        Posts post = postService.getPostById(id);
+        Post post = postService.getPostById(id);
         if (post == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -41,14 +41,14 @@ public class ApiPostController {
 
 // Tạo một bài đăng mới (vẫn nhận và trả về entity gốc)
     @PostMapping("/posts")
-    public ResponseEntity<Posts> createPost(@RequestBody Posts post) {
-        Posts created = postService.createPost(post);
+    public ResponseEntity<Post> createPost(@RequestBody Post post) {
+        Post created = postService.createPost(post);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     // Cập nhật một bài đăng
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<Void> updatePost(@PathVariable("postId") Long id, @RequestBody Posts post) {
+    public ResponseEntity<Void> updatePost(@PathVariable("postId") Long id, @RequestBody Post post) {
         post.setId(id);
         postService.updatePost(post);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

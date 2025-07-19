@@ -5,14 +5,13 @@
 package com.vmct.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -22,23 +21,21 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "comments")
+@Table(name = "notification")
 @NamedQueries({
-    @NamedQuery(name = "Comments.findAll", query = "SELECT c FROM Comments c"),
-    @NamedQuery(name = "Comments.findById", query = "SELECT c FROM Comments c WHERE c.id = :id"),
-    @NamedQuery(name = "Comments.findByCreatedAt", query = "SELECT c FROM Comments c WHERE c.createdAt = :createdAt"),
-    @NamedQuery(name = "Comments.findByUpdatedAt", query = "SELECT c FROM Comments c WHERE c.updatedAt = :updatedAt")})
-public class Comments implements Serializable {
+    @NamedQuery(name = "Notification.findAll", query = "SELECT n FROM Notification n"),
+    @NamedQuery(name = "Notification.findById", query = "SELECT n FROM Notification n WHERE n.id = :id"),
+    @NamedQuery(name = "Notification.findByTitle", query = "SELECT n FROM Notification n WHERE n.title = :title"),
+    @NamedQuery(name = "Notification.findByCreatedAt", query = "SELECT n FROM Notification n WHERE n.createdAt = :createdAt")})
+public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -48,6 +45,11 @@ public class Comments implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "title")
+    private String title;
+    @Basic(optional = false)
+    @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "content")
@@ -55,31 +57,19 @@ public class Comments implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @OneToMany(mappedBy = "parentId")
-    private Set<Comments> commentsCollection = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificationId")
+    private Set<NotificationRecipient> notificationRecipientSet;
 
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    @ManyToOne
-    private Comments parentId;
-    @JoinColumn(name = "post_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Posts postId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Users userId;
-
-    public Comments() {
+    public Notification() {
     }
 
-    public Comments(Long id) {
+    public Notification(Long id) {
         this.id = id;
     }
 
-    public Comments(Long id, String content) {
+    public Notification(Long id, String title, String content) {
         this.id = id;
+        this.title = title;
         this.content = content;
     }
 
@@ -89,6 +79,14 @@ public class Comments implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
@@ -107,44 +105,12 @@ public class Comments implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Set<NotificationRecipient> getNotificationRecipientSet() {
+        return notificationRecipientSet;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Collection<Comments> getCommentsCollection() {
-        return commentsCollection;
-    }
-
-    public void setCommentsCollection(Collection<Comments> commentsCollection) {
-        this.commentsCollection = (Set<Comments>) commentsCollection;
-    }
-
-    public Comments getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Comments parentId) {
-        this.parentId = parentId;
-    }
-
-    public Posts getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Posts postId) {
-        this.postId = postId;
-    }
-
-    public Users getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Users userId) {
-        this.userId = userId;
+    public void setNotificationRecipientSet(Set<NotificationRecipient> notificationRecipientSet) {
+        this.notificationRecipientSet = notificationRecipientSet;
     }
 
     @Override
@@ -157,10 +123,10 @@ public class Comments implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Comments)) {
+        if (!(object instanceof Notification)) {
             return false;
         }
-        Comments other = (Comments) object;
+        Notification other = (Notification) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -169,7 +135,7 @@ public class Comments implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Comments[ id=" + id + " ]";
+        return "com.vmct.pojo.Notification[ id=" + id + " ]";
     }
-
+    
 }

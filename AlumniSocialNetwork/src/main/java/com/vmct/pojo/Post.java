@@ -11,7 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -21,21 +23,22 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "notifications")
+@Table(name = "post")
 @NamedQueries({
-    @NamedQuery(name = "Notifications.findAll", query = "SELECT n FROM Notifications n"),
-    @NamedQuery(name = "Notifications.findById", query = "SELECT n FROM Notifications n WHERE n.id = :id"),
-    @NamedQuery(name = "Notifications.findByTitle", query = "SELECT n FROM Notifications n WHERE n.title = :title"),
-    @NamedQuery(name = "Notifications.findByCreatedAt", query = "SELECT n FROM Notifications n WHERE n.createdAt = :createdAt")})
-public class Notifications implements Serializable {
+    @NamedQuery(name = "Post.findAll", query = "SELECT p FROM Post p"),
+    @NamedQuery(name = "Post.findById", query = "SELECT p FROM Post p WHERE p.id = :id"),
+    @NamedQuery(name = "Post.findByIsCommentLocked", query = "SELECT p FROM Post p WHERE p.isCommentLocked = :isCommentLocked"),
+    @NamedQuery(name = "Post.findByCreatedAt", query = "SELECT p FROM Post p WHERE p.createdAt = :createdAt"),
+    @NamedQuery(name = "Post.findByUpdatedAt", query = "SELECT p FROM Post p WHERE p.updatedAt = :updatedAt")})
+public class Post implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -45,31 +48,35 @@ public class Notifications implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "title")
-    private String title;
-    @Basic(optional = false)
-    @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "content")
     private String content;
+    @Column(name = "is_comment_locked")
+    private Boolean isCommentLocked;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificationId")
-    private Collection<NotificationRecipients> notificationRecipientsCollection;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
+    private Set<Reaction> reactionSet;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private User userId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
+    private Set<Comment> commentSet;
 
-    public Notifications() {
+    public Post() {
     }
 
-    public Notifications(Long id) {
+    public Post(Long id) {
         this.id = id;
     }
 
-    public Notifications(Long id, String title, String content) {
+    public Post(Long id, String content) {
         this.id = id;
-        this.title = title;
         this.content = content;
     }
 
@@ -81,20 +88,20 @@ public class Notifications implements Serializable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Boolean getIsCommentLocked() {
+        return isCommentLocked;
+    }
+
+    public void setIsCommentLocked(Boolean isCommentLocked) {
+        this.isCommentLocked = isCommentLocked;
     }
 
     public Date getCreatedAt() {
@@ -105,12 +112,36 @@ public class Notifications implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Collection<NotificationRecipients> getNotificationRecipientsCollection() {
-        return notificationRecipientsCollection;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setNotificationRecipientsCollection(Collection<NotificationRecipients> notificationRecipientsCollection) {
-        this.notificationRecipientsCollection = notificationRecipientsCollection;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
+    }
+
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
+    public Set<Comment> getCommentSet() {
+        return commentSet;
+    }
+
+    public void setCommentSet(Set<Comment> commentSet) {
+        this.commentSet = commentSet;
     }
 
     @Override
@@ -123,10 +154,10 @@ public class Notifications implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Notifications)) {
+        if (!(object instanceof Post)) {
             return false;
         }
-        Notifications other = (Notifications) object;
+        Post other = (Post) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -135,7 +166,7 @@ public class Notifications implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Notifications[ id=" + id + " ]";
+        return "com.vmct.pojo.Post[ id=" + id + " ]";
     }
     
 }

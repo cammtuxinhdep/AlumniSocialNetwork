@@ -1,7 +1,7 @@
 package com.vmct.controllers;
 
 import com.vmct.services.CommentService;
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,27 +19,27 @@ public class CommentController {
 
     @GetMapping("/post/{postId}")
     public String listCommentsByPost(@PathVariable("postId") Long postId, Model model) {
-        List<Comments> comments = commentService.findByPostId(postId);
+        List<Comment> comments = commentService.findByPostId(postId);
         model.addAttribute("comments", comments);
         return "comments"; // tên file .html view
     }
 
     @GetMapping("/edit/{id}")
     public String editComment(@PathVariable("id") Long id, Model model) {
-        Comments comment = commentService.findById(id);
+        Comment comment = commentService.findById(id);
         model.addAttribute("comment", comment);
         return "comment-edit";
     }
 
     @PostMapping("/edit")
-    public String updateComment(@ModelAttribute("comment") @Valid Comments comment) {
+    public String updateComment(@ModelAttribute("comment") @Valid Comment comment) {
         commentService.save(comment);
         return "redirect:/comments/post/" + comment.getPostId().getId();  
     }
 
     @GetMapping("/delete/{id}")
     public String deleteComment(@PathVariable("id") Long id) {
-        Comments c = commentService.findById(id);
+        Comment c = commentService.findById(id);
         if (c != null)
             commentService.delete(id);
         return "redirect:/comments/post/" + c.getPostId().getId();  

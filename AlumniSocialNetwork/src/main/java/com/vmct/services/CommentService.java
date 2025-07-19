@@ -1,6 +1,6 @@
 package com.vmct.services;
 
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import java.util.List;
 
 /**
@@ -8,8 +8,8 @@ import java.util.List;
  * @author Thanh Nhat
  */
 public interface CommentService {
-    Comments findById(Long cId);
-    boolean save(Comments c);
+    Comment findById(Long cId);
+    boolean save(Comment c);
     boolean delete(Long cId);
-    List<Comments> findByPostId(Long pId);
+    List<Comment> findByPostId(Long pId);
 }

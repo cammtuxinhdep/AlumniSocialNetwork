@@ -1,6 +1,6 @@
 package com.vmct.dto;
 
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import org.hibernate.Hibernate;
 
 import java.util.Collections;
@@ -15,15 +15,15 @@ public class CommentDTO {
     private UserDTO user;
     private List<CommentDTO> replies;
 
-    public CommentDTO(Comments comment) {
+    public CommentDTO(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.user = (comment.getUserId() != null && Hibernate.isInitialized(comment.getUserId())) 
                 ? new UserDTO(comment.getUserId()) 
                 : null;
-        this.replies = (comment.getCommentsCollection() != null && Hibernate.isInitialized(comment.getCommentsCollection()))
-                ? comment.getCommentsCollection().stream()
+        this.replies = (comment.getCommentSet() != null && Hibernate.isInitialized(comment.getCommentSet()))
+                ? comment.getCommentSet().stream()
                          .map(CommentDTO::new)
                          .collect(Collectors.toList())
                 : Collections.emptyList();

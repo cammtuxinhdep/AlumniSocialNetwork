@@ -1,13 +1,13 @@
 package com.vmct.dto;
 
-import com.vmct.pojo.Users;
+import com.vmct.pojo.User;
 
 public class UserDTO {
     private Long id;
     private String fullName;
     private String email;
 
-    public UserDTO(Users user) {
+    public UserDTO(User user) {
         this.id = user.getId();
         this.fullName = user.getFullName();
         this.email = user.getEmail();

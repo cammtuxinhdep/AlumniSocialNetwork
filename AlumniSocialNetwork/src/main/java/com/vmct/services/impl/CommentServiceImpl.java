@@ -1,6 +1,6 @@
 package com.vmct.services.impl;
 
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import com.vmct.repositories.CommentRepository;
 import com.vmct.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepo;
 
     @Override
-    public Comments findById(Long cId) {
+    public Comment findById(Long cId) {
         try {
             return commentRepo.findById(cId);
         } catch (Exception e) {
@@ -29,7 +29,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean save(Comments c) {
+    public boolean save(Comment c) {
         try {
             return commentRepo.save(c);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comments> findByPostId(Long pId) {
+    public List<Comment> findByPostId(Long pId) {
         try {
             return commentRepo.findByPostId(pId);
         } catch (Exception e) {

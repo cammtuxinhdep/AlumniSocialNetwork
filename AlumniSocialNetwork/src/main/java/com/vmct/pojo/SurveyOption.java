@@ -20,11 +20,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
 @Table(name = "survey_option")
@@ -45,11 +45,11 @@ public class SurveyOption implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "option_text")
     private String optionText;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "optionId")
+    private Set<SurveyResponse> surveyResponseSet;
     @JoinColumn(name = "survey_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Survey surveyId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "optionId")
-    private Collection<SurveyResponses> surveyResponsesCollection;
 
     public SurveyOption() {
     }
@@ -79,20 +79,20 @@ public class SurveyOption implements Serializable {
         this.optionText = optionText;
     }
 
+    public Set<SurveyResponse> getSurveyResponseSet() {
+        return surveyResponseSet;
+    }
+
+    public void setSurveyResponseSet(Set<SurveyResponse> surveyResponseSet) {
+        this.surveyResponseSet = surveyResponseSet;
+    }
+
     public Survey getSurveyId() {
         return surveyId;
     }
 
     public void setSurveyId(Survey surveyId) {
         this.surveyId = surveyId;
-    }
-
-    public Collection<SurveyResponses> getSurveyResponsesCollection() {
-        return surveyResponsesCollection;
-    }
-
-    public void setSurveyResponsesCollection(Collection<SurveyResponses> surveyResponsesCollection) {
-        this.surveyResponsesCollection = surveyResponsesCollection;
     }
 
     @Override

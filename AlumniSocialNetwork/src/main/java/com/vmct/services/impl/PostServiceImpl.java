@@ -1,7 +1,7 @@
 package com.vmct.services.impl;
 
-import com.vmct.pojo.Posts;
-import com.vmct.pojo.Users;
+import com.vmct.pojo.Post;
+import com.vmct.pojo.User;
 import com.vmct.repositories.PostRepository;
 import com.vmct.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,13 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepo;
 
     @Override
-    public Posts createPost(Posts p) {
+    public Post createPost(Post p) {
         try {
             p.setCreatedAt(new Date());
             p.setIsCommentLocked(false);
 
             // GÁN MẪU USER để tránh lỗi null (chỉ dùng khi test)
-            Users u = new Users();
+            User u = new User();
             u.setId(1L); // Giả sử user có ID = 1 tồn tại trong DB
             p.setUserId(u);
 
@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Posts getPostById(Long id) {
+    public Post getPostById(Long id) {
         try {
             return postRepo.getPostById(id);
         } catch (Exception e) {
@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(Posts p) {
+    public void updatePost(Post p) {
         try {
             p.setUpdatedAt(new Date());
             postRepo.addOrUpdatePost(p);
@@ -73,7 +73,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void lockComments(Long pId, boolean lock) {
         try {
-            Posts p = getPostById(pId);
+            Post p = getPostById(pId);
             if (p != null) {
                 p.setIsCommentLocked(lock);
                 updatePost(p);
@@ -84,9 +84,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Posts> getAllPosts() {
+    public List<Post> getAllPost() {
         try {
-            return postRepo.getAllPosts();
+            return postRepo.getAllPost();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

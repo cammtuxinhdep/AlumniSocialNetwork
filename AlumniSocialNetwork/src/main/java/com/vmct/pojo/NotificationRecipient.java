@@ -19,15 +19,15 @@ import java.io.Serializable;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "notification_recipients")
+@Table(name = "notification_recipient")
 @NamedQueries({
-    @NamedQuery(name = "NotificationRecipients.findAll", query = "SELECT n FROM NotificationRecipients n"),
-    @NamedQuery(name = "NotificationRecipients.findById", query = "SELECT n FROM NotificationRecipients n WHERE n.id = :id"),
-    @NamedQuery(name = "NotificationRecipients.findByIsAll", query = "SELECT n FROM NotificationRecipients n WHERE n.isAll = :isAll")})
-public class NotificationRecipients implements Serializable {
+    @NamedQuery(name = "NotificationRecipient.findAll", query = "SELECT n FROM NotificationRecipient n"),
+    @NamedQuery(name = "NotificationRecipient.findById", query = "SELECT n FROM NotificationRecipient n WHERE n.id = :id"),
+    @NamedQuery(name = "NotificationRecipient.findByIsAll", query = "SELECT n FROM NotificationRecipient n WHERE n.isAll = :isAll")})
+public class NotificationRecipient implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,18 +39,18 @@ public class NotificationRecipients implements Serializable {
     private Boolean isAll;
     @JoinColumn(name = "notification_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Notifications notificationId;
+    private Notification notificationId;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    private User userId;
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     @ManyToOne
     private UserGroup groupId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne
-    private Users userId;
 
-    public NotificationRecipients() {
+    public NotificationRecipient() {
     }
 
-    public NotificationRecipients(Long id) {
+    public NotificationRecipient(Long id) {
         this.id = id;
     }
 
@@ -70,12 +70,20 @@ public class NotificationRecipients implements Serializable {
         this.isAll = isAll;
     }
 
-    public Notifications getNotificationId() {
+    public Notification getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Notifications notificationId) {
+    public void setNotificationId(Notification notificationId) {
         this.notificationId = notificationId;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     public UserGroup getGroupId() {
@@ -84,14 +92,6 @@ public class NotificationRecipients implements Serializable {
 
     public void setGroupId(UserGroup groupId) {
         this.groupId = groupId;
-    }
-
-    public Users getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Users userId) {
-        this.userId = userId;
     }
 
     @Override
@@ -104,10 +104,10 @@ public class NotificationRecipients implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof NotificationRecipients)) {
+        if (!(object instanceof NotificationRecipient)) {
             return false;
         }
-        NotificationRecipients other = (NotificationRecipients) object;
+        NotificationRecipient other = (NotificationRecipient) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -116,7 +116,7 @@ public class NotificationRecipients implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.NotificationRecipients[ id=" + id + " ]";
+        return "com.vmct.pojo.NotificationRecipient[ id=" + id + " ]";
     }
     
 }

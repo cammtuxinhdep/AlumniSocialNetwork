@@ -1,6 +1,6 @@
 package com.vmct.repositories.impl;
 
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import com.vmct.repositories.CommentRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -25,18 +25,18 @@ public class CommentRepositoryImpl implements CommentRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public Comments findById(Long id) {
+    public Comment findById(Long id) {
         Session s = this.factory.getObject().getCurrentSession();
         Query query = s.createQuery("SELECT c FROM Comments c "
                 + "JOIN FETCH c.userId "
                 + "LEFT JOIN FETCH c.commentsCollection "
                 + "WHERE c.id = :id");
         query.setParameter("id", id);
-        return (Comments) query.getSingleResult();
+        return (Comment) query.getSingleResult();
     }
 
     @Override
-    public boolean save(Comments comment) {
+    public boolean save(Comment comment) {
         try {
             Session s = this.factory.getObject().getCurrentSession();
             if (comment.getId() == null) {
@@ -55,7 +55,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     public boolean delete(Long id) {
         try {
             Session s = this.factory.getObject().getCurrentSession();
-            Comments comment = findById(id);
+            Comment comment = findById(id);
             if (comment != null) {
                 s.remove(comment);
             }
@@ -67,11 +67,11 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public List<Comments> findByPostId(Long postId) {
+    public List<Comment> findByPostId(Long postId) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
-        CriteriaQuery<Comments> q = b.createQuery(Comments.class);
-        Root<Comments> root = q.from(Comments.class);
+        CriteriaQuery<Comment> q = b.createQuery(Comment.class);
+        Root<Comment> root = q.from(Comment.class);
         q.select(root).where(b.equal(root.get("postId").get("id"), postId));
         Query query = s.createQuery(q);
         return query.getResultList();

@@ -4,7 +4,7 @@
  */
 package com.vmct.services;
 
-import com.vmct.pojo.Posts;
+import com.vmct.pojo.Post;
 import java.util.List;
 
 /**
@@ -12,10 +12,10 @@ import java.util.List;
  * @author Thanh Nhat
  */
 public interface PostService {
-    List<Posts> getAllPosts();
-    Posts createPost(Posts post);
-    Posts getPostById(Long id);
-    void updatePost(Posts post);
+    List<Post> getAllPost();
+    Post createPost(Post post);
+    Post getPostById(Long id);
+    void updatePost(Post post);
     void deletePost(Long id);
     void lockComments(Long postId, boolean lock);
 }

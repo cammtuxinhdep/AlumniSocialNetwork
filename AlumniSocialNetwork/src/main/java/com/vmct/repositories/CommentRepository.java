@@ -4,7 +4,7 @@
  */
 package com.vmct.repositories;
 
-import com.vmct.pojo.Comments;
+import com.vmct.pojo.Comment;
 import java.util.List;
 
 /**
@@ -12,8 +12,8 @@ import java.util.List;
  * @author Thanh Nhat
  */
 public interface CommentRepository {
-    Comments findById(Long id);
-    boolean save(Comments comment);
+    Comment findById(Long id);
+    boolean save(Comment comment);
     boolean delete(Long id);
-    List<Comments> findByPostId(Long postId);
+    List<Comment> findByPostId(Long postId);
 }

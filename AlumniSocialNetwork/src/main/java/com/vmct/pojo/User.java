@@ -20,29 +20,29 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @NamedQueries({
-    @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
-    @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
-    @NamedQuery(name = "Users.findByFullName", query = "SELECT u FROM Users u WHERE u.fullName = :fullName"),
-    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
-    @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
-    @NamedQuery(name = "Users.findByStudentId", query = "SELECT u FROM Users u WHERE u.studentId = :studentId"),
-    @NamedQuery(name = "Users.findByUserRole", query = "SELECT u FROM Users u WHERE u.userRole = :userRole"),
-    @NamedQuery(name = "Users.findByAvatar", query = "SELECT u FROM Users u WHERE u.avatar = :avatar"),
-    @NamedQuery(name = "Users.findByCover", query = "SELECT u FROM Users u WHERE u.cover = :cover"),
-    @NamedQuery(name = "Users.findByIsLocked", query = "SELECT u FROM Users u WHERE u.isLocked = :isLocked"),
-    @NamedQuery(name = "Users.findByPasswordChangeDeadline", query = "SELECT u FROM Users u WHERE u.passwordChangeDeadline = :passwordChangeDeadline"),
-    @NamedQuery(name = "Users.findByCreatedAt", query = "SELECT u FROM Users u WHERE u.createdAt = :createdAt")})
-public class Users implements Serializable {
+    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+    @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
+    @NamedQuery(name = "User.findByFullName", query = "SELECT u FROM User u WHERE u.fullName = :fullName"),
+    @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+    @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
+    @NamedQuery(name = "User.findByStudentId", query = "SELECT u FROM User u WHERE u.studentId = :studentId"),
+    @NamedQuery(name = "User.findByUserRole", query = "SELECT u FROM User u WHERE u.userRole = :userRole"),
+    @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
+    @NamedQuery(name = "User.findByCover", query = "SELECT u FROM User u WHERE u.cover = :cover"),
+    @NamedQuery(name = "User.findByIsLocked", query = "SELECT u FROM User u WHERE u.isLocked = :isLocked"),
+    @NamedQuery(name = "User.findByPasswordChangeDeadline", query = "SELECT u FROM User u WHERE u.passwordChangeDeadline = :passwordChangeDeadline"),
+    @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt")})
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -88,27 +88,27 @@ public class Users implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<SurveyResponse> surveyResponseSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Reaction> reactionSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Post> postSet;
     @OneToMany(mappedBy = "userId")
-    private Collection<NotificationRecipients> notificationRecipientsCollection;
+    private Set<NotificationRecipient> notificationRecipientSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Comments> commentsCollection;
+    private Set<Comment> commentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<GroupMembers> groupMembersCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Reactions> reactionsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Posts> postsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<SurveyResponses> surveyResponsesCollection;
+    private Set<GroupMember> groupMemberSet;
 
-    public Users() {
+    public User() {
     }
 
-    public Users(Long id) {
+    public User(Long id) {
         this.id = id;
     }
 
-    public Users(Long id, String fullName, String email, String password, String userRole) {
+    public User(Long id, String fullName, String email, String password, String userRole) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -204,52 +204,52 @@ public class Users implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Collection<NotificationRecipients> getNotificationRecipientsCollection() {
-        return notificationRecipientsCollection;
+    public Set<SurveyResponse> getSurveyResponseSet() {
+        return surveyResponseSet;
     }
 
-    public void setNotificationRecipientsCollection(Collection<NotificationRecipients> notificationRecipientsCollection) {
-        this.notificationRecipientsCollection = notificationRecipientsCollection;
+    public void setSurveyResponseSet(Set<SurveyResponse> surveyResponseSet) {
+        this.surveyResponseSet = surveyResponseSet;
     }
 
-    public Collection<Comments> getCommentsCollection() {
-        return commentsCollection;
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
     }
 
-    public void setCommentsCollection(Collection<Comments> commentsCollection) {
-        this.commentsCollection = commentsCollection;
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
     }
 
-    public Collection<GroupMembers> getGroupMembersCollection() {
-        return groupMembersCollection;
+    public Set<Post> getPostSet() {
+        return postSet;
     }
 
-    public void setGroupMembersCollection(Collection<GroupMembers> groupMembersCollection) {
-        this.groupMembersCollection = groupMembersCollection;
+    public void setPostSet(Set<Post> postSet) {
+        this.postSet = postSet;
     }
 
-    public Collection<Reactions> getReactionsCollection() {
-        return reactionsCollection;
+    public Set<NotificationRecipient> getNotificationRecipientSet() {
+        return notificationRecipientSet;
     }
 
-    public void setReactionsCollection(Collection<Reactions> reactionsCollection) {
-        this.reactionsCollection = reactionsCollection;
+    public void setNotificationRecipientSet(Set<NotificationRecipient> notificationRecipientSet) {
+        this.notificationRecipientSet = notificationRecipientSet;
     }
 
-    public Collection<Posts> getPostsCollection() {
-        return postsCollection;
+    public Set<Comment> getCommentSet() {
+        return commentSet;
     }
 
-    public void setPostsCollection(Collection<Posts> postsCollection) {
-        this.postsCollection = postsCollection;
+    public void setCommentSet(Set<Comment> commentSet) {
+        this.commentSet = commentSet;
     }
 
-    public Collection<SurveyResponses> getSurveyResponsesCollection() {
-        return surveyResponsesCollection;
+    public Set<GroupMember> getGroupMemberSet() {
+        return groupMemberSet;
     }
 
-    public void setSurveyResponsesCollection(Collection<SurveyResponses> surveyResponsesCollection) {
-        this.surveyResponsesCollection = surveyResponsesCollection;
+    public void setGroupMemberSet(Set<GroupMember> groupMemberSet) {
+        this.groupMemberSet = groupMemberSet;
     }
 
     @Override
@@ -262,10 +262,10 @@ public class Users implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Users)) {
+        if (!(object instanceof User)) {
             return false;
         }
-        Users other = (Users) object;
+        User other = (User) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -274,7 +274,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Users[ id=" + id + " ]";
+        return "com.vmct.pojo.User[ id=" + id + " ]";
     }
     
 }

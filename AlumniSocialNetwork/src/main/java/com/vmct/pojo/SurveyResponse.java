@@ -22,15 +22,15 @@ import java.util.Date;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "survey_responses")
+@Table(name = "survey_response")
 @NamedQueries({
-    @NamedQuery(name = "SurveyResponses.findAll", query = "SELECT s FROM SurveyResponses s"),
-    @NamedQuery(name = "SurveyResponses.findById", query = "SELECT s FROM SurveyResponses s WHERE s.id = :id"),
-    @NamedQuery(name = "SurveyResponses.findByCreatedAt", query = "SELECT s FROM SurveyResponses s WHERE s.createdAt = :createdAt")})
-public class SurveyResponses implements Serializable {
+    @NamedQuery(name = "SurveyResponse.findAll", query = "SELECT s FROM SurveyResponse s"),
+    @NamedQuery(name = "SurveyResponse.findById", query = "SELECT s FROM SurveyResponse s WHERE s.id = :id"),
+    @NamedQuery(name = "SurveyResponse.findByCreatedAt", query = "SELECT s FROM SurveyResponse s WHERE s.createdAt = :createdAt")})
+public class SurveyResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -49,12 +49,12 @@ public class SurveyResponses implements Serializable {
     private SurveyOption optionId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private User userId;
 
-    public SurveyResponses() {
+    public SurveyResponse() {
     }
 
-    public SurveyResponses(Long id) {
+    public SurveyResponse(Long id) {
         this.id = id;
     }
 
@@ -90,11 +90,11 @@ public class SurveyResponses implements Serializable {
         this.optionId = optionId;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 
@@ -108,10 +108,10 @@ public class SurveyResponses implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof SurveyResponses)) {
+        if (!(object instanceof SurveyResponse)) {
             return false;
         }
-        SurveyResponses other = (SurveyResponses) object;
+        SurveyResponse other = (SurveyResponse) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -120,7 +120,7 @@ public class SurveyResponses implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.SurveyResponses[ id=" + id + " ]";
+        return "com.vmct.pojo.SurveyResponse[ id=" + id + " ]";
     }
     
 }

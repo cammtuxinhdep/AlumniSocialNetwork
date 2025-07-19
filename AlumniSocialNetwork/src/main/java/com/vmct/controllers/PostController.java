@@ -1,6 +1,6 @@
 package com.vmct.controllers;
 
-import com.vmct.pojo.Posts;
+import com.vmct.pojo.Post;
 import com.vmct.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,28 +13,28 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/posts")
-    public String listPosts(Model model) {
-        model.addAttribute("post", new Posts());
-        model.addAttribute("posts", postService.getAllPosts());
+    public String listPost(Model model) {
+        model.addAttribute("post", new Post());
+        model.addAttribute("posts", postService.getAllPost());
         return "posts";
     }
 
     @PostMapping("/posts")
-    public String addPost(@ModelAttribute("post") Posts post) {
+    public String addPost(@ModelAttribute("post") Post post) {
         postService.createPost(post);
         return "redirect:/posts";
     }
 
     @GetMapping("/posts/{postId}")
     public String updatePostForm(Model model, @PathVariable("postId") Long id) {
-        Posts post = postService.getPostById(id);
-        model.addAttribute("post", post != null ? post : new Posts());
-        model.addAttribute("posts", postService.getAllPosts());
+        Post post = postService.getPostById(id);
+        model.addAttribute("post", post != null ? post : new Post());
+        model.addAttribute("posts", postService.getAllPost());
         return "posts";
     }
 
     @PostMapping("/posts/{postId}")
-    public String updatePost(@PathVariable("postId") Long id, @ModelAttribute("post") Posts post) {
+    public String updatePost(@PathVariable("postId") Long id, @ModelAttribute("post") Post post) {
         post.setId(id);
         postService.updatePost(post);
         return "redirect:/posts";
