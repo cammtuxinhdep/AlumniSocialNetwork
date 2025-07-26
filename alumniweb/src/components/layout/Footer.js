@@ -1,13 +1,8 @@
-import { Container } from "react-bootstrap";
-
 const Footer = () => {
     return (
-        <footer style={{ backgroundColor: "#f8f9fa", padding: "10px 0", marginTop: "auto" }}>
-            <Container className="text-center">
-                <small className="text-muted">
-                    &copy; 2025 Alumni Social Network. Developed by CTDev.
-                </small>
-            </Container>
+        <footer style={{ backgroundColor: "#3e8faaa6", padding: "1.5rem" }} className="fixed-bottom">
+            <h1>Alumni Network &copy; 2025</h1>
+            <p>Social Website - Mini Project</p>
         </footer>
     );
 }

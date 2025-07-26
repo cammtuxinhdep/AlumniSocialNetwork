@@ -8,7 +8,6 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.vmct.pojo.User;
 import com.vmct.repositories.UserRepository;
-import com.vmct.services.UserService;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.vmct.services.UserService;
 
 /**
  *
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(Map<String, String> params, MultipartFile avatar) {
+    public User register(Map<String, String> params, MultipartFile avatar) {
         User u = new User();
         u.setFirstName(params.get("firstName"));
         u.setLastName(params.get("lastName"));
@@ -80,6 +80,11 @@ public class UserServiceImpl implements UserService {
 
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
+    }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepo.authenticate(username, password);
     }
 
 }

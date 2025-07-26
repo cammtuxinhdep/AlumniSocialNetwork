@@ -4,26 +4,23 @@
         <title>Đăng nhập</title>
     <th:context th:replace="base :: resources"></th:context>
 </head>
-<body style="background-color: lightsteelblue">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <div class="container-fluid">
-            <span class="navbar-text">ALUMNI SOCIAL NETWORK</span>
-        </div>
-    </nav>
+<body style="background-image: url('https://res.cloudinary.com/dlnru7sj1/image/upload/v1753011517/2112812-3840x2160-desktop-4k-minimalist-background-photo_bkbjvs.jpg'); background-size: cover;">
+    <div th:replace="base :: header"></div>
     <main class="container">
-        <form method="post" th:action="@{/login}" style="width: 70%; background-color: #959CA4; margin: 3rem auto; padding: 2rem;">
-            <h1 style="text-align: center; color: #555">LOGIN</h1>
+        <form method="post" th:action="@{/login}" style="width: 70%; background-color: #add8e678; margin: 3rem auto; padding: 2rem; box-shadow: 5px 5px 5px #55555599; border-radius: 1rem; font-weight: bold;">
+            <h1 style="text-align: center;">ĐĂNG NHẬP</h1>
 
             <div class="mb-3 mt-3">
-                <label for="username" class="form-label">Username:</label>
+                <label for="username" class="form-label">Tên đăng nhập:</label>
                 <input type="text" class="form-control" id="username" placeholder="Nhập tên đăng nhập" name="username">
             </div>
             <div class="mb-3">
                 <label for="pwd" class="form-label">Mật khẩu:</label>
                 <input type="password" class="form-control" id="pwd" placeholder="Nhập mật khẩu" name="password">
             </div>
-            <button type="submit" style="background-color: #555; color: white" class="btn mt-2">Đăng nhập</button>
+            <button type="submit" style="background-color: #0e3a57; color: white" class="btn mt-2">Đăng nhập</button>
         </form>
     </main>
+    <div th:replace="base :: footer"></div>
 </body>
 </html>
