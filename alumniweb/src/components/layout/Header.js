@@ -3,9 +3,9 @@ import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 const Header = () => {
     return (
         <>
-            <Navbar expand="lg" className="bg-body-tertiary">
+            <Navbar expand="lg" style={{backgroundColor: "#add8e678"}} className="fixed-top">
                 <Container>
-                    <Navbar.Brand href="/">Alumni Network</Navbar.Brand>
+                    <Navbar.Brand href="/">Alumni Social Network</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
@@ -14,8 +14,6 @@ const Header = () => {
                             <Nav.Link href="/notifications">Thông báo</Nav.Link>
                             <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
-                                <NavDropdown.Item href="/login">Đăng nhập</NavDropdown.Item>
-                                <NavDropdown.Item href="/register">Đăng ký</NavDropdown.Item>
                                 <NavDropdown.Divider />
                                 <NavDropdown.Item href="/logout">Đăng xuất</NavDropdown.Item>
                             </NavDropdown>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import PostItem from "../components/PostItem";
 import Apis from "../configs/Apis";
 
 const dummyUser = { id: 1, fullName: "Nguyễn Văn A" }; // currentUser giả lập
@@ -31,9 +30,7 @@ const Home = () => {
     <div className="container mt-4">
       <h2 className="mb-4">Bảng tin</h2>
       {posts.length === 0 && <p>Chưa có bài viết nào.</p>}
-      {posts.map(post => (
-        <PostItem key={post.id} post={post} currentUser={dummyUser} />
-      ))}
+
     </div>
   );
 };
