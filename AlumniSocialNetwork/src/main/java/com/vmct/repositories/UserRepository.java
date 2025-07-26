@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
@@ -22,3 +23,14 @@ public interface UserRepository {
     boolean isPasswordExpired(Long userId);
     void lockUserIfPasswordExpired(Long userId);
 }
+=======
+//package com.vmct.repositories;
+//
+//import com.vmct.pojo.User;
+//
+//public interface UserRepository {
+//    User getUserById(Long id);
+//    boolean addOrUpdateUser(User user);
+//    boolean deleteUser(Long id);
+//}
+>>>>>>> Stashed changes

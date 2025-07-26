@@ -1,20 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.vmct.repositories;
 
 import com.vmct.pojo.Posts;
 import java.util.List;
+import java.util.Map;
 
-/**
- *
- * @author Thanh Nhat
- */
 public interface PostRepository {
     Posts getPostById(Long id);
     boolean addOrUpdatePost(Posts post);
     boolean deletePost(Long id);
+<<<<<<< Updated upstream
     List<Posts> getPostsByUserId(Long userId);
     List<Posts> getAllPosts();
+=======
+    List<Post> getPostByUserId(Long userId);
+    List<Post> getAllPosts(Map<String, String> params);
+>>>>>>> Stashed changes
 }
