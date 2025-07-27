@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{base :: header}"></header>
+
+<main class="container mt-4">
+    <h2>⚙️ Lựa chọn cho khảo sát: <span th:text="${survey.title}"></span></h2>
+
+    <form th:action="@{'/survey/' + ${survey.id} + '/options'}" th:object="${newOption}" method="post" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" th:field="*{optionText}" placeholder="Nhập lựa chọn..." required/>
+            <button type="submit" class="btn btn-primary">➕ Thêm</button>
+        </div>
+    </form>
+
+   <ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center"
+        th:each="option : ${survey.surveyOptionSet}">
+        <span th:text="${option.optionText}"></span>
+        <a th:href="@{'/survey/' + ${survey.id} + '/options/delete/' + ${option.id}}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('Xoá lựa chọn này?')">🗑️ Xoá</a>
+    </li>
+</ul>
+
+
+    <a th:href="@{/survey}" class="btn btn-secondary mt-3">🔙 Quay lại</a>
+</main>
+
+<footer th:replace="~{base :: footer}"></footer>
+</body>
+</html>

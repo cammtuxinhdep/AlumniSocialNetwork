@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{base :: header}"></header>
+
+<main class="container mt-4">
+    <h2>📋 Danh sách khảo sát</h2>
+    <a th:href="@{/survey/add}" class="btn btn-primary mb-3">➕ Thêm khảo sát</a>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Tiêu đề</th>
+            <th>Mô tả</th>
+            <th>Tùy chọn</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${surveys}">
+            <td th:text="${s.title}"></td>
+            <td th:text="${s.description}"></td>
+            <td>
+                <a th:href="@{'/survey/edit/' + ${s.id}}" class="btn btn-sm btn-warning">✏️ Sửa</a>
+                <a th:href="@{'/survey/delete/' + ${s.id}}" class="btn btn-sm btn-danger"
+                   onclick="return confirm('Bạn có chắc muốn xoá khảo sát này?')">🗑️ Xoá</a>
+                <a th:href="@{'/survey/' + ${s.id} + '/options'}" class="btn btn-sm btn-info">⚙️ Tuỳ chọn</a>
+                <a th:href="@{'/survey/stats/' + ${s.id}}" class="btn btn-sm btn-success">📈 Thống kê</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer th:replace="~{base :: footer}"></footer>
+</body>
+</html>

@@ -1,19 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
+
 package com.vmct.repositories;
 
 import com.vmct.pojo.Comment;
 import java.util.List;
+import java.util.Optional;
 
-/**
- *
- * @author Thanh Nhat
- */
 public interface CommentRepository {
-    Comment findById(Long id);
-    boolean save(Comment comment);
-    boolean delete(Long id);
-    List<Comment> findByPostId(Long postId);
+
+    Optional<Comment> findById(Long id); // Tìm comment theo ID
+
+    boolean save(Comment comment);       // Lưu hoặc cập nhật comment
+
+    boolean deleteById(Long id);         // Xóa comment theo ID
+
+    int countByPostId(Long postId);      // Đếm comment theo bài viết
+
+    List<Comment> findByPostId(Long postId); // Lấy tất cả comment của bài viết (gồm gốc và reply)
+
+    List<Comment> findByParentId(Long parentId); // Lấy các reply của 1 comment cụ thể
+
 }

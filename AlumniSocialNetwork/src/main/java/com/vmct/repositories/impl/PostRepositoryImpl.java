@@ -2,18 +2,18 @@ package com.vmct.repositories.impl;
 
 import com.vmct.pojo.Post;
 import com.vmct.repositories.PostRepository;
-import org.springframework.stereotype.Repository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import java.util.List;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional
@@ -26,31 +26,27 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Post getPostById(Long id) {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Post> query = s.createQuery(
-                "SELECT DISTINCT p FROM Post p "
-                + "LEFT JOIN FETCH p.userId "
-                + "LEFT JOIN FETCH p.commentSet c "
-                + "LEFT JOIN FETCH c.commentSet "
-                + "LEFT JOIN FETCH c.userId "
-                + "WHERE p.id = :pid", Post.class);
-        query.setParameter("pid", id);
-
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Post> cq = cb.createQuery(Post.class);
+        Root<Post> root = cq.from(Post.class);
+        cq.select(root).where(cb.equal(root.get("id"), id));
+        Query<Post> query = session.createQuery(cq);
         return query.uniqueResultOptional().orElse(null);
     }
 
     @Override
     public boolean addOrUpdatePost(Post post) {
         try {
-            Session s = this.factory.getObject().getCurrentSession();
+            Session session = this.factory.getObject().getCurrentSession();
             if (post.getId() == null) {
-                s.persist(post);
+                session.persist(post);
             } else {
-                s.merge(post);
+                session.merge(post);
             }
             return true;
-        } catch (Exception e) {
-            logger.error("Error saving or updating post", e);
+        } catch (Exception ex) {
+            logger.error("Failed to save or update Post", ex);
             return false;
         }
     }
@@ -58,38 +54,46 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public boolean deletePost(Long id) {
         try {
-            Session s = this.factory.getObject().getCurrentSession();
+            Session session = this.factory.getObject().getCurrentSession();
             Post post = getPostById(id);
             if (post != null) {
-                s.remove(s.contains(post) ? post : s.merge(post));
+                session.remove(session.contains(post) ? post : session.merge(post));
             }
             return true;
-        } catch (Exception e) {
-            logger.error("Error deleting post with id {}", id, e);
+        } catch (Exception ex) {
+            logger.error("Failed to delete Post with ID {}", id, ex);
             return false;
         }
     }
 
     @Override
     public List<Post> getPostByUserId(Long userId) {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Post> query = s.createQuery(
-                "SELECT DISTINCT p FROM Post p "
-                + "LEFT JOIN FETCH p.userId "
-                + "LEFT JOIN FETCH p.commentSet c "
-                + "LEFT JOIN FETCH c.commentSet "
-                + "LEFT JOIN FETCH c.userId "
-                + "WHERE p.userId.id = :uid", Post.class);
-        query.setParameter("uid", userId);
-        return query.getResultList();
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Post> cq = cb.createQuery(Post.class);
+        Root<Post> root = cq.from(Post.class);
+        cq.select(root).where(cb.equal(root.get("userId").get("id"), userId));
+        cq.orderBy(cb.desc(root.get("createdAt")));
+        return session.createQuery(cq).getResultList();
     }
 
     @Override
-    public List<Post> getAllPost() {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Post> query = s.createQuery("FROM Post p", Post.class);
-        return query.getResultList();
+    public List<Post> getAllPosts(Map<String, String> params) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Post> cq = cb.createQuery(Post.class);
+        Root<Post> root = cq.from(Post.class);
+        Predicate predicate = cb.conjunction();
+
+        // Example: lọc theo từ khoá tiêu đề
+        if (params != null) {
+            if (params.containsKey("kw")) {
+                String kw = "%" + params.get("kw").trim().toLowerCase() + "%";
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("title")), kw));
+            }
+        }
+
+        cq.select(root).where(predicate).orderBy(cb.desc(root.get("createdAt")));
+        return session.createQuery(cq).getResultList();
     }
-
 }
-

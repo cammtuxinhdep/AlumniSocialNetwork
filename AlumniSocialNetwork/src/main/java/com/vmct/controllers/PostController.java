@@ -1,54 +1,72 @@
 package com.vmct.controllers;
 
 import com.vmct.pojo.Post;
+import com.vmct.pojo.User;
 import com.vmct.services.PostService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/post")
+
 public class PostController {
+
     @Autowired
     private PostService postService;
 
-    @GetMapping("/post")
-    public String listPost(Model model) {
-        model.addAttribute("post", new Post());
-        model.addAttribute("post", postService.getAllPost());
+    // GET: Hiển thị danh sách post + form tạo mới
+    @GetMapping
+    public String listPosts(Model model) {
+        model.addAttribute("post", new Post()); // Form tạo mới
+        model.addAttribute("posts", postService.getAllPostSummaries()); // DTO danh sách
         return "post";
     }
 
-    @PostMapping("/post")
-    public String addPost(@ModelAttribute("post") Post post) {
-        postService.createPost(post);
+    // POST: Tạo post mới
+    @PostMapping
+    public String createPost(@ModelAttribute("post") Post post, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        postService.createPost(post, currentUser);
         return "redirect:/post";
     }
 
-    @GetMapping("/post/{postId}")
-    public String updatePostForm(Model model, @PathVariable("postId") Long id) {
-        Post post = postService.getPostById(id);
-        model.addAttribute("post", post != null ? post : new Post());
-        model.addAttribute("posts", postService.getAllPost());
+    // GET: Hiển thị form cập nhật post
+    @GetMapping("/{id}")
+    public String editPostForm(@PathVariable("id") Long id, Model model) {
+        Post existingPost = postService.getPostById(id);
+        if (existingPost == null) {
+            return "redirect:/post";
+        }
+        model.addAttribute("post", existingPost);
+        model.addAttribute("posts", postService.getAllPostSummaries());
         return "post";
     }
 
-    @PostMapping("/poss/{postId}")
-    public String updatePost(@PathVariable("postId") Long id, @ModelAttribute("post") Post post) {
+    // POST: Cập nhật post
+    @PostMapping("/{id}")
+    public String updatePost(@PathVariable("id") Long id, @ModelAttribute("post") Post post) {
         post.setId(id);
         postService.updatePost(post);
         return "redirect:/post";
     }
 
-    @GetMapping("/post/delete/{postId}")
-    public String deletePost(@PathVariable("postId") Long id) {
+    // GET: Xoá post
+    @GetMapping("/delete/{id}")
+    public String deletePost(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return "redirect:/post";
     }
 
-    @PostMapping("/post/{postId}/lock-comments")
-    public String lockComments(@PathVariable("postId") Long postId, @RequestParam("lock") boolean lock) {
-        postService.lockComments(postId, lock);
+    // POST: Khoá/mở comment
+    @PostMapping("/{id}/lock-comments")
+    public String toggleLockComments(@PathVariable("id") Long id, @RequestParam("lock") boolean lock) {
+        postService.lockComments(id, lock);
         return "redirect:/post";
     }
 }

@@ -6,7 +6,7 @@ import org.hibernate.Hibernate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class PostDTO {
     private Long id;
@@ -14,38 +14,63 @@ public class PostDTO {
     private Boolean isCommentLocked;
     private Date createdAt;
     private Date updatedAt;
+
     private UserDTO user;
     private List<CommentDTO> comments;
 
-    public PostDTO(Post post) {
+    private Map<String, Integer> reactionStats;
+    private String currentUserReaction; // like, haha, heart
+    private int commentCount;
+
+    public PostDTO(Post post,
+                   List<CommentDTO> comments,
+                   Map<String, Integer> reactionStats,
+                   String currentUserReaction,
+                   int commentCount) {
         this.id = post.getId();
         this.content = post.getContent();
         this.isCommentLocked = post.getIsCommentLocked();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
-        this.user = (post.getUserId() != null && Hibernate.isInitialized(post.getUserId())) 
-                ? new UserDTO(post.getUserId()) 
+
+        this.user = (post.getUserId() != null && Hibernate.isInitialized(post.getUserId()))
+                ? new UserDTO(post.getUserId())
                 : null;
-        this.comments = (post.getCommentSet() != null && Hibernate.isInitialized(post.getCommentSet()))
-                ? post.getCommentSet().stream()
-                      .filter(c -> c.getParentId() == null) 
-                      .map(CommentDTO::new)
-                      .collect(Collectors.toList())
-                : Collections.emptyList();
+
+        this.comments = comments != null ? comments : Collections.emptyList();
+        this.reactionStats = reactionStats;
+        this.currentUserReaction = currentUserReaction;
+        this.commentCount = commentCount;
     }
 
+    // Getters và Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
     public Boolean getIsCommentLocked() { return isCommentLocked; }
     public void setIsCommentLocked(Boolean isCommentLocked) { this.isCommentLocked = isCommentLocked; }
+
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+
     public UserDTO getUser() { return user; }
     public void setUser(UserDTO user) { this.user = user; }
+
     public List<CommentDTO> getComments() { return comments; }
     public void setComments(List<CommentDTO> comments) { this.comments = comments; }
+
+    public Map<String, Integer> getReactionStats() { return reactionStats; }
+    public void setReactionStats(Map<String, Integer> reactionStats) { this.reactionStats = reactionStats; }
+
+    public String getCurrentUserReaction() { return currentUserReaction; }
+    public void setCurrentUserReaction(String currentUserReaction) { this.currentUserReaction = currentUserReaction; }
+
+    public int getCommentCount() { return commentCount; }
+    public void setCommentCount(int commentCount) { this.commentCount = commentCount; }
 }

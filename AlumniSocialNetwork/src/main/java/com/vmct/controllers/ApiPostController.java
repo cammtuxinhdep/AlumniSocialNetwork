@@ -1,69 +1,75 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.vmct.controllers;
 
+/**
+ *
+ * @author Thanh Nhat
+ */
 import com.vmct.dto.PostDTO;
 import com.vmct.dto.PostSummaryDTO;
 import com.vmct.pojo.Post;
+import com.vmct.pojo.User;
 import com.vmct.services.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/post")
 @CrossOrigin
 public class ApiPostController {
-
-    @Autowired
+     @Autowired
     private PostService postService;
 
-    // Lấy danh sách tất cả bài đăng (dạng DTO)
-  @GetMapping("/post")
-    public ResponseEntity<List<PostSummaryDTO>> listPost() {
-        List<Post> post = postService.getAllPost();
-        List<PostSummaryDTO> postDTOs = post.stream()
-                .map(PostSummaryDTO::new)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(postDTOs, HttpStatus.OK);
+    // GET /api/post - danh sách bài viết (không chứa bình luận)
+    @GetMapping
+    public ResponseEntity<List<PostSummaryDTO>> listPosts() {
+        List<PostSummaryDTO> posts = postService.getAllPostSummaries();
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    // Lấy chi tiết một bài đăng theo ID (dạng DTO)
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<PostDTO> getPost(@PathVariable("postId") Long id) {
-        Post post = postService.getPostById(id);
-        if (post == null) {
+    // GET /api/post/{id} - chi tiết bài viết (gồm bình luận, reactions)
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId, HttpServletRequest request) {
+        User currentUser = (User) request.getAttribute("currentUser"); // giả định được set ở Interceptor/Auth
+        PostDTO postDTO = postService.getPostDTOById(postId, currentUser);
+        if (postDTO == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+        return new ResponseEntity<>(postDTO, HttpStatus.OK);
     }
 
-// Tạo một bài đăng mới (vẫn nhận và trả về entity gốc)
-    @PostMapping("/post")
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
-        Post created = postService.createPost(post);
+    // POST /api/post - tạo bài đăng mới
+    @PostMapping
+    public ResponseEntity<Post> createPost(@RequestBody Post post, HttpServletRequest request) {
+        User currentUser = (User) request.getAttribute("currentUser");
+        Post created = postService.createPost(post, currentUser);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    // Cập nhật một bài đăng
-    @PutMapping("/post/{postId}")
-    public ResponseEntity<Void> updatePost(@PathVariable("postId") Long id, @RequestBody Post post) {
-        post.setId(id);
+    // PUT /api/post/{id} - cập nhật nội dung bài viết
+    @PutMapping("/{postId}")
+    public ResponseEntity<Void> updatePost(@PathVariable Long postId, @RequestBody Post post) {
+        post.setId(postId);
         postService.updatePost(post);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // Xoá một bài đăng
-    @DeleteMapping("/post/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable("postId") Long id) {
-        postService.deletePost(id);
+    // DELETE /api/post/{id} - xoá bài viết
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // Khoá hoặc mở comment cho bài đăng
-    @PostMapping("/post/{postId}/lock-comments")
-    public ResponseEntity<Void> lockComments(@PathVariable("postId") Long postId, @RequestParam("lock") boolean lock) {
+    // POST /api/post/{id}/lock-comments?lock=true|false
+    @PostMapping("/{postId}/lock-comments")
+    public ResponseEntity<Void> lockComments(@PathVariable Long postId, @RequestParam boolean lock) {
         postService.lockComments(postId, lock);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

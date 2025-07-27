@@ -1,15 +1,21 @@
 package com.vmct.services;
 
+import com.vmct.dto.CommentDTO;
 import com.vmct.pojo.Comment;
+
 import java.util.List;
 
-/**
- *
- * @author Thanh Nhat
- */
 public interface CommentService {
-    Comment findById(Long cId);
-    boolean save(Comment c);
-    boolean delete(Long cId);
-    List<Comment> findByPostId(Long pId);
+
+    Comment findById(Long commentId);
+
+    boolean save(Comment comment);
+
+    boolean delete(Long commentId);
+
+    int countByPostId(Long postId);
+
+    List<CommentDTO> getRootCommentsWithFirstLevelReplies(Long postId); // ✅ load gốc + 1 cấp
+
+    List<CommentDTO> getReplies(Long parentId); // ✅ lazy load replies
 }

@@ -1,21 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
+
 package com.vmct.services;
 
+import com.vmct.dto.PostDTO;
+import com.vmct.dto.PostSummaryDTO;
 import com.vmct.pojo.Post;
+import com.vmct.pojo.User;
+
 import java.util.List;
 
-/**
- *
- * @author Thanh Nhat
- */
 public interface PostService {
-    List<Post> getAllPost();
-    Post createPost(Post post);
+
+    // ✅ DÙNG DTO THAY VÌ ENTITY TRỰC TIẾP
+    List<PostSummaryDTO> getAllPostSummaries();
+
+    Post createPost(Post post, User creator);
+
     Post getPostById(Long id);
+
+    PostDTO getPostDTOById(Long id, User currentUser);
+
     void updatePost(Post post);
+
     void deletePost(Long id);
-    void lockComments(Long postId, boolean lock);
+
+    void lockComments(Long postId, boolean locked);
 }
