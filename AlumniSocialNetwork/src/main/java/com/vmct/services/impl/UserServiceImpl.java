@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.vmct.services.UserService;
+import java.util.Date;
 
 /**
  *
@@ -54,6 +55,8 @@ public class UserServiceImpl implements UserService {
         u.setEmail(params.get("email"));
         u.setUsername(params.get("username"));
         u.setPassword(this.passwordEncoder.encode(params.get("password")));
+        u.setCreatedAt(new Date());
+        u.setIsLocked(Boolean.TRUE);
         u.setUserRole("ROLE_ALUMNI");
 
         if (!avatar.isEmpty()) {
@@ -87,4 +90,18 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.authenticate(username, password);
     }
 
+    @Override
+    public User addLecturer(Map<String, String> params) {
+        User u = new User();
+        u.setFirstName(params.get("firstName"));
+        u.setLastName(params.get("lastName"));
+        u.setEmail(params.get("email"));
+        u.setUsername(params.get("username"));
+        u.setPassword(this.passwordEncoder.encode("ou@123"));
+        u.setCreatedAt(new Date());
+        u.setPasswordChangeDeadline(new Date(System.currentTimeMillis() + 86400000));
+        u.setUserRole("ROLE_LECTURER");
+
+        return this.userRepo.addUser(u);
+    }
 }

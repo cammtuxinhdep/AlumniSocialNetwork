@@ -1,12 +1,56 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-
-<head>
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras springsecurity6">
+    <head>
     <th:context th:fragment="resources">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+              crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                body {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    min-height: 100vh !important;
+                }
+                main {
+                    flex: 1 0 auto !important;
+                }
+                footer {
+                    flex-shrink: 0 !important;
+                } /* Đảm bảo chiều cao tối thiểu bằng chiều cao màn hình */
+            }
+
+            main {
+                flex: 1 0 auto; /* Nội dung chính mở rộng để đẩy footer xuống dưới */
+            }
+
+            footer {
+                flex-shrink: 0; /* Footer không bị co lại */
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+            main {
+                flex: 1 0 auto;
+            }
+            footer {
+                flex-shrink: 0;
+            }
+        </style>
     </th:context>
 </head>
 <body>
@@ -16,12 +60,10 @@
         </div>
     </nav>
     <footer th:fragment="footer">
-        <div class="p-4 fixed-bottom" style="background-color: #3e8faaa6">
+        <div class="p-4" style="background-color: #3e8faaa6">
             <h1>Alumni Network &COPY; 2025</h1>
             <p>Social Website - Mini Project</p>
         </div>
     </footer>
 </body>
 </html>
-
-
