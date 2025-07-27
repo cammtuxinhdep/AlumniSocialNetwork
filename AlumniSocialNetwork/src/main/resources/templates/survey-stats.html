@@ -1,79 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Thống kê khảo sát</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>Thống kê khảo sát</title>
+    <th:context th:replace="base :: resources"></th:context>
 </head>
 <body>
-<!-- Header -->
-<div th:replace="base :: header"></div>
+    <!-- Header -->
+    <div th:replace="index :: header"></div>
 
-<!-- Nội dung -->
-<main class="container mt-4">
-    <h2 class="mb-4">📊 Kết quả thống kê khảo sát</h2>
+    <!-- Nội dung -->
+    <main class="container mt-4">
+        <h2 class="mb-4">📊 Kết quả thống kê khảo sát</h2>
 
-    <div class="row">
-        <div class="col-md-5 col-6">
-            <table class="table table-bordered">
-                <thead class="table-light">
-                <tr>
-                    <th>Câu trả lời</th>
-                    <th>Số lượt chọn</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="entry : ${stats}">
-                    <td th:text="${entry.key}">Câu trả lời</td>
-                    <td th:text="${entry.value}">0</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-md-5 col-6">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Câu trả lời</th>
+                            <th>Số lượt chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${stats}">
+                            <td th:text="${entry.key}">Câu trả lời</td>
+                            <td th:text="${entry.value}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-7 col-6">
+                <canvas id="surveyChart"></canvas>
+            </div>
         </div>
+    </main>
 
-        <div class="col-md-7 col-6">
-            <canvas id="surveyChart"></canvas>
-        </div>
-    </div>
-</main>
+    <!-- Footer -->
+    <div th:replace="base :: footer"></div>
 
-<!-- Footer -->
-<div th:replace="base :: footer"></div>
+    <!-- Chart.js -->
+    <script th:inline="javascript">
+        let surveyStats = [[${stats}]];
+        let labels = Object.keys(surveyStats);
+        let data = Object.values(surveyStats);
 
-<!-- Chart.js -->
-<script th:inline="javascript">
-    let surveyStats = [[${stats}]];
-    let labels = Object.keys(surveyStats);
-    let data = Object.values(surveyStats);
-
-    const ctx = document.getElementById('surveyChart');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Số lượt chọn',
-                data: data,
-                backgroundColor: labels.map((_, i) => `hsl(${i * 40}, 70%, 60%)`)
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false }
+        const ctx = document.getElementById('surveyChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                        label: 'Số lượt chọn',
+                        data: data,
+                        backgroundColor: labels.map((_, i) => `hsl(${i * 40}, 70%, 60%)`)
+                    }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: { display: true, text: 'Lượt chọn' }
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {display: false}
                 },
-                x: {
-                    title: { display: true, text: 'Câu trả lời' }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {display: true, text: 'Lượt chọn'}
+                    },
+                    x: {
+                        title: {display: true, text: 'Câu trả lời'}
+                    }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>

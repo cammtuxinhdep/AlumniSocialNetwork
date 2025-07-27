@@ -2,11 +2,11 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Trang chủ</title>
-    <th:context th:replace="base :: bootstrap"></th:context>
-</head>
+        <title>Thống kê</title>
+        <th:context th:replace="base :: resources"></th:context>
+    </head>
 <body>
-    <div th:replace="base :: header"></div>
+    <div th:replace="index :: header"></div>
 
     <main class="container">
         <div class="row">
@@ -35,11 +35,11 @@
     <script th:src="@{/js/main.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
-        
+
         window.onload = function () {
-            
+
             let stats = [[${productRevenues}]];
-            
+
             let data = stats.map(o => o[2]);
             let labels = stats.map(o => o[1]);
 
