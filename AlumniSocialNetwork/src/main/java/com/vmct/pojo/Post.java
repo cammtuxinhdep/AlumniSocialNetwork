@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
 @Table(name = "post")

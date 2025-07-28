@@ -1,5 +1,6 @@
 package com.vmct.services.impl;
 
+import com.vmct.pojo.User;
 import com.vmct.pojo.UserGroup;
 import com.vmct.repositories.UserGroupRepository;
 import com.vmct.services.UserGroupService;
@@ -20,5 +21,10 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public UserGroup getGroupById(Long id) {
         return userGroupRepo.getGroupById(id);
+    }
+
+    @Override
+    public List<User> getUsersByGroupIds(List<Long> groupIds) {
+       return userGroupRepo.getUsersByGroupIds(groupIds);
     }
 }

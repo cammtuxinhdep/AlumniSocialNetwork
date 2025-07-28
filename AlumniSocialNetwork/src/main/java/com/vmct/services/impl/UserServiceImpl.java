@@ -46,7 +46,10 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return this.userRepo.getUserByUsername(username);
     }
-
+    @Override
+    public User getUserById(Long id) {
+        return this.userRepo.getUserById(id);
+    }
     @Override
     public User register(Map<String, String> params, MultipartFile avatar) {
         User u = new User();

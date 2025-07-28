@@ -23,12 +23,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
 @Table(name = "comment")
@@ -58,8 +57,7 @@ public class Comment implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @OneToMany(mappedBy = "parentId")
-    private Set<Comment> commentSet = new HashSet<>();
-
+    private Set<Comment> commentSet;
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @ManyToOne
     private Comment parentId;

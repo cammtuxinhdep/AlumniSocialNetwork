@@ -1,77 +1,78 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{base :: head}"></head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gửi thư mời</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
 <body>
-<header th:replace="~{base :: header}"></header>
-
-<main class="container mt-4">
+<div class="container mt-4">
     <h2>✉️ Gửi thư mời</h2>
-
-    <form th:action="@{/notification/send}" method="post">
-        <!-- Chọn thông báo -->
+    <form th:action="@{/notification}" th:object="${notification}" method="post">
+        <!-- Tiêu đề -->
         <div class="mb-3">
-            <label for="notificationId" class="form-label">Chọn thông báo:</label>
-            <select class="form-select" name="notificationId" id="notificationId" required>
-                <option th:each="n : ${notifications}" th:value="${n.id}" th:text="${n.title}"></option>
-            </select>
+            <label for="title" class="form-label">Tiêu đề</label>
+            <input type="text" class="form-control" th:field="*{title}" placeholder="Nhập tiêu đề" required>
         </div>
 
-        <!-- Loại người nhận -->
+        <!-- Nội dung -->
         <div class="mb-3">
-            <label class="form-label">Chọn người nhận:</label>
-            <div class="form-check">
+            <label for="content" class="form-label">Nội dung</label>
+            <textarea class="form-control" th:field="*{content}" rows="5" placeholder="Nhập nội dung" required></textarea>
+        </div>
+
+        <!-- Địa điểm -->
+        <div class="mb-3">
+            <label for="eventLocation" class="form-label">Địa điểm</label>
+            <input type="text" class="form-control" th:field="*{eventLocation}" placeholder="Nhập địa điểm" required>
+        </div>
+
+        <!-- Thời gian diễn ra -->
+        <div class="mb-3">
+            <label for="eventDatetime" class="form-label">Thời gian diễn ra</label>
+            <input type="datetime-local" class="form-control"
+                   th:field="*{eventDatetime}" required>
+        </div>
+
+        <!-- Người nhận -->
+        <div class="mb-3">
+            <label class="form-label">Người nhận</label><br>
+            <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="recipientType" id="all" value="all" checked>
                 <label class="form-check-label" for="all">Tất cả cựu sinh viên</label>
             </div>
-            <div class="form-check">
+            <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="recipientType" id="group" value="group">
                 <label class="form-check-label" for="group">Theo nhóm</label>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="recipientType" id="individual" value="individual">
-                <label class="form-check-label" for="individual">Theo cá nhân</label>
-            </div>
         </div>
 
-        <!-- Checkbox nhóm -->
-        <div class="mb-3" id="groupSelection" style="display: none;">
-            <label class="form-label">Chọn nhóm:</label>
-            <div th:each="g : ${userGroups}" class="form-check">
-                <input class="form-check-input" type="checkbox" name="groupIds" th:value="${g.id}" th:id="'group_' + ${g.id}">
-                <label class="form-check-label" th:for="'group_' + ${g.id}" th:text="${g.name}"></label>
-            </div>
+        <!-- Nhóm người dùng (ẩn/hiện tùy chọn radio) -->
+        <div class="mb-3" id="groupSelectContainer" style="display: none;">
+            <label for="groupId" class="form-label">Chọn nhóm</label>
+            <select class="form-select" id="groupId" name="groupId">
+                <option value="">-- Chọn nhóm --</option>
+                <option th:each="g : ${groups}" th:value="${g.id}" th:text="${g.name}"></option>
+            </select>
         </div>
 
-        <!-- Checkbox người dùng -->
-        <div class="mb-3" id="userSelection" style="display: none;">
-            <label class="form-label">Chọn người dùng:</label>
-            <div th:each="u : ${users}" class="form-check">
-                <input class="form-check-input" type="checkbox" name="userIds" th:value="${u.id}" th:id="'user_' + ${u.id}">
-                <label class="form-check-label" th:for="'user_' + ${u.id}" th:text="${u.fullName} + ' (' + ${u.email} + ')'"></label>
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">📤 Gửi thư mời</button>
+        <!-- Nút gửi -->
+        <button type="submit" class="btn btn-primary">Gửi thư mời</button>
     </form>
-</main>
+</div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const radios = document.getElementsByName("recipientType");
-        const groupSection = document.getElementById("groupSelection");
-        const userSection = document.getElementById("userSelection");
+    const groupRadio = document.getElementById("group");
+    const allRadio = document.getElementById("all");
+    const groupSelectContainer = document.getElementById("groupSelectContainer");
 
-        function toggleSections() {
-            const selected = Array.from(radios).find(r => r.checked)?.value;
-            groupSection.style.display = selected === "group" ? "block" : "none";
-            userSection.style.display = selected === "individual" ? "block" : "none";
-        }
+    groupRadio.addEventListener("change", () => {
+        groupSelectContainer.style.display = "block";
+    });
 
-        radios.forEach(r => r.addEventListener("change", toggleSections));
-        toggleSections(); // run at start
+    allRadio.addEventListener("change", () => {
+        groupSelectContainer.style.display = "none";
     });
 </script>
-
-<footer th:replace="~{base :: footer}"></footer>
 </body>
 </html>

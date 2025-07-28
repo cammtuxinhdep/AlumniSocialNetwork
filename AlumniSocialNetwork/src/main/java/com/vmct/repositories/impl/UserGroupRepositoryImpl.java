@@ -1,10 +1,12 @@
 package com.vmct.repositories.impl;
 
+import com.vmct.pojo.User;
 import com.vmct.pojo.UserGroup;
 import com.vmct.repositories.UserGroupRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +37,17 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
         Session session = factory.getObject().getCurrentSession();
         return session.get(UserGroup.class, id);
     }
+    @Override
+    public List<User> getUsersByGroupIds(List<Long> groupIds) {
+        if (groupIds == null || groupIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Session session = factory.getObject().getCurrentSession();
+        Query<User> query = session.createQuery(
+            "SELECT u FROM User u JOIN group_members gm ON u.id = gm.user_id WHERE gm.group_id IN :groupIds",
+            User.class
+        );
+        query.setParameter("groupIds", groupIds);
+        return query.getResultList();
+}
 }
