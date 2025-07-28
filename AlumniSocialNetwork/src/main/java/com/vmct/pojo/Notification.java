@@ -21,21 +21,21 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "surveys")
+@Table(name = "notification")
 @NamedQueries({
-    @NamedQuery(name = "Surveys.findAll", query = "SELECT s FROM Surveys s"),
-    @NamedQuery(name = "Surveys.findById", query = "SELECT s FROM Surveys s WHERE s.id = :id"),
-    @NamedQuery(name = "Surveys.findByTitle", query = "SELECT s FROM Surveys s WHERE s.title = :title"),
-    @NamedQuery(name = "Surveys.findByCreatedAt", query = "SELECT s FROM Surveys s WHERE s.createdAt = :createdAt")})
-public class Surveys implements Serializable {
+    @NamedQuery(name = "Notification.findAll", query = "SELECT n FROM Notification n"),
+    @NamedQuery(name = "Notification.findById", query = "SELECT n FROM Notification n WHERE n.id = :id"),
+    @NamedQuery(name = "Notification.findByTitle", query = "SELECT n FROM Notification n WHERE n.title = :title"),
+    @NamedQuery(name = "Notification.findByCreatedAt", query = "SELECT n FROM Notification n WHERE n.createdAt = :createdAt")})
+public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -51,26 +51,26 @@ public class Surveys implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Lob
-    @Size(min = 1, max = 1073741824)
-    @Column(name = "questions")
-    private String questions;
+    @Size(min = 1, max = 65535)
+    @Column(name = "content")
+    private String content;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
-    private Collection<SurveyResponses> surveyResponsesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificationId")
+    private Set<NotificationRecipient> notificationRecipientSet;
 
-    public Surveys() {
+    public Notification() {
     }
 
-    public Surveys(Long id) {
+    public Notification(Long id) {
         this.id = id;
     }
 
-    public Surveys(Long id, String title, String questions) {
+    public Notification(Long id, String title, String content) {
         this.id = id;
         this.title = title;
-        this.questions = questions;
+        this.content = content;
     }
 
     public Long getId() {
@@ -89,12 +89,12 @@ public class Surveys implements Serializable {
         this.title = title;
     }
 
-    public String getQuestions() {
-        return questions;
+    public String getContent() {
+        return content;
     }
 
-    public void setQuestions(String questions) {
-        this.questions = questions;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getCreatedAt() {
@@ -105,12 +105,12 @@ public class Surveys implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Collection<SurveyResponses> getSurveyResponsesCollection() {
-        return surveyResponsesCollection;
+    public Set<NotificationRecipient> getNotificationRecipientSet() {
+        return notificationRecipientSet;
     }
 
-    public void setSurveyResponsesCollection(Collection<SurveyResponses> surveyResponsesCollection) {
-        this.surveyResponsesCollection = surveyResponsesCollection;
+    public void setNotificationRecipientSet(Set<NotificationRecipient> notificationRecipientSet) {
+        this.notificationRecipientSet = notificationRecipientSet;
     }
 
     @Override
@@ -123,10 +123,10 @@ public class Surveys implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Surveys)) {
+        if (!(object instanceof Notification)) {
             return false;
         }
-        Surveys other = (Surveys) object;
+        Notification other = (Notification) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -135,7 +135,7 @@ public class Surveys implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Surveys[ id=" + id + " ]";
+        return "com.vmct.pojo.Notification[ id=" + id + " ]";
     }
     
 }

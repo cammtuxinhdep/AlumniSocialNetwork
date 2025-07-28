@@ -11,9 +11,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -21,19 +23,21 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "reactions")
+@Table(name = "comment")
 @NamedQueries({
-    @NamedQuery(name = "Reactions.findAll", query = "SELECT r FROM Reactions r"),
-    @NamedQuery(name = "Reactions.findById", query = "SELECT r FROM Reactions r WHERE r.id = :id"),
-    @NamedQuery(name = "Reactions.findByType", query = "SELECT r FROM Reactions r WHERE r.type = :type"),
-    @NamedQuery(name = "Reactions.findByCreatedAt", query = "SELECT r FROM Reactions r WHERE r.createdAt = :createdAt")})
-public class Reactions implements Serializable {
+    @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c"),
+    @NamedQuery(name = "Comment.findById", query = "SELECT c FROM Comment c WHERE c.id = :id"),
+    @NamedQuery(name = "Comment.findByCreatedAt", query = "SELECT c FROM Comment c WHERE c.createdAt = :createdAt"),
+    @NamedQuery(name = "Comment.findByUpdatedAt", query = "SELECT c FROM Comment c WHERE c.updatedAt = :updatedAt")})
+public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,29 +47,39 @@ public class Reactions implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5)
-    @Column(name = "type")
-    private String type;
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "content")
+    private String content;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @OneToMany(mappedBy = "parentId")
+    private Set<Comment> commentSet = new HashSet<>();
+
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @ManyToOne
+    private Comment parentId;
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Posts postId;
+    private Post postId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private User userId;
 
-    public Reactions() {
+    public Comment() {
     }
 
-    public Reactions(Long id) {
+    public Comment(Long id) {
         this.id = id;
     }
 
-    public Reactions(Long id, String type) {
+    public Comment(Long id, String content) {
         this.id = id;
-        this.type = type;
+        this.content = content;
     }
 
     public Long getId() {
@@ -76,12 +90,12 @@ public class Reactions implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getContent() {
+        return content;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getCreatedAt() {
@@ -92,19 +106,43 @@ public class Reactions implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Posts getPostId() {
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Set<Comment> getCommentSet() {
+        return commentSet;
+    }
+
+    public void setCommentSet(Set<Comment> commentSet) {
+        this.commentSet = commentSet;
+    }
+
+    public Comment getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Comment parentId) {
+        this.parentId = parentId;
+    }
+
+    public Post getPostId() {
         return postId;
     }
 
-    public void setPostId(Posts postId) {
+    public void setPostId(Post postId) {
         this.postId = postId;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 
@@ -118,10 +156,10 @@ public class Reactions implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Reactions)) {
+        if (!(object instanceof Comment)) {
             return false;
         }
-        Reactions other = (Reactions) object;
+        Comment other = (Comment) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -130,7 +168,7 @@ public class Reactions implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Reactions[ id=" + id + " ]";
+        return "com.vmct.pojo.Comment[ id=" + id + " ]";
     }
     
 }

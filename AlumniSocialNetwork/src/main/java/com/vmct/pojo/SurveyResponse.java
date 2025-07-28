@@ -15,21 +15,22 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.util.Date;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "notification_recipients")
+@Table(name = "survey_response")
 @NamedQueries({
-    @NamedQuery(name = "NotificationRecipients.findAll", query = "SELECT n FROM NotificationRecipients n"),
-    @NamedQuery(name = "NotificationRecipients.findById", query = "SELECT n FROM NotificationRecipients n WHERE n.id = :id"),
-    @NamedQuery(name = "NotificationRecipients.findByGroupId", query = "SELECT n FROM NotificationRecipients n WHERE n.groupId = :groupId"),
-    @NamedQuery(name = "NotificationRecipients.findByIsAll", query = "SELECT n FROM NotificationRecipients n WHERE n.isAll = :isAll")})
-public class NotificationRecipients implements Serializable {
+    @NamedQuery(name = "SurveyResponse.findAll", query = "SELECT s FROM SurveyResponse s"),
+    @NamedQuery(name = "SurveyResponse.findById", query = "SELECT s FROM SurveyResponse s WHERE s.id = :id"),
+    @NamedQuery(name = "SurveyResponse.findByCreatedAt", query = "SELECT s FROM SurveyResponse s WHERE s.createdAt = :createdAt")})
+public class SurveyResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -37,21 +38,23 @@ public class NotificationRecipients implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Column(name = "group_id")
-    private BigInteger groupId;
-    @Column(name = "is_all")
-    private Boolean isAll;
-    @JoinColumn(name = "notification_id", referencedColumnName = "id")
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @JoinColumn(name = "survey_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Notifications notificationId;
+    private Survey surveyId;
+    @JoinColumn(name = "option_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private SurveyOption optionId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne
-    private Users userId;
+    @ManyToOne(optional = false)
+    private User userId;
 
-    public NotificationRecipients() {
+    public SurveyResponse() {
     }
 
-    public NotificationRecipients(Long id) {
+    public SurveyResponse(Long id) {
         this.id = id;
     }
 
@@ -63,35 +66,35 @@ public class NotificationRecipients implements Serializable {
         this.id = id;
     }
 
-    public BigInteger getGroupId() {
-        return groupId;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setGroupId(BigInteger groupId) {
-        this.groupId = groupId;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Boolean getIsAll() {
-        return isAll;
+    public Survey getSurveyId() {
+        return surveyId;
     }
 
-    public void setIsAll(Boolean isAll) {
-        this.isAll = isAll;
+    public void setSurveyId(Survey surveyId) {
+        this.surveyId = surveyId;
     }
 
-    public Notifications getNotificationId() {
-        return notificationId;
+    public SurveyOption getOptionId() {
+        return optionId;
     }
 
-    public void setNotificationId(Notifications notificationId) {
-        this.notificationId = notificationId;
+    public void setOptionId(SurveyOption optionId) {
+        this.optionId = optionId;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 
@@ -105,10 +108,10 @@ public class NotificationRecipients implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof NotificationRecipients)) {
+        if (!(object instanceof SurveyResponse)) {
             return false;
         }
-        NotificationRecipients other = (NotificationRecipients) object;
+        SurveyResponse other = (SurveyResponse) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -117,7 +120,7 @@ public class NotificationRecipients implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.NotificationRecipients[ id=" + id + " ]";
+        return "com.vmct.pojo.SurveyResponse[ id=" + id + " ]";
     }
     
 }

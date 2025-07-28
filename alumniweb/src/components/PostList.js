@@ -1,27 +1,32 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import Apis, { endpoints } from "../configs/Apis";
 import MySpinner from "./layout/MySpinner";
 import PostItem from "./PostItem";
+import { MyUserContext } from "../configs/Context";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
-
+  const [user] = useContext(MyUserContext); 
   const loadPosts = async () => {
     try {
-      let url = `${endpoints.posts}?page=${page}`;
-      if (q) url += `&kw=${q}`;
+      setLoading(true);
+      const res = await Apis.get(endpoints.posts, {
+        params: {
+          page,
+          kw: q || undefined,
+        },
+      });
 
-      const res = await Apis.get(url);
+      const newPosts = res.data;
 
-      if (res.data.length === 0 && page > 1) {
-        setPage(0); // Dừng phân trang
+      if (newPosts.length === 0 && page > 1) {
+        setPage(0); // Không còn dữ liệu để load
       } else {
-        if (page === 1) setPosts(res.data);
-        else setPosts(prev => [...prev, ...res.data]);
+        setPosts((prev) => (page === 1 ? newPosts : [...prev, ...newPosts]));
       }
     } catch (err) {
       console.error("Lỗi tải bài viết:", err);
@@ -31,20 +36,19 @@ const PostList = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
+    const delayDebounce = setTimeout(() => {
       if (page > 0) loadPosts();
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(delayDebounce);
   }, [page, q]);
 
   useEffect(() => {
-    setPage(1);
+    setPage(1); 
   }, [q]);
 
   const loadMore = () => {
-    setPage(prev => prev + 1);
+    setPage((prev) => prev + 1);
   };
 
   return (
@@ -55,7 +59,7 @@ const PostList = () => {
             type="text"
             placeholder="Tìm kiếm bài viết..."
             value={q}
-            onChange={e => setQ(e.target.value)}
+            onChange={(e) => setQ(e.target.value)}
           />
         </Form.Group>
       </Form>
@@ -65,9 +69,9 @@ const PostList = () => {
       )}
 
       <Row>
-        {posts.map(post => (
+        {posts.map((post) => (
           <Col key={post.id} md={6} className="mb-3">
-            <PostItem post={post} />
+            <PostItem post={post} currentUser={user} />
           </Col>
         ))}
       </Row>

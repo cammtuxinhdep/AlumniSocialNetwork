@@ -20,12 +20,12 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
 @Table(name = "user_group")
@@ -50,8 +50,10 @@ public class UserGroup implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @OneToMany(mappedBy = "groupId")
+    private Set<NotificationRecipient> notificationRecipientSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "groupId")
-    private Collection<GroupMembers> groupMembersCollection;
+    private Set<GroupMember> groupMemberSet;
 
     public UserGroup() {
     }
@@ -89,12 +91,20 @@ public class UserGroup implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Collection<GroupMembers> getGroupMembersCollection() {
-        return groupMembersCollection;
+    public Set<NotificationRecipient> getNotificationRecipientSet() {
+        return notificationRecipientSet;
     }
 
-    public void setGroupMembersCollection(Collection<GroupMembers> groupMembersCollection) {
-        this.groupMembersCollection = groupMembersCollection;
+    public void setNotificationRecipientSet(Set<NotificationRecipient> notificationRecipientSet) {
+        this.notificationRecipientSet = notificationRecipientSet;
+    }
+
+    public Set<GroupMember> getGroupMemberSet() {
+        return groupMemberSet;
+    }
+
+    public void setGroupMemberSet(Set<GroupMember> groupMemberSet) {
+        this.groupMemberSet = groupMemberSet;
     }
 
     @Override

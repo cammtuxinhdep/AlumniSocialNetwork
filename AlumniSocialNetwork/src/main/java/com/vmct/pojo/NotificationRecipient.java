@@ -19,14 +19,15 @@ import java.io.Serializable;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "group_members")
+@Table(name = "notification_recipient")
 @NamedQueries({
-    @NamedQuery(name = "GroupMembers.findAll", query = "SELECT g FROM GroupMembers g"),
-    @NamedQuery(name = "GroupMembers.findById", query = "SELECT g FROM GroupMembers g WHERE g.id = :id")})
-public class GroupMembers implements Serializable {
+    @NamedQuery(name = "NotificationRecipient.findAll", query = "SELECT n FROM NotificationRecipient n"),
+    @NamedQuery(name = "NotificationRecipient.findById", query = "SELECT n FROM NotificationRecipient n WHERE n.id = :id"),
+    @NamedQuery(name = "NotificationRecipient.findByIsAll", query = "SELECT n FROM NotificationRecipient n WHERE n.isAll = :isAll")})
+public class NotificationRecipient implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -34,17 +35,22 @@ public class GroupMembers implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @Column(name = "is_all")
+    private Boolean isAll;
+    @JoinColumn(name = "notification_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private UserGroup groupId;
+    private Notification notificationId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Users userId;
+    @ManyToOne
+    private User userId;
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @ManyToOne
+    private UserGroup groupId;
 
-    public GroupMembers() {
+    public NotificationRecipient() {
     }
 
-    public GroupMembers(Long id) {
+    public NotificationRecipient(Long id) {
         this.id = id;
     }
 
@@ -56,20 +62,36 @@ public class GroupMembers implements Serializable {
         this.id = id;
     }
 
+    public Boolean getIsAll() {
+        return isAll;
+    }
+
+    public void setIsAll(Boolean isAll) {
+        this.isAll = isAll;
+    }
+
+    public Notification getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(Notification notificationId) {
+        this.notificationId = notificationId;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
     public UserGroup getGroupId() {
         return groupId;
     }
 
     public void setGroupId(UserGroup groupId) {
         this.groupId = groupId;
-    }
-
-    public Users getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Users userId) {
-        this.userId = userId;
     }
 
     @Override
@@ -82,10 +104,10 @@ public class GroupMembers implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof GroupMembers)) {
+        if (!(object instanceof NotificationRecipient)) {
             return false;
         }
-        GroupMembers other = (GroupMembers) object;
+        NotificationRecipient other = (NotificationRecipient) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -94,7 +116,7 @@ public class GroupMembers implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.GroupMembers[ id=" + id + " ]";
+        return "com.vmct.pojo.NotificationRecipient[ id=" + id + " ]";
     }
     
 }

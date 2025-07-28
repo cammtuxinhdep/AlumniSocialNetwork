@@ -2,7 +2,9 @@ package com.vmct.repositories.impl;
 
 import com.vmct.pojo.Comment;
 import com.vmct.repositories.CommentRepository;
+
 import jakarta.persistence.criteria.*;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-
 @Repository
 @Transactional
 public class CommentRepositoryImpl implements CommentRepository {
@@ -25,6 +26,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public Optional<Comment> findById(Long id) {
         return Optional.ofNullable(getCurrentSession().get(Comment.class, id));
+
     }
 
     @Override

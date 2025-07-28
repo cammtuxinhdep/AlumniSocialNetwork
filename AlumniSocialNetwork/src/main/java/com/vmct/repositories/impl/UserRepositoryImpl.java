@@ -4,94 +4,68 @@
  */
 package com.vmct.repositories.impl;
 
-import com.vmct.pojo.Users;
+import com.vmct.pojo.User;
 import com.vmct.repositories.UserRepository;
-import jakarta.data.repository.Repository;
-import java.util.Date;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import java.util.List;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Repository
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
     @Autowired
-    private SessionFactory sessionFactory;
+    private LocalSessionFactoryBean factory;
 
-    private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+    
+    @Override
+    public User addUser(User u) {
+        Session s = this.factory.getObject().getCurrentSession();
+        s.persist(u);
+        
+        return u;
     }
 
     @Override
-    public List<Users> getAllUsers() {
-        return getCurrentSession().createQuery("FROM Users", Users.class).getResultList();
+    public User getUserByUsername(String username) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("User.findByUsername", User.class);
+        q.setParameter("username", username);
+        
+        return (User) q.getSingleResult();
     }
 
     @Override
-    public Users getUserById(Long id) {
-        return getCurrentSession().get(Users.class, id);
+    public boolean authenticate(String username, String password) {
+        User u = this.getUserByUsername(username);
+        
+        if (u == null)
+            return false;
+        
+        return this.passwordEncoder.matches(password, u.getPassword());
     }
-
     @Override
-    public void addUser(Users user) {
-        getCurrentSession().persist(user);
-    }
+public List<User> getAllUsers() {
+    Session session = this.factory.getObject().getCurrentSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<User> cq = cb.createQuery(User.class);
+    Root<User> root = cq.from(User.class);
+    cq.select(root);
+    Query<User> query = session.createQuery(cq);
+    return query.getResultList();
+}
 
-    @Override
-    public void updateUser(Users user) {
-        getCurrentSession().merge(user);
-    }
-
-    @Override
-    public void deleteUser(Long id) {
-        Users user = getUserById(id);
-        if (user != null) {
-            getCurrentSession().remove(user);
-        }
-    }
-
-    @Override
-    public Users getUserByEmail(String email) {
-        List<Users> result = getCurrentSession()
-            .createNamedQuery("Users.findByEmail", Users.class)
-            .setParameter("email", email)
-            .getResultList();
-        return result.isEmpty() ? null : result.get(0);
-    }
-
-    @Override
-    public boolean updatePassword(Long userId, String newPassword) {
-        Users user = getUserById(userId);
-        if (user != null) {
-            user.setPassword(newPassword);
-            user.setPasswordChangeDeadline(null);
-            updateUser(user);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isPasswordExpired(Long userId) {
-        Users user = getUserById(userId);
-        if (user != null && user.getPasswordChangeDeadline() != null) {
-            return new Date().after(user.getPasswordChangeDeadline());
-        }
-        return false;
-    }
-
-    @Override
-    public void lockUserIfPasswordExpired(Long userId) {
-        Users user = getUserById(userId);
-        if (user != null && isPasswordExpired(userId)) {
-            user.setIsLocked(true);
-            updateUser(user);
-        }
-    }
 }

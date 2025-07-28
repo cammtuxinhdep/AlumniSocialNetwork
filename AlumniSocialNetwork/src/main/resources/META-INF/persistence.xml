@@ -10,16 +10,21 @@
     <class>com.vmct.pojo.PostReactions</class>
     <class>com.vmct.pojo.SurveyVotes</class>
     <class>com.vmct.pojo.PostComments</class>
-    <class>com.vmct.pojo.NotificationRecipients</class>
-    <class>com.vmct.pojo.GroupMembers</class>
-    <class>com.vmct.pojo.Users</class>
     <class>com.vmct.pojo.Chats</class>
     <class>com.vmct.pojo.SurveyResponses</class>
     <class>com.vmct.pojo.Surveys</class>
-    <class>com.vmct.pojo.Notifications</class>
     <class>com.vmct.pojo.Reactions</class>
     <class>com.vmct.pojo.UserGroup</class>
-    <class>com.vmct.pojo.Comments</class>
     <class>com.vmct.pojo.Posts</class>
+    <class>com.vmct.pojo.Survey</class>
+    <class>com.vmct.pojo.SurveyOption</class>
+    <class>com.vmct.pojo.User</class>
+    <class>com.vmct.pojo.Comment</class>
+    <class>com.vmct.pojo.GroupMember</class>
+    <class>com.vmct.pojo.NotificationRecipient</class>
+    <class>com.vmct.pojo.Notification</class>
+    <class>com.vmct.pojo.Post</class>
+    <class>com.vmct.pojo.Reaction</class>
+    <class>com.vmct.pojo.SurveyResponse</class>
   </persistence-unit>
 </persistence>

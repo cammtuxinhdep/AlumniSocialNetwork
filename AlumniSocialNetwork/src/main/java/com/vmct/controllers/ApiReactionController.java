@@ -16,8 +16,6 @@ public class ApiReactionController {
 
     @Autowired
     private ReactionService reactionService;
-
-    // Thêm hoặc cập nhật reaction (1 user chỉ có 1 reaction trên 1 post)
     @PostMapping
     public ResponseEntity<?> createOrUpdateReaction(@RequestBody Reaction reaction) {
         boolean result = reactionService.save(reaction);
@@ -26,7 +24,6 @@ public class ApiReactionController {
         return ResponseEntity.badRequest().body("Invalid data or save failed");
     }
 
-    // Xoá reaction theo ID
     @DeleteMapping("/{reactionId}")
     public ResponseEntity<?> deleteReaction(@PathVariable("reactionId") Long reactionId) {
         boolean result = reactionService.delete(reactionId);
@@ -35,14 +32,12 @@ public class ApiReactionController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reaction not found");
     }
 
-    // Lấy thống kê reaction theo post
     @GetMapping("/stats/{postId}")
     public ResponseEntity<Map<String, Integer>> getReactionStats(@PathVariable("postId") Long postId) {
         Map<String, Integer> stats = reactionService.getReactionStats(postId);
         return ResponseEntity.ok(stats);
     }
 
-    // Lấy reaction của 1 user trên post
     @GetMapping("/user/{userId}/post/{postId}")
     public ResponseEntity<Reaction> getUserReaction(
             @PathVariable("userId") Long userId,

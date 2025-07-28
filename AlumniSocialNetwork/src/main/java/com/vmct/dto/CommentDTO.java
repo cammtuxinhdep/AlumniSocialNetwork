@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 public class CommentDTO {
+
     private Long id;
     private String content;
     private Date createdAt;
@@ -17,10 +18,11 @@ public class CommentDTO {
         this.createdAt = comment.getCreatedAt();
 
         try {
-            if (comment.getUserId() != null)
+            if (comment.getUserId() != null) {
                 this.user = new UserDTO(comment.getUserId());
+            }
         } catch (Exception e) {
-            e.printStackTrace(); // log nếu có lỗi lazy
+            e.printStackTrace();
             this.user = null;
         }
     }
@@ -30,19 +32,43 @@ public class CommentDTO {
         this.replies = replies;
     }
 
-    // Getters và Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public String getContent() {
+        return content;
+    }
 
-    public UserDTO getUser() { return user; }
-    public void setUser(UserDTO user) { this.user = user; }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-    public List<CommentDTO> getReplies() { return replies; }
-    public void setReplies(List<CommentDTO> replies) { this.replies = replies; }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
+    public List<CommentDTO> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<CommentDTO> replies) {
+        this.replies = replies;
+    }
 }

@@ -1,5 +1,4 @@
 package com.vmct.services.impl;
-
 import com.vmct.dto.PostDTO;
 import com.vmct.dto.PostSummaryDTO;
 import com.vmct.pojo.Post;
@@ -126,4 +125,3 @@ public PostDTO getPostDTOById(Long id, User currentUser) {
     );
 }
 }
-

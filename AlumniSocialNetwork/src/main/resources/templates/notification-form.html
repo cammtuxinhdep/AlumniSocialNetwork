@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{base :: header}"></header>
+
+<main class="container mt-4">
+    <h2>✉️ Gửi thư mời</h2>
+
+    <form th:action="@{/notification/send}" method="post">
+        <!-- Chọn thông báo -->
+        <div class="mb-3">
+            <label for="notificationId" class="form-label">Chọn thông báo:</label>
+            <select class="form-select" name="notificationId" id="notificationId" required>
+                <option th:each="n : ${notifications}" th:value="${n.id}" th:text="${n.title}"></option>
+            </select>
+        </div>
+
+        <!-- Loại người nhận -->
+        <div class="mb-3">
+            <label class="form-label">Chọn người nhận:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="recipientType" id="all" value="all" checked>
+                <label class="form-check-label" for="all">Tất cả cựu sinh viên</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="recipientType" id="group" value="group">
+                <label class="form-check-label" for="group">Theo nhóm</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="recipientType" id="individual" value="individual">
+                <label class="form-check-label" for="individual">Theo cá nhân</label>
+            </div>
+        </div>
+
+        <!-- Checkbox nhóm -->
+        <div class="mb-3" id="groupSelection" style="display: none;">
+            <label class="form-label">Chọn nhóm:</label>
+            <div th:each="g : ${userGroups}" class="form-check">
+                <input class="form-check-input" type="checkbox" name="groupIds" th:value="${g.id}" th:id="'group_' + ${g.id}">
+                <label class="form-check-label" th:for="'group_' + ${g.id}" th:text="${g.name}"></label>
+            </div>
+        </div>
+
+        <!-- Checkbox người dùng -->
+        <div class="mb-3" id="userSelection" style="display: none;">
+            <label class="form-label">Chọn người dùng:</label>
+            <div th:each="u : ${users}" class="form-check">
+                <input class="form-check-input" type="checkbox" name="userIds" th:value="${u.id}" th:id="'user_' + ${u.id}">
+                <label class="form-check-label" th:for="'user_' + ${u.id}" th:text="${u.fullName} + ' (' + ${u.email} + ')'"></label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">📤 Gửi thư mời</button>
+    </form>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const radios = document.getElementsByName("recipientType");
+        const groupSection = document.getElementById("groupSelection");
+        const userSection = document.getElementById("userSelection");
+
+        function toggleSections() {
+            const selected = Array.from(radios).find(r => r.checked)?.value;
+            groupSection.style.display = selected === "group" ? "block" : "none";
+            userSection.style.display = selected === "individual" ? "block" : "none";
+        }
+
+        radios.forEach(r => r.addEventListener("change", toggleSections));
+        toggleSections(); // run at start
+    });
+</script>
+
+<footer th:replace="~{base :: footer}"></footer>
+</body>
+</html>

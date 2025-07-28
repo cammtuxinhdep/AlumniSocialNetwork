@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Image, Card } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
+import { formatTimeVi } from "../formatters/TimeFormatter";
 
-const CommentList = ({ postId, comments }) => {
+const CommentList = ({ comments }) => {
   const [expandedComments, setExpandedComments] = useState({});
 
   const toggleReplies = (commentId) => {
@@ -13,7 +14,6 @@ const CommentList = ({ postId, comments }) => {
 
   const renderReplies = (comment) => {
     const isExpanded = expandedComments[comment.id];
-
     if (!comment.replies || comment.replies.length === 0) return null;
 
     if (!isExpanded) {
@@ -42,7 +42,7 @@ const CommentList = ({ postId, comments }) => {
           <div style={{ fontWeight: 600 }}>{reply.user.name}</div>
           <div style={{ fontSize: "0.95rem" }}>{reply.content}</div>
           <div className="text-muted mt-1" style={{ fontSize: "0.75rem" }}>
-            {new Date(reply.createdDate).toLocaleString()}
+            {reply.createdAt ? formatTimeVi(reply.createdAt) : "Không rõ thời gian"}
           </div>
         </div>
       </div>
@@ -65,11 +65,10 @@ const CommentList = ({ postId, comments }) => {
               <strong>{comment.user.name}</strong>
               <div>{comment.content}</div>
               <div className="text-muted mt-1" style={{ fontSize: "0.75rem" }}>
-                {new Date(comment.createdDate).toLocaleString()}
+                {comment.createdAt ? formatTimeVi(comment.createdAt) : "Không rõ thời gian"}
               </div>
             </div>
 
-            {/* Replies */}
             {renderReplies(comment)}
           </div>
         </div>

@@ -11,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -25,16 +24,16 @@ import java.util.Date;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "comments")
+@Table(name = "reaction")
 @NamedQueries({
-    @NamedQuery(name = "Comments.findAll", query = "SELECT c FROM Comments c"),
-    @NamedQuery(name = "Comments.findById", query = "SELECT c FROM Comments c WHERE c.id = :id"),
-    @NamedQuery(name = "Comments.findByCreatedAt", query = "SELECT c FROM Comments c WHERE c.createdAt = :createdAt"),
-    @NamedQuery(name = "Comments.findByUpdatedAt", query = "SELECT c FROM Comments c WHERE c.updatedAt = :updatedAt")})
-public class Comments implements Serializable {
+    @NamedQuery(name = "Reaction.findAll", query = "SELECT r FROM Reaction r"),
+    @NamedQuery(name = "Reaction.findById", query = "SELECT r FROM Reaction r WHERE r.id = :id"),
+    @NamedQuery(name = "Reaction.findByType", query = "SELECT r FROM Reaction r WHERE r.type = :type"),
+    @NamedQuery(name = "Reaction.findByCreatedAt", query = "SELECT r FROM Reaction r WHERE r.createdAt = :createdAt")})
+public class Reaction implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -44,33 +43,29 @@ public class Comments implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "content")
-    private String content;
+    @Size(min = 1, max = 5)
+    @Column(name = "type")
+    private String type;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Posts postId;
+    private Post postId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private User userId;
 
-    public Comments() {
+    public Reaction() {
     }
 
-    public Comments(Long id) {
+    public Reaction(Long id) {
         this.id = id;
     }
 
-    public Comments(Long id, String content) {
+    public Reaction(Long id, String type) {
         this.id = id;
-        this.content = content;
+        this.type = type;
     }
 
     public Long getId() {
@@ -81,12 +76,12 @@ public class Comments implements Serializable {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getType() {
+        return type;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Date getCreatedAt() {
@@ -97,27 +92,19 @@ public class Comments implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Posts getPostId() {
+    public Post getPostId() {
         return postId;
     }
 
-    public void setPostId(Posts postId) {
+    public void setPostId(Post postId) {
         this.postId = postId;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 
@@ -131,10 +118,10 @@ public class Comments implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Comments)) {
+        if (!(object instanceof Reaction)) {
             return false;
         }
-        Comments other = (Comments) object;
+        Reaction other = (Reaction) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -143,7 +130,7 @@ public class Comments implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Comments[ id=" + id + " ]";
+        return "com.vmct.pojo.Reaction[ id=" + id + " ]";
     }
     
 }

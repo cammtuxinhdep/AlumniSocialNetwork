@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{base :: head}"></head>
+    <head>
+        <title>Quản lý khảo sát</title>
+        <th:context th:replace="base :: resources"></th:context>
+    </head>
 <body>
-<header th:replace="~{base :: header}"></header>
+<header th:replace="~{index :: header}"></header>
 
 <main class="container mt-4">
     <h2>⚙️ Lựa chọn cho khảo sát: <span th:text="${survey.title}"></span></h2>

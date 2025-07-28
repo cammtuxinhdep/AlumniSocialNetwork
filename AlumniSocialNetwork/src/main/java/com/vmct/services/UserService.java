@@ -4,19 +4,19 @@
  */
 package com.vmct.services;
 
-import com.vmct.pojo.Users;
+import com.vmct.pojo.User;
+import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 public interface UserService extends UserDetailsService {
-       Users getUserByEmail(String email);
-    Users addUser(Map<String, String> params, MultipartFile avatar);
-    boolean updatePassword(Long userId, String newPassword);
-    boolean isPasswordExpired(Long userId);
-    void lockUserIfPasswordExpired(Long userId);
+    User getUserByUsername(String username);
+    User register(Map<String, String> params, MultipartFile avatar);
+    boolean authenticate(String username, String password);
+    List<User> getAllUsers();
 }

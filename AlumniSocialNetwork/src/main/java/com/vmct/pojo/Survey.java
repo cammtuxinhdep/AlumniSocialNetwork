@@ -5,16 +5,16 @@
 package com.vmct.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -22,18 +22,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "survey_responses")
+@Table(name = "survey")
 @NamedQueries({
-    @NamedQuery(name = "SurveyResponses.findAll", query = "SELECT s FROM SurveyResponses s"),
-    @NamedQuery(name = "SurveyResponses.findById", query = "SELECT s FROM SurveyResponses s WHERE s.id = :id"),
-    @NamedQuery(name = "SurveyResponses.findByCreatedAt", query = "SELECT s FROM SurveyResponses s WHERE s.createdAt = :createdAt")})
-public class SurveyResponses implements Serializable {
+    @NamedQuery(name = "Survey.findAll", query = "SELECT s FROM Survey s"),
+    @NamedQuery(name = "Survey.findById", query = "SELECT s FROM Survey s WHERE s.id = :id"),
+    @NamedQuery(name = "Survey.findByTitle", query = "SELECT s FROM Survey s WHERE s.title = :title"),
+    @NamedQuery(name = "Survey.findByCreatedAt", query = "SELECT s FROM Survey s WHERE s.createdAt = :createdAt")})
+public class Survey implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,30 +45,31 @@ public class SurveyResponses implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "title")
+    private String title;
     @Lob
-    @Size(min = 1, max = 1073741824)
-    @Column(name = "responses")
-    private String responses;
+    @Size(max = 65535)
+    @Column(name = "description")
+    private String description;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @JoinColumn(name = "survey_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Surveys surveyId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Users userId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
+    private Set<SurveyResponse> surveyResponseSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
+    private Set<SurveyOption> surveyOptionSet;
 
-    public SurveyResponses() {
+    public Survey() {
     }
 
-    public SurveyResponses(Long id) {
+    public Survey(Long id) {
         this.id = id;
     }
 
-    public SurveyResponses(Long id, String responses) {
+    public Survey(Long id, String title) {
         this.id = id;
-        this.responses = responses;
+        this.title = title;
     }
 
     public Long getId() {
@@ -77,12 +80,20 @@ public class SurveyResponses implements Serializable {
         this.id = id;
     }
 
-    public String getResponses() {
-        return responses;
+    public String getTitle() {
+        return title;
     }
 
-    public void setResponses(String responses) {
-        this.responses = responses;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getCreatedAt() {
@@ -93,20 +104,20 @@ public class SurveyResponses implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Surveys getSurveyId() {
-        return surveyId;
+    public Set<SurveyResponse> getSurveyResponseSet() {
+        return surveyResponseSet;
     }
 
-    public void setSurveyId(Surveys surveyId) {
-        this.surveyId = surveyId;
+    public void setSurveyResponseSet(Set<SurveyResponse> surveyResponseSet) {
+        this.surveyResponseSet = surveyResponseSet;
     }
 
-    public Users getUserId() {
-        return userId;
+    public Set<SurveyOption> getSurveyOptionSet() {
+        return surveyOptionSet;
     }
 
-    public void setUserId(Users userId) {
-        this.userId = userId;
+    public void setSurveyOptionSet(Set<SurveyOption> surveyOptionSet) {
+        this.surveyOptionSet = surveyOptionSet;
     }
 
     @Override
@@ -119,10 +130,10 @@ public class SurveyResponses implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof SurveyResponses)) {
+        if (!(object instanceof Survey)) {
             return false;
         }
-        SurveyResponses other = (SurveyResponses) object;
+        Survey other = (Survey) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -131,7 +142,7 @@ public class SurveyResponses implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.SurveyResponses[ id=" + id + " ]";
+        return "com.vmct.pojo.Survey[ id=" + id + " ]";
     }
     
 }

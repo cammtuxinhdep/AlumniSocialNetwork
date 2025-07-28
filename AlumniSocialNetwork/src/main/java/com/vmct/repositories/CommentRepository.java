@@ -1,3 +1,4 @@
+
 package com.vmct.repositories;
 
 import com.vmct.pojo.Comment;
@@ -19,4 +20,3 @@ public interface CommentRepository {
     List<Comment> findByParentId(Long parentId); // Lấy các reply của 1 comment cụ thể
 
 }
-

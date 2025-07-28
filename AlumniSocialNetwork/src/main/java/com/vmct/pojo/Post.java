@@ -23,22 +23,22 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
- * @author Thanh Nhat
+ * @author HP
  */
 @Entity
-@Table(name = "posts")
+@Table(name = "post")
 @NamedQueries({
-    @NamedQuery(name = "Posts.findAll", query = "SELECT p FROM Posts p"),
-    @NamedQuery(name = "Posts.findById", query = "SELECT p FROM Posts p WHERE p.id = :id"),
-    @NamedQuery(name = "Posts.findByIsCommentLocked", query = "SELECT p FROM Posts p WHERE p.isCommentLocked = :isCommentLocked"),
-    @NamedQuery(name = "Posts.findByCreatedAt", query = "SELECT p FROM Posts p WHERE p.createdAt = :createdAt"),
-    @NamedQuery(name = "Posts.findByUpdatedAt", query = "SELECT p FROM Posts p WHERE p.updatedAt = :updatedAt")})
-public class Posts implements Serializable {
+    @NamedQuery(name = "Post.findAll", query = "SELECT p FROM Post p"),
+    @NamedQuery(name = "Post.findById", query = "SELECT p FROM Post p WHERE p.id = :id"),
+    @NamedQuery(name = "Post.findByIsCommentLocked", query = "SELECT p FROM Post p WHERE p.isCommentLocked = :isCommentLocked"),
+    @NamedQuery(name = "Post.findByCreatedAt", query = "SELECT p FROM Post p WHERE p.createdAt = :createdAt"),
+    @NamedQuery(name = "Post.findByUpdatedAt", query = "SELECT p FROM Post p WHERE p.updatedAt = :updatedAt")})
+public class Post implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -61,21 +61,21 @@ public class Posts implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
-    private Collection<Comments> commentsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
-    private Collection<Reactions> reactionsCollection;
+    private Set<Reaction> reactionSet;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private User userId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
+    private Set<Comment> commentSet;
 
-    public Posts() {
+    public Post() {
     }
 
-    public Posts(Long id) {
+    public Post(Long id) {
         this.id = id;
     }
 
-    public Posts(Long id, String content) {
+    public Post(Long id, String content) {
         this.id = id;
         this.content = content;
     }
@@ -120,28 +120,28 @@ public class Posts implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Collection<Comments> getCommentsCollection() {
-        return commentsCollection;
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
     }
 
-    public void setCommentsCollection(Collection<Comments> commentsCollection) {
-        this.commentsCollection = commentsCollection;
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
     }
 
-    public Collection<Reactions> getReactionsCollection() {
-        return reactionsCollection;
-    }
-
-    public void setReactionsCollection(Collection<Reactions> reactionsCollection) {
-        this.reactionsCollection = reactionsCollection;
-    }
-
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
+    }
+
+    public Set<Comment> getCommentSet() {
+        return commentSet;
+    }
+
+    public void setCommentSet(Set<Comment> commentSet) {
+        this.commentSet = commentSet;
     }
 
     @Override
@@ -154,10 +154,10 @@ public class Posts implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Posts)) {
+        if (!(object instanceof Post)) {
             return false;
         }
-        Posts other = (Posts) object;
+        Post other = (Post) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -166,7 +166,7 @@ public class Posts implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vmct.pojo.Posts[ id=" + id + " ]";
+        return "com.vmct.pojo.Post[ id=" + id + " ]";
     }
     
 }

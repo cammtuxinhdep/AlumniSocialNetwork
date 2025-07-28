@@ -1,18 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.vmct.controllers;
 
-<<<<<<< Updated upstream
-/**
- *
- * @author Thanh Nhat
- */
-@Controller
-@RequestMapping("/posts")
-=======
-import com.vmct.dto.PostSummaryDTO;
 import com.vmct.pojo.Post;
 import com.vmct.pojo.User;
 import com.vmct.services.PostService;
@@ -24,63 +11,19 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/post")
->>>>>>> Stashed changes
+
 public class PostController {
 
     @Autowired
     private PostService postService;
 
-<<<<<<< Updated upstream
-    @GetMapping("/")
-    public String listPosts(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
-        return "posts/list";
-    }
-
-    @GetMapping("/add")
-    public String addPostForm(Model model) {
-        model.addAttribute("post", new Posts());
-        return "posts/add";
-    }
-
-    @PostMapping("/add")
-    public String addPost(@ModelAttribute("post") @Valid Posts post, BindingResult rs) {
-        if (!rs.hasErrors()) {
-            postService.addPost(post);
-            return "redirect:/posts/";
-        }
-        return "posts/add";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editPostForm(Model model, @PathVariable Long id) {
-        model.addAttribute("post", postService.getPostById(id));
-        return "posts/edit";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String editPost(@ModelAttribute("post") @Valid Posts post, BindingResult rs) {
-        if (!rs.hasErrors()) {
-            postService.updatePost(post);
-            return "redirect:/posts/";
-        }
-        return "posts/edit";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
-        return "redirect:/posts/";
-=======
-    // GET: Hiển thị danh sách post + form tạo mới
     @GetMapping
     public String listPosts(Model model) {
-        model.addAttribute("post", new Post()); // Form tạo mới
-        model.addAttribute("posts", postService.getAllPostSummaries()); // DTO danh sách
+        model.addAttribute("post", new Post()); 
+        model.addAttribute("posts", postService.getAllPostSummaries()); 
         return "post";
     }
 
-    // POST: Tạo post mới
     @PostMapping
     public String createPost(@ModelAttribute("post") Post post, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -91,7 +34,6 @@ public class PostController {
         return "redirect:/post";
     }
 
-    // GET: Hiển thị form cập nhật post
     @GetMapping("/{id}")
     public String editPostForm(@PathVariable("id") Long id, Model model) {
         Post existingPost = postService.getPostById(id);
@@ -102,8 +44,6 @@ public class PostController {
         model.addAttribute("posts", postService.getAllPostSummaries());
         return "post";
     }
-
-    // POST: Cập nhật post
     @PostMapping("/{id}")
     public String updatePost(@PathVariable("id") Long id, @ModelAttribute("post") Post post) {
         post.setId(id);
@@ -111,18 +51,15 @@ public class PostController {
         return "redirect:/post";
     }
 
-    // GET: Xoá post
     @GetMapping("/delete/{id}")
     public String deletePost(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return "redirect:/post";
     }
 
-    // POST: Khoá/mở comment
     @PostMapping("/{id}/lock-comments")
     public String toggleLockComments(@PathVariable("id") Long id, @RequestParam("lock") boolean lock) {
         postService.lockComments(id, lock);
         return "redirect:/post";
->>>>>>> Stashed changes
     }
 }
