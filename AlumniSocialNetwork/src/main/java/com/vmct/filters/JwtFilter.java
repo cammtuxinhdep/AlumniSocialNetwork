@@ -47,7 +47,7 @@ public class JwtFilter implements Filter {
                         return;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); // Nên xử lí lỗi sâu hơn để tránh rò rỉ thông tin bảo mật
                 }
             }
             
