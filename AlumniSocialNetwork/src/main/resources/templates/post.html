@@ -7,7 +7,7 @@
 <body>
     <div th:replace="~{index :: header}"></div>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
         <h2 th:text="${post.id != null} ? 'Cập nhật bài viết' : 'Tạo bài viết mới'"></h2>
         
         <!-- Form tạo hoặc cập nhật bài viết -->
@@ -66,7 +66,7 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </main>
 
     <div th:replace="~{base :: footer}"></div>
 </body>

@@ -5,6 +5,8 @@
 package com.vmct.repositories;
 
 import com.vmct.pojo.User;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -14,4 +16,7 @@ public interface UserRepository {
     User getUserByUsername(String username);
     User addUser(User u);
     boolean authenticate(String username, String password);
+    List<User> getUsers(Map<String, String> params);
+    int getTotalAccountPages(String userRole);
+    void deleteUser(int id);
 }
