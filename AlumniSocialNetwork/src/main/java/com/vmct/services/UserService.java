@@ -21,4 +21,7 @@ public interface UserService extends UserDetailsService {
     boolean authenticate(String username, String password);
     List<User> getAllUsers();
     User addLecturer(Map<String, String> params);
+    List<User> getUsers(Map<String, String> params);
+    int getTotalAccountPages(String userRole);
+    void deleteUser(int id);
 }

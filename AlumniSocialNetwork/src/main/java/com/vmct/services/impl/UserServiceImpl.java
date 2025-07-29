@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.vmct.services.UserService;
 import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -111,5 +112,20 @@ public List<User> getAllUsers() {
         u.setUserRole("ROLE_LECTURER");
 
         return this.userRepo.addUser(u);
+    }
+
+    @Override
+    public List<User> getUsers(Map<String, String> params) {
+        return this.userRepo.getUsers(params);
+    }
+
+    @Override
+    public int getTotalAccountPages(String userRole) {
+        return this.userRepo.getTotalAccountPages(userRole);
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        this.userRepo.deleteUser(id);
     }
 }

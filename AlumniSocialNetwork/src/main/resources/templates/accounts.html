@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Quản lý tài khoản</title>
+    <th:context th:replace="base :: resources"></th:context>
+</head>
+<body>
+    <div th:replace="index :: header"></div>
+
+    <main class="container mt-4">
+        <div style="display: flex">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" th:classappend="${role == 'ROLE_ALUMNI'} ? 'active'" th:href="@{/accounts(role='ROLE_ALUMNI')}">Cựu sinh viên</a>
+                </li>
+                <li class="nav-item">
+                    <a style="color: black" class="nav-link" th:classappend="${role == 'ROLE_LECTURER'} ? 'active'" th:href="@{/accounts(role='ROLE_LECTURER')}">Giảng viên</a>
+                </li>
+            </ul>
+            <form th:action="@{/accounts}" style="margin-left: auto; display: flex;">
+                <div class="form-floating">
+                    <input  style="padding: .3rem; margin-right: .5rem" type="text" id="kw" placeholder="Nhập tên cần tìm" name="kw">
+                    <label for="kw"></label>
+                </div>
+                <input type="hidden" name="role" th:value="${role}"/>
+                <div class="form-floating">
+                    <button type="submit" class="btn btn-info">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>MSSV</th>
+                    <th>Họ và tên đệm</th>
+                    <th>Tên</th>
+                    <th>Tên tài khoản</th>
+                    <th>Tình trạng tài khoản</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="a : ${accounts}">
+                    <td th:text="${a.studentId}"></td>
+                    <td th:text="${a.lastName}"></td>
+                    <td th:text="${a.firstName}"></td>
+                    <td th:text="${a.username}"></td>
+                    <td>
+                        <form th:action="@{'/accounts/' + ${a.id} + '/lock'}" method="post">
+                            <input type="hidden" name="lock" th:value="${!a.isLocked}" />
+                            <button disabled class="btn btn-sm" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" type="submit">
+                                <span th:text="${a.isLocked} ? 'Khóa' : 'Mở'"></span>
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <a th:href="@{'/accounts/' + ${a.id}}" class="btn btn-sm btn-primary">Sửa</a>
+                        <a th:href="@{'/accounts/delete/' + ${a.id}(role=${role}, page=${currentPage})}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Bạn chắc chắn muốn xoá?')">Xoá</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul class="pagination" th:if="${totalPages > 1 and (kw == null or kw.trim() == '')}" style="justify-content: end">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/accounts(page=${currentPage - 1}, role=${role})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/accounts(page=${i}, role=${role})}" th:text="${i}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/accounts(page=${currentPage}, role=${role})}">Next</a>
+            </li>
+        </ul>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>
