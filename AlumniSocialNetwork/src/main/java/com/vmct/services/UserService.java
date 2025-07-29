@@ -16,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface UserService extends UserDetailsService {
     User getUserByUsername(String username);
+    User getUserById(Long id);
     User register(Map<String, String> params, MultipartFile avatar);
     boolean authenticate(String username, String password);
+    List<User> getAllUsers();
     User addLecturer(Map<String, String> params);
     List<User> getUsers(Map<String, String> params);
     int getTotalAccountPages(String userRole);

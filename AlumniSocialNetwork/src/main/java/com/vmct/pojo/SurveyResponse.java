@@ -22,7 +22,7 @@ import java.util.Date;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
 @Table(name = "survey_response")

@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.vmct.services.UserService;
+import java.util.List;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,10 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return this.userRepo.getUserByUsername(username);
     }
-
+    @Override
+    public User getUserById(Long id) {
+        return this.userRepo.getUserById(id);
+    }
     @Override
     public User register(Map<String, String> params, MultipartFile avatar) {
         User u = new User();
@@ -90,6 +94,10 @@ public class UserServiceImpl implements UserService {
     public boolean authenticate(String username, String password) {
         return this.userRepo.authenticate(username, password);
     }
+@Override
+public List<User> getAllUsers() {
+    return this.userRepo.getAllUsers();
+}
 
     @Override
     public User addLecturer(Map<String, String> params) {

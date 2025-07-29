@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
 @Table(name = "notification_recipient")

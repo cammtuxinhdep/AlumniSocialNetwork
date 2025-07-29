@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{base :: header}"></header>
+
+<main class="container mt-4">
+    <h2>📬 Kết quả gửi thư mời</h2>
+
+    <div class="alert alert-info" th:text="${message}">Thông báo kết quả gửi</div>
+
+    <a th:href="@{/notification}" class="btn btn-secondary">🔙 Quay lại</a>
+</main>
+
+<footer th:replace="~{base :: footer}"></footer>
+</body>
+</html>

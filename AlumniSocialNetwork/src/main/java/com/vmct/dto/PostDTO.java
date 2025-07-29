@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PostDTO {
+
     private Long id;
     private String content;
     private Boolean isCommentLocked;
@@ -19,14 +20,14 @@ public class PostDTO {
     private List<CommentDTO> comments;
 
     private Map<String, Integer> reactionStats;
-    private String currentUserReaction; // like, haha, heart
+    private String currentUserReaction;
     private int commentCount;
 
     public PostDTO(Post post,
-                   List<CommentDTO> comments,
-                   Map<String, Integer> reactionStats,
-                   String currentUserReaction,
-                   int commentCount) {
+            List<CommentDTO> comments,
+            Map<String, Integer> reactionStats,
+            String currentUserReaction,
+            int commentCount) {
         this.id = post.getId();
         this.content = post.getContent();
         this.isCommentLocked = post.getIsCommentLocked();
@@ -43,34 +44,83 @@ public class PostDTO {
         this.commentCount = commentCount;
     }
 
-    // Getters và Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Boolean getIsCommentLocked() { return isCommentLocked; }
-    public void setIsCommentLocked(Boolean isCommentLocked) { this.isCommentLocked = isCommentLocked; }
+    public String getContent() {
+        return content;
+    }
 
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-    public Date getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+    public Boolean getIsCommentLocked() {
+        return isCommentLocked;
+    }
 
-    public UserDTO getUser() { return user; }
-    public void setUser(UserDTO user) { this.user = user; }
+    public void setIsCommentLocked(Boolean isCommentLocked) {
+        this.isCommentLocked = isCommentLocked;
+    }
 
-    public List<CommentDTO> getComments() { return comments; }
-    public void setComments(List<CommentDTO> comments) { this.comments = comments; }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-    public Map<String, Integer> getReactionStats() { return reactionStats; }
-    public void setReactionStats(Map<String, Integer> reactionStats) { this.reactionStats = reactionStats; }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-    public String getCurrentUserReaction() { return currentUserReaction; }
-    public void setCurrentUserReaction(String currentUserReaction) { this.currentUserReaction = currentUserReaction; }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-    public int getCommentCount() { return commentCount; }
-    public void setCommentCount(int commentCount) { this.commentCount = commentCount; }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
+    public List<CommentDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDTO> comments) {
+        this.comments = comments;
+    }
+
+    public Map<String, Integer> getReactionStats() {
+        return reactionStats;
+    }
+
+    public void setReactionStats(Map<String, Integer> reactionStats) {
+        this.reactionStats = reactionStats;
+    }
+
+    public String getCurrentUserReaction() {
+        return currentUserReaction;
+    }
+
+    public void setCurrentUserReaction(String currentUserReaction) {
+        this.currentUserReaction = currentUserReaction;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
 }
