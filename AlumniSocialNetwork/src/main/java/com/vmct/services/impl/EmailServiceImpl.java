@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
             request.setMethod(Method.POST);
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
-            Response response = sg.api(request); // Lấy phản hồi từ SendGrid
+            Response response = sg.api(request); 
             if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
                 System.out.println("✅ Email sent successfully to " + to + " at " + new java.util.Date());
             } else {
@@ -76,7 +76,7 @@ public class EmailServiceImpl implements EmailService {
             request.setMethod(Method.POST);
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
-            Response response = sg.api(request); // Lấy phản hồi từ SendGrid
+            Response response = sg.api(request);
             if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
                 System.out.println("✅ Email sent successfully to group at " + new java.util.Date());
             } else {

@@ -1,48 +1,42 @@
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{base :: head}"></head>
+<head>
+    <title>Danh sách thư mời</title>
+    <th:context th:replace="base :: resources"></th:context>
+</head>
 <body>
-<header th:replace="~{base :: header}"></header>
+    <div th:replace="~{index :: header}"></div>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>📨 Danh sách thư mời</h2>
-        <a class="btn btn-primary" th:href="@{/notification/form}">+ Tạo thư mời mới</a>
+    <div class="container mt-4">
+        <h2>Danh sách thư mời</h2>
+        <a class="btn btn-success mb-3" th:href="@{/notification/form}">➕ Tạo thư mời mới</a>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Thời gian tổ chức</th>
+                    <th>Địa điểm</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="n : ${notifications}">
+                    <td th:text="${n.title}"></td>
+                    <td th:text="${#dates.format(n.eventDatetime, 'dd/MM/yyyy HH:mm')}"></td> <!-- Sửa ở đây -->
+                    <td th:text="${n.eventLocation}"></td>
+                    <td th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}"></td> <!-- Giữ nguyên -->
+                    <td>
+                        <a th:href="@{/notification/form(id=${n.id})}" class="btn btn-sm btn-primary">✏️ Sửa/Gửi</a>
+                        <a th:href="@{/notification/delete(id=${n.id})}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa?')">🗑️ Xoá</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>Mã thông báo</th>
-                <th>Tiêu đề</th>
-                <th>Nội dung</th>
-                <th>Ngày tạo</th>
-                <th>Ngày giờ sự kiện</th>
-                <th>Địa điểm</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="n : ${notifications}">
-                <td th:text="${n.id}">Mã</td>
-                <td th:text="${n.title}">Tiêu đề</td>
-                <td th:text="${n.content}">Nội dung</td>
-                <td th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy HH:mm')}">Ngày tạo</td>
-                <td th:text="${#dates.format(n.eventDatetime, 'dd/MM/yyyy HH:mm')}">Ngày giờ sự kiện</td>
-                <td th:text="${n.eventLocation}">Địa điểm</td>
-                <td>
-                    <a class="btn btn-sm btn-secondary" th:href="@{'/notification/form?id=' + ${n.id}}">✏️ Sửa</a>
-                    <a class="btn btn-sm btn-danger" 
-                       th:href="@{'/notification/delete?id=' + ${n.id}}"
-                       onclick="return confirm('Bạn có chắc muốn xoá thư mời này?')">🗑️ Xoá</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(notifications)}">
-                <td colspan="7" class="text-center text-muted">Không có thư mời nào.</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<footer th:replace="~{base :: footer}"></footer>
+    <div th:replace="~{base :: footer}"></div>
 </body>
 </html>
