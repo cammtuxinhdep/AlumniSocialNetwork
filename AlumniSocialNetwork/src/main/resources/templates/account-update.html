@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Chỉnh sửa tài khoản</title>
+    <th:context th:replace="base :: resources"></th:context>
+</head>
+<body>
+    <div th:replace="index :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Cập nhật thông tin tài khoản</h2>
+        <form th:action="@{/accounts/account-update}" method="post" th:object="${account}" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}" required>
+            </div>
+            <div class="mb-3" th:if="${account.userRole == 'ROLE_ALUMNI'}">
+                <label for="studentId">Mã số sinh viên:</label>
+                <input type="text" class="form-control" id="studentId" th:field="*{studentId}" required>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Họ và tên đệm:</label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">Tên:</label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+            </div>
+            <div class="mb-3">
+                <label for="userRole" class="form-label">Chức năng:</label>
+                <select class="form-select" id="userRole" th:field="*{userRole}" required>
+                    <option value="ROLE_LECTURER">Giảng viên</option>
+                    <option value="ROLE_ALUMNI">Cựu sinh viên</option>
+                    <option value="ROLE_ADMIN">Quản trị viên</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="avatar">Avatar:</label>
+                <input type="file" class="form-control" id="avatar" th:field="*{avatarFile}">
+                <div class="form-text">Hỗ trợ định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB.</div>
+                <div th:if="${account.avatar != null}">
+                    <img th:src="@{${account.avatar}}" alt="Avatar hiện tại" class="img-thumbnail mt-2" style="max-width: 100px;" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="cover">Ảnh bìa:</label>
+                <input type="file" class="form-control" id="cover" th:field="*{coverFile}">
+                <div class="form-text">Hỗ trợ định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB.</div>
+                <div th:if="${account.cover != null}">
+                    <img th:src="@{${account.cover}}" alt="Ảnh bìa hiện tại" class="img-thumbnail mt-2" style="max-width: 200px;" />
+                </div>
+            </div>
+            <div style="direction: rtl; margin-bottom: 1rem">
+                <a th:href="@{/accounts(role=${account.userRole})}" class="btn btn-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </div>
+        </form>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>
+
 

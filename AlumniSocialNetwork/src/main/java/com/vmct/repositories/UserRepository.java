@@ -20,4 +20,7 @@ public interface UserRepository {
     List<User> getUsers(Map<String, String> params);
     int getTotalAccountPages(String userRole);
     void deleteUser(int id);
+    void setLockedAlumni(int id);
+    User updateUser(User u);
+    User getUserById(int id);
 }

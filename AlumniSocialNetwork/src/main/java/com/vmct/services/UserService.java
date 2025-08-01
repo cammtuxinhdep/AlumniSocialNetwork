@@ -19,9 +19,12 @@ public interface UserService extends UserDetailsService {
     User getUserById(Long id);
     User register(Map<String, String> params, MultipartFile avatar);
     boolean authenticate(String username, String password);
+    User addLecturer(User u);
     List<User> getAllUsers();
-    User addLecturer(Map<String, String> params);
     List<User> getUsers(Map<String, String> params);
     int getTotalAccountPages(String userRole);
     void deleteUser(int id);
+    void setLockedAlumni(int id);
+    User updateUser(User u);
+    User getUserById(int id);
 }

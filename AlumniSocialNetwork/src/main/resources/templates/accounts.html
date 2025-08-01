@@ -11,7 +11,7 @@
         <div style="display: flex">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" th:classappend="${role == 'ROLE_ALUMNI'} ? 'active'" th:href="@{/accounts(role='ROLE_ALUMNI')}">Cựu sinh viên</a>
+                    <a style="color: black" class="nav-link" th:classappend="${role == 'ROLE_ALUMNI'} ? 'active'" th:href="@{/accounts(role='ROLE_ALUMNI')}">Cựu sinh viên</a>
                 </li>
                 <li class="nav-item">
                     <a style="color: black" class="nav-link" th:classappend="${role == 'ROLE_LECTURER'} ? 'active'" th:href="@{/accounts(role='ROLE_LECTURER')}">Giảng viên</a>
@@ -31,7 +31,8 @@
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>MSSV</th>
+                    <th th:if="${role=='ROLE_ALUMNI'}">MSSV</th>
+                    <th th:unless="${role=='ROLE_ALUMNI'}">Tình trạng mật khẩu mặc định</th>
                     <th>Họ và tên đệm</th>
                     <th>Tên</th>
                     <th>Tên tài khoản</th>
@@ -41,26 +42,33 @@
             </thead>
             <tbody>
                 <tr th:each="a : ${accounts}">
-                    <td th:text="${a.studentId}"></td>
+                    <td th:if="${a.userRole=='ROLE_ALUMNI'}" th:text="${a.isChecked} ? ${a.studentId} : 'Chưa xác nhận'"></td>
+                    <td th:unless="${a.userRole=='ROLE_ALUMNI'}" th:text="${a.isChecked} ? 'Đã đổi' : 'Chưa đổi'"></td>
                     <td th:text="${a.lastName}"></td>
                     <td th:text="${a.firstName}"></td>
                     <td th:text="${a.username}"></td>
                     <td>
-                        <form th:action="@{'/accounts/' + ${a.id} + '/lock'}" method="post">
-                            <input type="hidden" name="lock" th:value="${!a.isLocked}" />
-                            <button disabled class="btn btn-sm" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" type="submit">
-                                <span th:text="${a.isLocked} ? 'Khóa' : 'Mở'"></span>
-                            </button>
-                        </form>
+                        <a th:if="${a.userRole=='ROLE_ALUMNI'}" class="btn" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" 
+                           th:text="${a.isLocked} ? 'Khóa' : 'Mở'" 
+                           th:href="@{'/accounts/lock/' + ${a.id}(role=${role}, page=${currentPage})}"
+                           th:onclick="${!a.isChecked and a.isLocked} ? 'return confirm(\'Bạn muốn xác nhận MSSV?\')' : 'return true'">
+                        </a>
+                        <a th:unless="${a.userRole=='ROLE_ALUMNI'}" class="btn" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" 
+                           th:text="${a.isLocked} ? 'Khóa' : 'Mở'" 
+                           th:onclick="${!a.isChecked and a.isLocked} ? 'return confirm(\'Bạn muốn gia hạn thời gian đổi mật khẩu?\')' : 'return true'">
+                        </a>
                     </td>
                     <td>
-                        <a th:href="@{'/accounts/' + ${a.id}}" class="btn btn-sm btn-primary">Sửa</a>
+                        <a th:href="@{'/accounts/account-update/' + ${a.id}}" class="btn btn-sm btn-primary">Sửa</a>
                         <a th:href="@{'/accounts/delete/' + ${a.id}(role=${role}, page=${currentPage})}" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Bạn chắc chắn muốn xoá?')">Xoá</a>
+                           th:onclick="return confirm('Bạn chắc chắn muốn xoá?')">Xoá</a>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <div th:if="${role == 'ROLE_LECTURER'}" class="mb-2" style="direction: rtl">
+            <a th:href="@{/accounts/account-create}" class="btn btn-info">Thêm tài khoản</a>
+        </div>
         <ul class="pagination" th:if="${totalPages > 1 and (kw == null or kw.trim() == '')}" style="justify-content: end">
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                 <a class="page-link" th:href="@{/accounts(page=${currentPage - 1}, role=${role})}">Previous</a>
