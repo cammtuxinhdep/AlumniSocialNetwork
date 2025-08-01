@@ -125,5 +125,3 @@ public PostDTO getPostDTOById(Long id, User currentUser) {
     );
 }
 }
-
-

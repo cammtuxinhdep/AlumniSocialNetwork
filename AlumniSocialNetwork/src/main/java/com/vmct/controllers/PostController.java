@@ -17,15 +17,13 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    // GET: Hiển thị danh sách post + form tạo mới
     @GetMapping
     public String listPosts(Model model) {
-        model.addAttribute("post", new Post()); // Form tạo mới
-        model.addAttribute("posts", postService.getAllPostSummaries()); // DTO danh sách
+        model.addAttribute("post", new Post()); 
+        model.addAttribute("posts", postService.getAllPostSummaries()); 
         return "post";
     }
 
-    // POST: Tạo post mới
     @PostMapping
     public String createPost(@ModelAttribute("post") Post post, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -36,7 +34,6 @@ public class PostController {
         return "redirect:/post";
     }
 
-    // GET: Hiển thị form cập nhật post
     @GetMapping("/{id}")
     public String editPostForm(@PathVariable("id") Long id, Model model) {
         Post existingPost = postService.getPostById(id);
@@ -47,8 +44,6 @@ public class PostController {
         model.addAttribute("posts", postService.getAllPostSummaries());
         return "post";
     }
-
-    // POST: Cập nhật post
     @PostMapping("/{id}")
     public String updatePost(@PathVariable("id") Long id, @ModelAttribute("post") Post post) {
         post.setId(id);
@@ -56,14 +51,12 @@ public class PostController {
         return "redirect:/post";
     }
 
-    // GET: Xoá post
     @GetMapping("/delete/{id}")
     public String deletePost(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return "redirect:/post";
     }
 
-    // POST: Khoá/mở comment
     @PostMapping("/{id}/lock-comments")
     public String toggleLockComments(@PathVariable("id") Long id, @RequestParam("lock") boolean lock) {
         postService.lockComments(id, lock);

@@ -17,30 +17,25 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
-
-
-    // === HIỂN THỊ COMMENT GỐC VÀ REPLIES 1 CẤP CỦA POST ===
     @GetMapping("/post/{postId}")
     public String listCommentsByPost(@PathVariable("postId") Long postId, Model model) {
         List<CommentDTO> comments = commentService.getRootCommentsWithFirstLevelReplies(postId);
         model.addAttribute("commentDTOs", comments);
         model.addAttribute("postId", postId);
-        return "comments"; // view: comments.html
+        return "comments"; 
     }
 
-    // === LAZY LOAD REPLIES CỦA 1 COMMENT GỐC ===
     @GetMapping("/replies/{parentId}")
     @ResponseBody
     public List<CommentDTO> getReplies(@PathVariable("parentId") Long parentId) {
         return commentService.getReplies(parentId);
     }
 
-    // === EDIT COMMENT ===
     @GetMapping("/edit/{id}")
     public String editComment(@PathVariable("id") Long id, Model model) {
         Comment comment = commentService.findById(id);
         model.addAttribute("comment", comment);
-        return "comment-edit"; // view: comment-edit.html
+        return "comment-edit";
     }
 
     @PostMapping("/edit")
@@ -48,8 +43,6 @@ public class CommentController {
         commentService.save(comment);
         return "redirect:/comments/post/" + comment.getPostId().getId();
     }
-
-    // === DELETE COMMENT ===
     @GetMapping("/delete/{id}")
     public String deleteComment(@PathVariable("id") Long id) {
         Comment c = commentService.findById(id);
@@ -59,5 +52,3 @@ public class CommentController {
         return "redirect:/comments/post/" + (c != null ? c.getPostId().getId() : "");
     }
 }
-
-

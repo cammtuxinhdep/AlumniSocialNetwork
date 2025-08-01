@@ -24,7 +24,7 @@
                         <a class="nav-link" th:href="@{/survey}" aria-label="Quản lý khảo sát">📊 Quản lý khảo sát</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
-                        <a class="nav-link" th:href="@{/invitation}" aria-label="Gửi thư mời">✉️ Gửi thư mời</a>
+                        <a class="nav-link" th:href="@{/notification}" aria-label="Gửi thư mời">✉️ Gửi thư mời</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
                         <a class="nav-link" th:href="@{/accounts(role='ROLE_ALUMNI')}" aria-label="Quản lý tài khoản">👥️ Quản lý tài khoản</a>

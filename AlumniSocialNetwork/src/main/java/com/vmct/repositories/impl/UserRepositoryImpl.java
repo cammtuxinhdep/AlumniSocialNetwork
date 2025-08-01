@@ -53,6 +53,14 @@ public class UserRepositoryImpl implements UserRepository {
 
         return (User) q.getSingleResult();
     }
+@Override
+    public User getUserById(Long id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("User.findById", User.class);
+        q.setParameter("id", id);
+        
+        return (User) q.getSingleResult();
+    }
 
     @Override
     public boolean authenticate(String username, String password) {
@@ -64,7 +72,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         return this.passwordEncoder.matches(password, u.getPassword());
     }
-
+  
     @Override
     public List<User> getUsers(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();

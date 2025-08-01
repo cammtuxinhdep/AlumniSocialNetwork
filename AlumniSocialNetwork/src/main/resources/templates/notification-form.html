@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="${notification.id == null} ? 'Tạo thư mời' : 'Chỉnh sửa/Gửi thư mời'"></title>
+    <th:context th:replace="~{base :: resources}"></th:context>
+</head>
+<body>
+    <div th:replace="~{index :: header}"></div>
+
+    <div class="container mt-4">
+        <h2 th:text="${notification.id == null} ? 'Tạo thư mời' : 'Chỉnh sửa/Gửi thư mời'"></h2>
+
+        <form th:action="@{/notification/save}" th:object="${notification}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+
+            <!-- Tiêu đề -->
+            <div class="form-group">
+                <label for="title">Tiêu đề:</label>
+                <input type="text" class="form-control" th:field="*{title}" required/>
+            </div>
+
+            <!-- Nội dung -->
+            <div class="form-group">
+                <label for="content">Nội dung:</label>
+                <textarea class="form-control" th:field="*{content}" rows="5" required></textarea>
+            </div>
+
+            <!-- Địa điểm -->
+            <div class="form-group">
+                <label for="eventLocation">Địa điểm:</label>
+                <input type="text" class="form-control" th:field="*{eventLocation}" required/>
+            </div>
+
+            <!-- Thời gian tổ chức -->
+            <div class="form-group">
+                <label for="eventDatetime">Thời gian diễn ra:</label>
+                <input type="datetime-local"
+                       th:field="*{eventDatetime}"
+                       th:value="${notification.eventDatetime != null ? #dates.format(notification.eventDatetime, 'yyyy-MM-dd''T''HH:mm') : ''}" />
+
+                <div th:if="${#fields.hasErrors('eventDatetime')}" class="text-danger" th:errors="*{eventDatetime}"></div>
+            </div>
+
+            <!-- Loại người nhận -->
+            <div class="form-group">
+                <label for="recipientType">Loại người nhận:</label>
+                <select class="form-control" name="recipientType" id="recipientType" required>
+                    <option value="all">Tất cả</option>
+                    <option value="group">Theo nhóm</option>
+                    <option value="individual">Theo cá nhân</option>
+                </select>
+            </div>
+
+            <!-- Chọn nhóm -->
+            <div class="form-group" id="groupSelection" style="display: none;">
+                <label>Chọn nhóm:</label>
+                <div th:each="group : ${userGroups}">
+                    <input type="checkbox" name="groupIds" th:value="${group.id}" th:id="'group-' + ${group.id}"/>
+                    <label th:for="'group-' + ${group.id}" th:text="${group.name}"></label><br/>
+                </div>
+            </div>
+
+            <!-- Chọn người dùng -->
+            <div class="form-group" id="userSelection" style="display: none;">
+                <label>Chọn người dùng:</label>
+                <div th:each="user : ${users}">
+                    <input type="checkbox" name="userIds" th:value="${user.id}" th:id="'user-' + ${user.id}"/>
+                    <label th:for="'user-' + ${user.id}" 
+                           th:text="${user.firstName} + ' ' + ${user.lastName} + ' (' + ${user.email} + ')'"></label><br/>
+                </div>
+            </div>
+
+            <div class="form-check mt-3">
+                <input type="checkbox" class="form-check-input" id="sendImmediately" name="sendImmediately" value="true"/>
+                <label class="form-check-label" for="sendImmediately">Gửi ngay</label>
+            </div>
+            <!-- Nút gửi -->
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a class="btn btn-secondary" th:href="@{/notification}">Hủy</a>
+            </div>
+
+            <!-- Thông báo -->
+            <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
+            <div th:if="${message}" class="alert alert-success mt-3" th:text="${message}"></div>
+        </form>
+    </div>
+
+    <!-- Script toggle -->
+    <script>
+        function updateRecipientFields() {
+            const type = document.getElementById("recipientType").value;
+            document.getElementById("groupSelection").style.display = (type === "group") ? "block" : "none";
+            document.getElementById("userSelection").style.display = (type === "individual") ? "block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("recipientType").addEventListener("change", updateRecipientFields);
+            updateRecipientFields(); // gọi khi load để đúng ban đầu
+        });
+    </script>
+</body>
+</html>

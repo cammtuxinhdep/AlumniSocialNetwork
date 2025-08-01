@@ -5,6 +5,7 @@
 package com.vmct.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -21,10 +23,11 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.Set;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
 @Table(name = "user")
@@ -106,6 +109,19 @@ public class User implements Serializable {
     
     @Transient
     private MultipartFile coverFile;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<SurveyResponse> surveyResponseSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Reaction> reactionSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Post> postSet;
+    @OneToMany(mappedBy = "userId")
+    private Set<NotificationRecipient> notificationRecipientSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Comment> commentSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<GroupMember> groupMemberSet;
 
     public User() {
     }
@@ -233,6 +249,53 @@ public class User implements Serializable {
 
     public void setIsChecked(boolean isChecked) {
         this.isChecked = isChecked;
+
+    public Set<SurveyResponse> getSurveyResponseSet() {
+        return surveyResponseSet;
+    }
+
+    public void setSurveyResponseSet(Set<SurveyResponse> surveyResponseSet) {
+        this.surveyResponseSet = surveyResponseSet;
+    }
+
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
+    }
+
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
+    }
+
+    public Set<Post> getPostSet() {
+        return postSet;
+    }
+
+    public void setPostSet(Set<Post> postSet) {
+        this.postSet = postSet;
+    }
+
+    public Set<NotificationRecipient> getNotificationRecipientSet() {
+        return notificationRecipientSet;
+    }
+
+    public void setNotificationRecipientSet(Set<NotificationRecipient> notificationRecipientSet) {
+        this.notificationRecipientSet = notificationRecipientSet;
+    }
+
+    public Set<Comment> getCommentSet() {
+        return commentSet;
+    }
+
+    public void setCommentSet(Set<Comment> commentSet) {
+        this.commentSet = commentSet;
+    }
+
+    public Set<GroupMember> getGroupMemberSet() {
+        return groupMemberSet;
+    }
+
+    public void setGroupMemberSet(Set<GroupMember> groupMemberSet) {
+        this.groupMemberSet = groupMemberSet;
     }
 
     @Override

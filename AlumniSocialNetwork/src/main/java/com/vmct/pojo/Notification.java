@@ -23,10 +23,11 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
- * @author HP
+ * @author Thanh Nhat
  */
 @Entity
 @Table(name = "notification")
@@ -34,7 +35,9 @@ import java.util.Set;
     @NamedQuery(name = "Notification.findAll", query = "SELECT n FROM Notification n"),
     @NamedQuery(name = "Notification.findById", query = "SELECT n FROM Notification n WHERE n.id = :id"),
     @NamedQuery(name = "Notification.findByTitle", query = "SELECT n FROM Notification n WHERE n.title = :title"),
-    @NamedQuery(name = "Notification.findByCreatedAt", query = "SELECT n FROM Notification n WHERE n.createdAt = :createdAt")})
+    @NamedQuery(name = "Notification.findByCreatedAt", query = "SELECT n FROM Notification n WHERE n.createdAt = :createdAt"),
+    @NamedQuery(name = "Notification.findByEventDatetime", query = "SELECT n FROM Notification n WHERE n.eventDatetime = :eventDatetime"),
+    @NamedQuery(name = "Notification.findByEventLocation", query = "SELECT n FROM Notification n WHERE n.eventLocation = :eventLocation")})
 public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,9 +57,17 @@ public class Notification implements Serializable {
     @Size(min = 1, max = 65535)
     @Column(name = "content")
     private String content;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @Column(name = "event_datetime")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date eventDatetime;
+    @Size(max = 255)
+    @Column(name = "event_location")
+    private String eventLocation;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificationId")
     private Set<NotificationRecipient> notificationRecipientSet;
 
@@ -103,6 +114,22 @@ public class Notification implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Date getEventDatetime() {
+        return eventDatetime;
+    }
+
+    public void setEventDatetime(Date eventDatetime) {
+        this.eventDatetime = eventDatetime;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
     }
 
     public Set<NotificationRecipient> getNotificationRecipientSet() {

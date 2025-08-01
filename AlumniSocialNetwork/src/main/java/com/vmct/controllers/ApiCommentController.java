@@ -32,20 +32,15 @@ public class ApiCommentController {
 
     @Autowired
     private CommentService commentService;
-
-    // ✅ GET: Lấy các comment gốc và reply cấp 1 của post
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentDTO>> getCommentsForPost(@PathVariable("postId") Long postId) {
         return ResponseEntity.ok(commentService.getRootCommentsWithFirstLevelReplies(postId));
     }
 
-    // ✅ GET: Lấy reply cấp tiếp theo của một comment cụ thể (lazy load)
     @GetMapping("/replies/{parentId}")
     public ResponseEntity<List<CommentDTO>> getReplies(@PathVariable("parentId") Long parentId) {
         return ResponseEntity.ok(commentService.getReplies(parentId));
     }
-
-    // ✅ GET: Lấy chi tiết comment theo ID
     @GetMapping("/{id}")
     public ResponseEntity<CommentDTO> getCommentById(@PathVariable("id") Long id) {
         Comment comment = commentService.findById(id);
@@ -55,7 +50,6 @@ public class ApiCommentController {
         return ResponseEntity.ok(new CommentDTO(comment));
     }
 
-    // ✅ POST: Tạo mới comment hoặc reply
     @PostMapping
     public ResponseEntity<?> createComment(@RequestBody Comment comment) {
         boolean saved = commentService.save(comment);
@@ -64,16 +58,13 @@ public class ApiCommentController {
         }
         return ResponseEntity.badRequest().body("Failed to create comment");
     }
-
-    // ✅ PUT: Cập nhật comment
     @PutMapping("/{id}")
     public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
         Comment existing = commentService.findById(id);
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
-
-        comment.setId(id); // đảm bảo dùng đúng ID
+        comment.setId(id);
         boolean updated = commentService.save(comment);
         if (updated) {
             return ResponseEntity.ok(new CommentDTO(comment));
@@ -81,7 +72,6 @@ public class ApiCommentController {
         return ResponseEntity.badRequest().body("Failed to update comment");
     }
 
-    // ✅ DELETE: Xoá comment
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
         Comment existing = commentService.findById(id);

@@ -3,6 +3,7 @@ package com.vmct.dto;
 import com.vmct.pojo.User;
 
 public class UserDTO {
+
     private Long id;
     private String email;
     private String fullName;
@@ -24,8 +25,6 @@ public class UserDTO {
         this.studentId = user.getStudentId();
         this.userRole = user.getUserRole();
     }
-
-    // Getters và Setters
 
     public Long getId() {
         return id;
