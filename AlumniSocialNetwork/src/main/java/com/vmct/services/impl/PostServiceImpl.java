@@ -83,10 +83,6 @@ public class PostServiceImpl implements PostService {
             e.printStackTrace();
         }
     }
-
-    // ✅ Đã bỏ getAllPost() — không còn sử dụng
-    // Nếu cần API public để get all post, có thể dùng getAllPostSummaries hoặc viết mới với param
-
     @Override
     public List<PostSummaryDTO> getAllPostSummaries() {
         try {

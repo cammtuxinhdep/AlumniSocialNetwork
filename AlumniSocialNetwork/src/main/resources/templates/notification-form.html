@@ -14,25 +14,22 @@
         <form th:action="@{/notification/save}" th:object="${notification}" method="post">
             <input type="hidden" th:field="*{id}"/>
 
-            <!-- Tiêu đề -->
+            
             <div class="form-group">
                 <label for="title">Tiêu đề:</label>
                 <input type="text" class="form-control" th:field="*{title}" required/>
             </div>
 
-            <!-- Nội dung -->
             <div class="form-group">
                 <label for="content">Nội dung:</label>
                 <textarea class="form-control" th:field="*{content}" rows="5" required></textarea>
             </div>
 
-            <!-- Địa điểm -->
             <div class="form-group">
                 <label for="eventLocation">Địa điểm:</label>
                 <input type="text" class="form-control" th:field="*{eventLocation}" required/>
             </div>
 
-            <!-- Thời gian tổ chức -->
             <div class="form-group">
                 <label for="eventDatetime">Thời gian diễn ra:</label>
                 <input type="datetime-local"
@@ -42,7 +39,6 @@
                 <div th:if="${#fields.hasErrors('eventDatetime')}" class="text-danger" th:errors="*{eventDatetime}"></div>
             </div>
 
-            <!-- Loại người nhận -->
             <div class="form-group">
                 <label for="recipientType">Loại người nhận:</label>
                 <select class="form-control" name="recipientType" id="recipientType" required>
@@ -51,8 +47,7 @@
                     <option value="individual">Theo cá nhân</option>
                 </select>
             </div>
-
-            <!-- Chọn nhóm -->
+            
             <div class="form-group" id="groupSelection" style="display: none;">
                 <label>Chọn nhóm:</label>
                 <div th:each="group : ${userGroups}">
@@ -75,19 +70,18 @@
                 <input type="checkbox" class="form-check-input" id="sendImmediately" name="sendImmediately" value="true"/>
                 <label class="form-check-label" for="sendImmediately">Gửi ngay</label>
             </div>
-            <!-- Nút gửi -->
+
             <div class="form-group mt-3">
                 <button type="submit" class="btn btn-primary">Lưu</button>
                 <a class="btn btn-secondary" th:href="@{/notification}">Hủy</a>
             </div>
 
-            <!-- Thông báo -->
             <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
             <div th:if="${message}" class="alert alert-success mt-3" th:text="${message}"></div>
         </form>
     </div>
 
-    <!-- Script toggle -->
+    
     <script>
         function updateRecipientFields() {
             const type = document.getElementById("recipientType").value;
@@ -97,7 +91,7 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("recipientType").addEventListener("change", updateRecipientFields);
-            updateRecipientFields(); // gọi khi load để đúng ban đầu
+            updateRecipientFields();
         });
     </script>
 </body>

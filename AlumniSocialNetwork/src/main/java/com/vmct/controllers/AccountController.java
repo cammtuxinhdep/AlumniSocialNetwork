@@ -31,8 +31,6 @@ public class AccountController {
     
     @GetMapping()
     public String listAccounts(Model model, @RequestParam Map<String, String> params) {
-        
-        // Phân trang hiển thị user theo role
         String role = params.get("role");
         int totalPages = this.userService.getTotalAccountPages(role);
         

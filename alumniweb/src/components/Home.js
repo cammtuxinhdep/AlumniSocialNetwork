@@ -1,5 +1,4 @@
 
-// src/components/Home.jsx
 import PostList from "./PostList";
 
 const Home = () => {

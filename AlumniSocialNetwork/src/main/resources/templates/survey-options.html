@@ -13,7 +13,7 @@
     <form th:action="@{'/survey/' + ${survey.id} + '/options'}" th:object="${newOption}" method="post" class="mb-4">
         <div class="input-group">
             <input type="text" class="form-control" th:field="*{optionText}" placeholder="Nhập lựa chọn..." required/>
-            <button type="submit" class="btn btn-primary">➕ Thêm</button>
+            <button type="submit" class="btn btn-primary">Thêm</button>
         </div>
     </form>
 
@@ -23,7 +23,7 @@
         <span th:text="${option.optionText}"></span>
         <a th:href="@{'/survey/' + ${survey.id} + '/options/delete/' + ${option.id}}"
            class="btn btn-sm btn-danger"
-           onclick="return confirm('Xoá lựa chọn này?')">🗑️ Xoá</a>
+           onclick="return confirm('Xoá lựa chọn này?')">Xoá</a>
     </li>
 </ul>
 

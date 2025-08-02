@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.vmct.controllers;
 
 import com.vmct.dto.CommentDTO;
@@ -32,6 +31,7 @@ public class ApiCommentController {
 
     @Autowired
     private CommentService commentService;
+
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentDTO>> getCommentsForPost(@PathVariable("postId") Long postId) {
         return ResponseEntity.ok(commentService.getRootCommentsWithFirstLevelReplies(postId));
@@ -41,6 +41,7 @@ public class ApiCommentController {
     public ResponseEntity<List<CommentDTO>> getReplies(@PathVariable("parentId") Long parentId) {
         return ResponseEntity.ok(commentService.getReplies(parentId));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<CommentDTO> getCommentById(@PathVariable("id") Long id) {
         Comment comment = commentService.findById(id);
@@ -58,6 +59,7 @@ public class ApiCommentController {
         }
         return ResponseEntity.badRequest().body("Failed to create comment");
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
         Comment existing = commentService.findById(id);

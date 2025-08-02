@@ -1,6 +1,5 @@
 package com.vmct.controllers;
 
-import com.vmct.dto.ReactionStatsDTO;
 import com.vmct.pojo.Reaction;
 import com.vmct.services.ReactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,24 +10,27 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reaction")
-@CrossOrigin // hoặc chỉ cho domain frontend
+@CrossOrigin
 public class ApiReactionController {
 
     @Autowired
     private ReactionService reactionService;
+
     @PostMapping
     public ResponseEntity<?> createOrUpdateReaction(@RequestBody Reaction reaction) {
         boolean result = reactionService.save(reaction);
-        if (result)
+        if (result) {
             return ResponseEntity.ok(reaction);
+        }
         return ResponseEntity.badRequest().body("Invalid data or save failed");
     }
 
     @DeleteMapping("/{reactionId}")
     public ResponseEntity<?> deleteReaction(@PathVariable("reactionId") Long reactionId) {
         boolean result = reactionService.delete(reactionId);
-        if (result)
+        if (result) {
             return ResponseEntity.ok().build();
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reaction not found");
     }
 
@@ -44,8 +46,9 @@ public class ApiReactionController {
             @PathVariable("postId") Long postId
     ) {
         Reaction reaction = reactionService.getUserReaction(postId, userId);
-        if (reaction != null)
+        if (reaction != null) {
             return ResponseEntity.ok(reaction);
+        }
         return ResponseEntity.notFound().build();
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface PostService {
 
-    // ✅ DÙNG DTO THAY VÌ ENTITY TRỰC TIẾP
     List<PostSummaryDTO> getAllPostSummaries();
 
     Post createPost(Post post, User creator);

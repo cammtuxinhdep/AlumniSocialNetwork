@@ -17,12 +17,13 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
+
     @GetMapping("/post/{postId}")
     public String listCommentsByPost(@PathVariable("postId") Long postId, Model model) {
         List<CommentDTO> comments = commentService.getRootCommentsWithFirstLevelReplies(postId);
         model.addAttribute("commentDTOs", comments);
         model.addAttribute("postId", postId);
-        return "comments"; 
+        return "comments";
     }
 
     @GetMapping("/replies/{parentId}")
@@ -43,11 +44,13 @@ public class CommentController {
         commentService.save(comment);
         return "redirect:/comments/post/" + comment.getPostId().getId();
     }
+
     @GetMapping("/delete/{id}")
     public String deleteComment(@PathVariable("id") Long id) {
         Comment c = commentService.findById(id);
-        if (c != null)
+        if (c != null) {
             commentService.delete(id);
+        }
 
         return "redirect:/comments/post/" + (c != null ? c.getPostId().getId() : "");
     }

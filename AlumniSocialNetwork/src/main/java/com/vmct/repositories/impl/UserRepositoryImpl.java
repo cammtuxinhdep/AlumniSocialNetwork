@@ -143,4 +143,11 @@ public class UserRepositoryImpl implements UserRepository {
         
         s.remove(u);
     }
+
+    @Override
+    public List<User> getAllUsers() {
+       Session s =this.factory.getObject().getCurrentSession();
+       Query q=s.createNamedQuery("User.findAll",User.class);
+       return q.getResultList();
+}
 }

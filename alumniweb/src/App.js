@@ -4,7 +4,7 @@ import Footer from "./components/layout/Footer";
 import Home from "./components/Home";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import PostDetail from "./components/PostDetail";
+import PostForm from "./components/PostForm";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -23,7 +23,7 @@ const App = () => {
         <Container className="mt-5 mb-5">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/post/:postId" element={<PostDetail />} />
+            <Route path="/post/:postId" element={<PostForm />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
           </Routes>

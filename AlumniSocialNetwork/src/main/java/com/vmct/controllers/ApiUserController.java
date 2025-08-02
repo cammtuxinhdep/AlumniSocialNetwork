@@ -29,16 +29,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api")
 @CrossOrigin
 public class ApiUserController {
+
     @Autowired
     private UserService userService;
-    
+
     @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> create(@RequestParam Map<String, String> info, @RequestParam(value = "avatar") MultipartFile avatar) {
         User u = this.userService.register(info, (MultipartFile) avatar);
-        
+
         return new ResponseEntity<>(u, HttpStatus.CREATED);
     }
-    
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) throws Exception {
         if (this.userService.authenticate(u.getUsername(), u.getPassword())) {

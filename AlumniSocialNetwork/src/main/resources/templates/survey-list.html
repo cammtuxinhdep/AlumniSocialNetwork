@@ -8,8 +8,8 @@
 <header th:replace="~{index :: header}"></header>
 
 <main class="container mt-4">
-    <h2>📋 Danh sách khảo sát</h2>
-    <a th:href="@{/survey/add}" class="btn btn-primary mb-3">➕ Thêm khảo sát</a>
+    <h2>Danh sách khảo sát</h2>
+    <a th:href="@{/survey/add}" class="btn btn-primary mb-3">Thêm khảo sát</a>
 
     <table class="table table-bordered">
         <thead>
@@ -24,11 +24,11 @@
             <td th:text="${s.title}"></td>
             <td th:text="${s.description}"></td>
             <td>
-                <a th:href="@{'/survey/edit/' + ${s.id}}" class="btn btn-sm btn-warning">✏️ Sửa</a>
+                <a th:href="@{'/survey/edit/' + ${s.id}}" class="btn btn-sm btn-primary">Sửa</a>
                 <a th:href="@{'/survey/delete/' + ${s.id}}" class="btn btn-sm btn-danger"
-                   onclick="return confirm('Bạn có chắc muốn xoá khảo sát này?')">🗑️ Xoá</a>
-                <a th:href="@{'/survey/' + ${s.id} + '/options'}" class="btn btn-sm btn-info">⚙️ Tuỳ chọn</a>
-                <a th:href="@{'/survey/stats/' + ${s.id}}" class="btn btn-sm btn-success">📈 Thống kê</a>
+                   onclick="return confirm('Bạn có chắc muốn xoá khảo sát này?')">Xoá</a>
+                <a th:href="@{'/survey/' + ${s.id} + '/options'}" class="btn btn-sm btn-info">Tuỳ chọn</a>
+                <a th:href="@{'/survey/stats/' + ${s.id}}" class="btn btn-sm btn-success">Thống kê</a>
             </td>
         </tr>
         </tbody>
