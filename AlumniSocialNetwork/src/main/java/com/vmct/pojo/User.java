@@ -17,10 +17,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.Set;
 
 /**
@@ -43,7 +45,8 @@ import java.util.Set;
     @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt"),
     @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
     @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
-    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")})
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+    @NamedQuery(name = "User.findByIsChecked", query = "SELECT u FROM User u WHERE u.isChecked = :isChecked")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -91,9 +94,22 @@ public class User implements Serializable {
     @Size(max = 100)
     @Column(name = "last_name")
     private String lastName;
-    @Size(max = 100)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
     @Column(name = "username")
     private String username;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "is_checked")
+    private boolean isChecked;
+    
+    @Transient // Đánh dấu đây là trường xử lí không liên kết vào DB
+    private MultipartFile avatarFile;
+    
+    @Transient
+    private MultipartFile coverFile;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<SurveyResponse> surveyResponseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -114,11 +130,13 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Long id, String email, String password, String userRole) {
+    public User(Long id, String email, String password, String userRole, String username, boolean isChecked) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.userRole = userRole;
+        this.username = username;
+        this.isChecked = isChecked;
     }
 
     public Long getId() {
@@ -225,6 +243,13 @@ public class User implements Serializable {
         this.username = username;
     }
 
+    public boolean getIsChecked() {
+        return isChecked;
+    }
+
+    public void setIsChecked(boolean isChecked) {
+        this.isChecked = isChecked;
+    }
     public Set<SurveyResponse> getSurveyResponseSet() {
         return surveyResponseSet;
     }
@@ -296,6 +321,34 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.vmct.pojo.User[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the avatarFile
+     */
+    public MultipartFile getAvatarFile() {
+        return avatarFile;
+    }
+
+    /**
+     * @param avatarFile the file to set
+     */
+    public void setAvatarFile(MultipartFile avatarFile) {
+        this.avatarFile = avatarFile;
+    }
+
+    /**
+     * @return the coverFile
+     */
+    public MultipartFile getCoverFile() {
+        return coverFile;
+    }
+
+    /**
+     * @param coverFile the coverFile to set
+     */
+    public void setCoverFile(MultipartFile coverFile) {
+        this.coverFile = coverFile;
     }
     
 }

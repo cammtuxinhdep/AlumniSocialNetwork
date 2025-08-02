@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -100,16 +98,12 @@ public List<User> getAllUsers() {
 }
 
     @Override
-    public User addLecturer(Map<String, String> params) {
-        User u = new User();
-        u.setFirstName(params.get("firstName"));
-        u.setLastName(params.get("lastName"));
-        u.setEmail(params.get("email"));
-        u.setUsername(params.get("username"));
+    public User addLecturer(User u) {
         u.setPassword(this.passwordEncoder.encode("ou@123"));
         u.setCreatedAt(new Date());
         u.setPasswordChangeDeadline(new Date(System.currentTimeMillis() + 86400000));
         u.setUserRole("ROLE_LECTURER");
+        u.setIsLocked(Boolean.FALSE);
 
         return this.userRepo.addUser(u);
     }
@@ -127,5 +121,40 @@ public List<User> getAllUsers() {
     @Override
     public void deleteUser(int id) {
         this.userRepo.deleteUser(id);
+    }
+
+    @Override
+    public void setLockedAlumni(int id) {
+        this.userRepo.setLockedAlumni(id);
+    }
+
+    @Override
+    public User getUserById(int id) {
+        return this.userRepo.getUserById(id);
+    }
+
+    @Override
+    public User updateUser(User u) {
+        if (u.getAvatarFile() != null && !u.getAvatarFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(u.getAvatarFile().getBytes(),
+                        ObjectUtils.asMap("resource type", "auto"));
+                u.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+
+        if (u.getCoverFile() != null && !u.getCoverFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(u.getCoverFile().getBytes(),
+                        ObjectUtils.asMap("resource type", "auto"));
+                u.setCover(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+        
+        return this.userRepo.updateUser(u);
     }
 }

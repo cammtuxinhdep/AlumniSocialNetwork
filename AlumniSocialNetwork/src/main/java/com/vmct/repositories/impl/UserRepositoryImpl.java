@@ -83,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
-            
+
             String kw = params.get("kw");
             if (kw != null && !kw.isEmpty()) {
                 String p = "%" + kw.toLowerCase() + "%";
@@ -91,7 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
                 Predicate p2 = builder.like(builder.lower(root.get("lastName").as(String.class)), p);
                 predicates.add(builder.or(p1, p2));
             }
-            
+
             String role = params.get("role");
             if (role != null && !role.isEmpty()) {
                 predicates.add(builder.equal(root.get("userRole"), role));
@@ -128,7 +128,7 @@ public class UserRepositoryImpl implements UserRepository {
         Predicate role = builder.equal(root.get("userRole"), userRole);
         query.where(role);
         query.select(builder.count(root));
-        
+
         Long totalAccounts = s.createQuery(query).getSingleResult();
 
         return (int) Math.ceil(totalAccounts * 1.0 / PAGE_SIZE) + 1;
@@ -140,7 +140,7 @@ public class UserRepositoryImpl implements UserRepository {
         Query q = s.createNamedQuery("User.findById", User.class);
         q.setParameter("id", id);
         User u = (User) q.getSingleResult();
-        
+
         s.remove(u);
     }
 
@@ -150,4 +150,34 @@ public class UserRepositoryImpl implements UserRepository {
        Query q=s.createNamedQuery("User.findAll",User.class);
        return q.getResultList();
 }
+
+    public void setLockedAlumni(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        User u = this.getUserById(id);
+
+        if (!u.getIsChecked()) {
+            u.setIsChecked(true);
+        }
+        u.setIsLocked(!u.getIsLocked());
+
+        s.merge(u);
+    }
+
+    @Override
+    public User updateUser(User u) {
+        Session s = this.factory.getObject().getCurrentSession();
+        s.merge(u);
+
+        return u;
+    }
+
+    @Override
+    public User getUserById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("User.findById", User.class
+        );
+        q.setParameter("id", id);
+
+        return (User) q.getSingleResult();
+    }
 }

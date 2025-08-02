@@ -10,7 +10,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,9 +57,50 @@ public class AccountController {
         return "redirect:/accounts?role=" + role + "&page=" + page;
     }
     
-    @PostMapping("/add")
-    public String addLecturer(@RequestParam Map<String, String> params) {
-        this.userService.addLecturer(params);
+    @GetMapping("/account-create")
+    public String formCreate(Model model) {
+        model.addAttribute("account", new User());
+        return "/account-create";
+    }
+    
+    @PostMapping("/account-create")
+    public String addLecturer(@ModelAttribute(value = "account") User u) {
+        this.userService.addLecturer(u);
+        return "redirect:/accounts?role=ROLE_LECTURER";
+    }
+    
+    @GetMapping("/lock/{id}")
+    public String setLockedAlumni(@PathVariable(value = "id") int id,
+            @RequestParam Map<String, String> params) {
+        this.userService.setLockedAlumni(id);
+        String role = params.get("role");
+        String page = params.getOrDefault("page", "1");
+        return "redirect:/accounts?role=" + role + "&page=" + page;
+    }
+    
+    @GetMapping("/account-update/{id}")
+    public String formUpdate(@PathVariable(value = "id") int id, Model model) {
+        User u = this.userService.getUserById(id);
+        model.addAttribute("account", u);
+        return "/account-update";
+    }
+    
+    @PostMapping("/account-update")
+    public String updateAccount(@ModelAttribute(value = "account") User u) {
+//        if (u == null) {
+//        System.out.println("User not found for ID: " + u.getId());
+//        return "redirect:/accounts";
+//    }
+//        System.out.println("Received User data from form:");
+//        System.out.println("ID: " + u.getId());
+//        System.out.println("Username: " + u.getUsername());
+//        System.out.println("Email: " + u.getEmail());
+//        System.out.println("FirstName: " + u.getFirstName());
+//        System.out.println("LastName: " + u.getLastName());
+//        System.out.println("StudentId: " + u.getStudentId());
+//        System.out.println("UserRole: " + u.getUserRole());
+//        System.out.println("Avatar URL: " + u.getAvatar());
+//        System.out.println("Cover URL: " + u.getCover());
         return "redirect:/accounts";
     }
 }
