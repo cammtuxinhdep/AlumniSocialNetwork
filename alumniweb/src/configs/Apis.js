@@ -17,6 +17,7 @@ export const endpoints = {
     userReaction: (userId, postId) => `reaction/user/${userId}/post/${postId}`,
 
     login: 'login',
+    register: 'register',
     profile: 'secure/profile'
 };
 

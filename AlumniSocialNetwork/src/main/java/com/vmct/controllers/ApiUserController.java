@@ -4,6 +4,8 @@
  */
 package com.vmct.controllers;
 
+import com.vmct.dto.UserDTO;
+import com.vmct.filters.JwtFilter;
 import com.vmct.pojo.User;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.vmct.services.UserService;
 import com.vmct.utils.JwtUtils;
+import java.security.Principal;
 import java.util.Collections;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -29,19 +34,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api")
 @CrossOrigin
 public class ApiUserController {
+
     @Autowired
-    private UserService userService;
-    
+    private UserService userDetailsService;
+
     @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> create(@RequestParam Map<String, String> info, @RequestParam(value = "avatar") MultipartFile avatar) {
-        User u = this.userService.register(info, (MultipartFile) avatar);
-        
+        User u = this.userDetailsService.register(info, avatar);
+
         return new ResponseEntity<>(u, HttpStatus.CREATED);
     }
-    
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) throws Exception {
-        if (this.userService.authenticate(u.getUsername(), u.getPassword())) {
+        if (this.userDetailsService.authenticate(u.getUsername(), u.getPassword())) {
             try {
                 String token = JwtUtils.generateToken(u.getUsername());
                 return ResponseEntity.ok().body(Collections.singletonMap("token", token));
@@ -50,5 +56,12 @@ public class ApiUserController {
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Tài khoản không tồn tại");
+    }
+
+    @RequestMapping("/secure/profile")
+    @ResponseBody
+    @CrossOrigin
+    public ResponseEntity<UserDTO> getProfile(Principal principal) throws Exception {
+        return new ResponseEntity<>(this.userDetailsService.getUserByUsernameDTO(principal.getName()), HttpStatus.OK);
     }
 }

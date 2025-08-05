@@ -6,11 +6,14 @@ package com.vmct.repositories.impl;
 
 import com.vmct.pojo.User;
 import com.vmct.repositories.UserRepository;
+import com.vmct.services.EmailService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
@@ -35,6 +38,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmailService emailService;
+
     private static final int PAGE_SIZE = 10;
 
     @Override
@@ -53,12 +59,13 @@ public class UserRepositoryImpl implements UserRepository {
 
         return (User) q.getSingleResult();
     }
-@Override
+
+    @Override
     public User getUserById(Long id) {
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createNamedQuery("User.findById", User.class);
         q.setParameter("id", id);
-        
+
         return (User) q.getSingleResult();
     }
 
@@ -72,7 +79,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         return this.passwordEncoder.matches(password, u.getPassword());
     }
-  
+
     @Override
     public List<User> getUsers(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -151,7 +158,18 @@ public class UserRepositoryImpl implements UserRepository {
 
         if (!u.getIsChecked()) {
             u.setIsChecked(true);
+
+            String subject = "Thông báo xác nhận mã số sinh viên thành công!";
+            String htmlContent = String.format(
+                    "<p>Mã số sinh viên của bạn đã được xác nhận thành công!</p>"
+                    + "<p>Hãy đăng nhập và trải nghiệm dịch vụ của chúng tôi :)</p>"
+                    + "<p>Trân trọng,</p>"
+                    + "<p><strong>Alumni Social Network</strong></p>"
+            );
+
+            this.emailService.sendEmail(u.getEmail(), subject, htmlContent);
         }
+
         u.setIsLocked(!u.getIsLocked());
 
         s.merge(u);
@@ -173,5 +191,62 @@ public class UserRepositoryImpl implements UserRepository {
         q.setParameter("id", id);
 
         return (User) q.getSingleResult();
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+        cq.select(root);
+        Query<User> query = session.createQuery(cq);
+        return query.getResultList();
+    }
+
+    @Override
+    public void setLockedLecturer(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        User u = this.getUserById(id);
+
+        if (!u.getIsChecked() && u.getIsLocked()) {
+            u.setPasswordChangeDeadline(new Date(System.currentTimeMillis() + 86400000));
+
+            String subject = "Gia hạn thời gian đổi mật khẩu!";
+            String htmlContent = String.format(
+                    "<p>Tài khoản của bạn đã được mở khóa.</p>"
+                    + "<p>Vui lòng đăng nhập và đổi mật khẩu trong vòng 24h, nếu sau %s bạn không đổi mật khẩu chúng tôi sẽ phải khóa tài khoản của bạn lần nữa!</p>"
+                    + "<p>Trân trọng,</p>"
+                    + "<p><strong>Alumni Social Network</strong></p>",
+                    "<strong>" + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(u.getPasswordChangeDeadline()) + "</strong>"
+            );
+
+            this.emailService.sendEmail(u.getEmail(), subject, htmlContent);
+        }
+
+        u.setIsLocked(!u.getIsLocked());
+
+        s.merge(u);
+    }
+
+    @Override
+    public List<User> getUncheckedLecturers() {
+        Session s = this.factory.getObject().getCurrentSession();
+
+        CriteriaBuilder builder = s.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root root = query.from(User.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(builder.equal(root.get("userRole"), "ROLE_LECTURER"));
+        predicates.add(builder.equal(root.get("isChecked"), false));
+        predicates.add(builder.equal(root.get("isLocked"), false));
+
+        query.where(predicates.toArray(Predicate[]::new));
+
+        Query q = s.createQuery(query);
+        
+        return q.getResultList();
     }
 }

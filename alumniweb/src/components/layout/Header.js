@@ -1,26 +1,33 @@
+import { useContext } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { MyUserContext } from "../../configs/Context";
 
 const Header = () => {
+    const [user, dispatch] = useContext(MyUserContext);
+
     return (
         <>
-            <Navbar expand="lg" style={{backgroundColor: "#add8e678"}} className="fixed-top">
+            <Navbar expand="sm" className="p-3" style={{ backgroundColor: "#add8e678" }}>
                 <Container>
-                    <Navbar.Brand href="/">Alumni Social Network</Navbar.Brand>
+                    <Navbar.Brand href="/">ALUMNI SOCIAL NETWORK</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link href="/">Trang chủ</Nav.Link>
-                            <Nav.Link href="/posts">Đăng bài</Nav.Link>
-                            <Nav.Link href="/notifications">Thông báo</Nav.Link>
-                            <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="/logout">Đăng xuất</NavDropdown.Item>
-                            </NavDropdown>
-                        </Nav>
-                    </Navbar.Collapse>
+                    {user !== null &&
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="me-auto">
+                                <Nav.Link href="/">Trang chủ</Nav.Link>
+                                <Nav.Link href="/posts">Đăng bài</Nav.Link>
+                                <Nav.Link href="/notifications">Thông báo</Nav.Link>
+                                <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
+                                    <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
+                                    <NavDropdown.Item href="/changePassword">Đổi mật khẩu</NavDropdown.Item>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item href="/login" onclick={() => dispatch({"type": "logout"})}>Đăng xuất</NavDropdown.Item>
+                                </NavDropdown>
+                            </Nav>
+                        </Navbar.Collapse>
+                    }
                 </Container>
-            </Navbar>
+            </Navbar >
         </>
     );
 }

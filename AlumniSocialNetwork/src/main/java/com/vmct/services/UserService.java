@@ -4,6 +4,7 @@
  */
 package com.vmct.services;
 
+import com.vmct.dto.UserDTO;
 import com.vmct.pojo.User;
 import java.util.List;
 import java.util.Map;
@@ -15,16 +16,34 @@ import org.springframework.web.multipart.MultipartFile;
  * @author HP
  */
 public interface UserService extends UserDetailsService {
+
+    UserDTO getUserByUsernameDTO(String username);
+
     User getUserByUsername(String username);
+
     User getUserById(Long id);
+
     User register(Map<String, String> params, MultipartFile avatar);
+
     boolean authenticate(String username, String password);
+
     User addLecturer(User u);
+
     List<User> getAllUsers();
+
     List<User> getUsers(Map<String, String> params);
+
     int getTotalAccountPages(String userRole);
+
     void deleteUser(int id);
+
     void setLockedAlumni(int id);
+
     User updateUser(User u);
+
     User getUserById(int id);
+
+    User changePassword(String username, String password);
+
+    void setLockedLecturer(int id);
 }

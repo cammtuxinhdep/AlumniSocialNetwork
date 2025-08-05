@@ -11,24 +11,25 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { MyUserContext } from "./configs/Context";
 import { useReducer } from "react";
 import MyUserReducer from "./components/reducers/MyUserReducer";
+import cookie from 'react-cookies';
 
 const App = () => {
-  const [user, dispatch] = useReducer(MyUserReducer, null);
+  const [user, dispatch] = useReducer(MyUserReducer, cookie.load('user') || null);
 
   return (
     <MyUserContext.Provider value={[user, dispatch]}>
       <BrowserRouter>
         <Header />
-
-        <Container className="mt-5 mb-5">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/post/:postId" element={<PostDetail />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </Container>
-
+        <main>
+          <Container className="form-container">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/post/:postId" element={<PostDetail />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </Container>
+        </main>
         <Footer />
       </BrowserRouter>
     </MyUserContext.Provider>

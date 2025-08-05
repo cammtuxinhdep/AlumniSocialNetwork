@@ -26,9 +26,9 @@ public class JwtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        
+
         if (httpRequest.getRequestURI().startsWith(String.format("%s/api/secure", httpRequest.getContextPath())) == true) {
-            
+
             String header = httpRequest.getHeader("Authorization");
             // Lấy header Authorization từ http và đảm bảo bắt đầu bằng Bearer
             if (header == null || !header.startsWith("Bearer ")) {
@@ -50,7 +50,7 @@ public class JwtFilter implements Filter {
                     e.printStackTrace(); // Nên xử lí lỗi sâu hơn để tránh rò rỉ thông tin bảo mật
                 }
             }
-            
+
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
                     "Token không hợp lệ hoặc hết hạn");
         }

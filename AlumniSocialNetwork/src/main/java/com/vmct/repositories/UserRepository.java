@@ -23,4 +23,7 @@ public interface UserRepository {
     void setLockedAlumni(int id);
     User updateUser(User u);
     User getUserById(int id);
+    List<User> getAllUsers();
+    void setLockedLecturer(int id);
+    List<User> getUncheckedLecturers();
 }

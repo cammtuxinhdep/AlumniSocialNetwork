@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,32 +25,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/accounts")
 public class AccountController {
-    
+
     @Autowired
     private UserService userService;
-    
+
     @GetMapping()
     public String listAccounts(Model model, @RequestParam Map<String, String> params) {
-        
+
         // Phân trang hiển thị user theo role
         String role = params.get("role");
         int totalPages = this.userService.getTotalAccountPages(role);
-        
+
         if (!params.containsKey("page") && totalPages > 1) {
             params.put("page", "1");
         }
-        
+
         String page = params.get("page");
         int currentPage = (page != null && page.matches("\\d+")) ? Integer.parseInt(page) : 1;
-        
-        model.addAttribute("accounts",this.userService.getUsers(params));
+
+        model.addAttribute("accounts", this.userService.getUsers(params));
         model.addAttribute("kw", params.get("kw"));
         model.addAttribute("role", role);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
         return "/accounts";
     }
-    
+
     @GetMapping("/delete/{id}")
     public String deleteAccount(@PathVariable(value = "id") int id,
             @RequestParam Map<String, String> params) {
@@ -58,51 +59,44 @@ public class AccountController {
         String page = params.getOrDefault("page", "1");
         return "redirect:/accounts?role=" + role + "&page=" + page;
     }
-    
+
     @GetMapping("/account-create")
     public String formCreate(Model model) {
         model.addAttribute("account", new User());
         return "/account-create";
     }
-    
+
     @PostMapping("/account-create")
     public String addLecturer(@ModelAttribute(value = "account") User u) {
         this.userService.addLecturer(u);
         return "redirect:/accounts?role=ROLE_LECTURER";
     }
-    
+
     @GetMapping("/lock/{id}")
-    public String setLockedAlumni(@PathVariable(value = "id") int id,
+    public String setLocked(@PathVariable(value = "id") int id,
             @RequestParam Map<String, String> params) {
-        this.userService.setLockedAlumni(id);
         String role = params.get("role");
+        if (role == "ROLE_ALUMNI") {
+            this.userService.setLockedAlumni(id);
+        } else {
+            this.userService.setLockedLecturer(id);
+
+        }
         String page = params.getOrDefault("page", "1");
         return "redirect:/accounts?role=" + role + "&page=" + page;
     }
-    
+
     @GetMapping("/account-update/{id}")
     public String formUpdate(@PathVariable(value = "id") int id, Model model) {
         User u = this.userService.getUserById(id);
         model.addAttribute("account", u);
         return "/account-update";
     }
-    
-    @PostMapping("/account-update")
+
+    @PostMapping("/account-update/{id}")
     public String updateAccount(@ModelAttribute(value = "account") User u) {
-//        if (u == null) {
-//        System.out.println("User not found for ID: " + u.getId());
-//        return "redirect:/accounts";
-//    }
-//        System.out.println("Received User data from form:");
-//        System.out.println("ID: " + u.getId());
-//        System.out.println("Username: " + u.getUsername());
-//        System.out.println("Email: " + u.getEmail());
-//        System.out.println("FirstName: " + u.getFirstName());
-//        System.out.println("LastName: " + u.getLastName());
-//        System.out.println("StudentId: " + u.getStudentId());
-//        System.out.println("UserRole: " + u.getUserRole());
-//        System.out.println("Avatar URL: " + u.getAvatar());
-//        System.out.println("Cover URL: " + u.getCover());
-        return "redirect:/accounts";
+        this.userService.updateUser(u);
+        return "redirect:/accounts?role=" + u.getUserRole();
+
     }
 }

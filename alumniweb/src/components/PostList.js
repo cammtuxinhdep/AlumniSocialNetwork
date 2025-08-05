@@ -68,13 +68,13 @@ const PostList = () => {
         <Alert variant="info">Không có bài viết nào!</Alert>
       )}
 
-      <Row>
+      {/* <Row>
         {posts.map((post) => (
           <Col key={post.id} md={6} className="mb-3">
             <PostItem post={post} currentUser={user} />
           </Col>
         ))}
-      </Row>
+      </Row> */}
 
       {loading && <MySpinner />}
 

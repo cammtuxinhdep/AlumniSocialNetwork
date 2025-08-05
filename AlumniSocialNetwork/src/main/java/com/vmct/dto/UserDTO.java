@@ -13,6 +13,8 @@ public class UserDTO {
     private Boolean isLocked;
     private String studentId;
     private String userRole;
+    private String firstName;
+    private String lastName;
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -24,6 +26,8 @@ public class UserDTO {
         this.isLocked = user.getIsLocked();
         this.studentId = user.getStudentId();
         this.userRole = user.getUserRole();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
     }
 
     public Long getId() {
@@ -96,5 +100,33 @@ public class UserDTO {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
+    }
+
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

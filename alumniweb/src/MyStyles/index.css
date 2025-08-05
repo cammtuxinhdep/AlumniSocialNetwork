@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('https://res.cloudinary.com/dlnru7sj1/image/upload/v1753011517/2112812-3840x2160-desktop-4k-minimalist-background-photo_bkbjvs.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 0;
+}
+
+header {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+main {
+    flex: 1 0 auto;
+    padding-top: 30px;
+    min-height: calc(100vh - 60px);
+}
+
+footer {
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+Container {
+    position: relative;
+    z-index: 1;
+    margin: 0 auto;
+}
