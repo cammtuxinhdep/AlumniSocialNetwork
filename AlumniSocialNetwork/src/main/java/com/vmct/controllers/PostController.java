@@ -19,8 +19,8 @@ public class PostController {
 
     @GetMapping
     public String listPosts(Model model) {
-        model.addAttribute("post", new Post()); 
-        model.addAttribute("posts", postService.getAllPostSummaries()); 
+        model.addAttribute("post", new Post());
+        model.addAttribute("posts", postService.getAllPostSummaries());
         return "post";
     }
 
@@ -44,6 +44,7 @@ public class PostController {
         model.addAttribute("posts", postService.getAllPostSummaries());
         return "post";
     }
+
     @PostMapping("/{id}")
     public String updatePost(@PathVariable("id") Long id, @ModelAttribute("post") Post post) {
         post.setId(id);

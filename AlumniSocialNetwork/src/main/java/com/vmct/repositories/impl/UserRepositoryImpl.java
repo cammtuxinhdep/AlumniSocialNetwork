@@ -152,6 +152,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public List<User> getAllUsers() {
+       Session s =this.factory.getObject().getCurrentSession();
+       Query q=s.createNamedQuery("User.findAll",User.class);
+       return q.getResultList();
+}
+
     public void setLockedAlumni(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         User u = this.getUserById(id);
@@ -193,16 +199,16 @@ public class UserRepositoryImpl implements UserRepository {
         return (User) q.getSingleResult();
     }
 
-    @Override
-    public List<User> getAllUsers() {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);
-        cq.select(root);
-        Query<User> query = session.createQuery(cq);
-        return query.getResultList();
-    }
+//    @Override
+//    public List<User> getAllUsers() {
+//        Session session = this.factory.getObject().getCurrentSession();
+//        CriteriaBuilder cb = session.getCriteriaBuilder();
+//        CriteriaQuery<User> cq = cb.createQuery(User.class);
+//        Root<User> root = cq.from(User.class);
+//        cq.select(root);
+//        Query<User> query = session.createQuery(cq);
+//        return query.getResultList();
+//    }
 
     @Override
     public void setLockedLecturer(int id) {

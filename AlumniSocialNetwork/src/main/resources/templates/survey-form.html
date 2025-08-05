@@ -8,7 +8,7 @@
 <header th:replace="~{index :: header}"></header>
 
 <main class="container mt-4">
-    <h2 th:text="${survey.id != null} ? '✏️ Cập nhật khảo sát' : '➕ Thêm khảo sát mới'"></h2>
+    <h2 th:text="${survey.id != null} ? 'Cập nhật khảo sát' : 'Thêm khảo sát mới'"></h2>
 
     <form th:action="@{/survey/save}" th:object="${survey}" method="post">
         <input type="hidden" th:field="*{id}"/>
@@ -20,8 +20,8 @@
             <label class="form-label">Mô tả</label>
             <textarea class="form-control" th:field="*{description}" rows="4" required></textarea>
         </div>
-        <button type="submit" class="btn btn-success">💾 Lưu</button>
-        <a th:href="@{/survey}" class="btn btn-secondary">🔙 Quay lại</a>
+        <button type="submit" class="btn btn-success">Lưu</button>
+        <a th:href="@{/survey}" class="btn btn-secondary">Quay lại</a>
     </form>
 </main>
 

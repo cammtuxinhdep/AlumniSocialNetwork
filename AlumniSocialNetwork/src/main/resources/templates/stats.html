@@ -1,69 +1,132 @@
-<!doctype html>
-
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Thống kê</title>
-        <th:context th:replace="base :: resources"></th:context>
-    </head>
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thống kê hệ thống</title>
+    <th:context th:replace="~{base :: resources}"></th:context>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 <body>
-    <div th:replace="index :: header"></div>
+    <div th:replace="~{index :: header}"></div>
 
-    <main class="container">
-        <div class="row">
-            <div class="col-md-5 col-6">
-                <table class="table">
-                    <tr>
-                        <th>Id</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Doanh thu</th>
-                    </tr>
-                    <tr th:each="s: ${productRevenues}">
-                        <td th:text="${s[0]}"></td>
-                        <td th:text="${s[1]}"></td>
-                        <td th:text="${s[2]}"></td>
-                    </tr>
+    <main class="container mt-4">
+        <form class="mb-4" th:action="@{/stats}" method="get">
+            <label for="yearSelect" class="form-label">Chọn năm:</label>
+            <select id="yearSelect" name="year" class="form-select" style="width: 150px; display: inline-block;">
+                <option th:each="y : ${#numbers.sequence(2020, 2030)}"
+                        th:value="${y}" 
+                        th:text="${y}" 
+                        th:selected="${y == year}">
+                </option>
+            </select>
+
+            <label for="typeSelect" class="form-label ms-3">Theo:</label>
+            <select id="typeSelect" name="type" class="form-select" style="width: 150px; display: inline-block;">
+                <option value="MONTH" th:selected="${type == 'MONTH'}">Tháng</option>
+                <option value="QUARTER" th:selected="${type == 'QUARTER'}">Quý</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary ms-2">Xem thống kê</button>
+        </form>
+
+        <!-- Thống kê người dùng -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h5>Thống kê người dùng theo <span th:text="${type == 'MONTH'} ? 'tháng' : 'quý'"></span></h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th th:text="${type == 'MONTH'} ? 'Tháng' : 'Quý'"></th>
+                            <th>Số người dùng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stat : ${userStats}">
+                            <td th:text="${stat[0]}"></td>
+                            <td th:text="${stat[1]}"></td>
+                        </tr>
+                    </tbody>
                 </table>
-
             </div>
-            <div class="col-md-7 col-6">
-                <canvas id="myChart"></canvas>
+            <div class="col-md-6">
+                <canvas id="userChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Thống kê bài viết -->
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Thống kê bài viết theo <span th:text="${type == 'MONTH'} ? 'tháng' : 'quý'"></span></h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th th:text="${type == 'MONTH'} ? 'Tháng' : 'Quý'"></th>
+                            <th>Số bài viết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stat : ${postStats}">
+                            <td th:text="${stat[0]}"></td>
+                            <td th:text="${stat[1]}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <canvas id="postChart"></canvas>
             </div>
         </div>
     </main>
 
-    <div th:replace="base :: footer"></div>
-    <script th:src="@{/js/main.js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div th:replace="~{base :: footer}"></div>
+
+
     <script th:inline="javascript">
+        const typeLabel = /*[[${type == 'MONTH'} ? 'Tháng' : 'Quý']]*/ 'Tháng';
 
-        window.onload = function () {
+        const userStats = /*[[${userStats}]]*/ [];
+        const postStats = /*[[${postStats}]]*/ [];
 
-            let stats = [[${productRevenues}]];
+        const userLabels = userStats.map(s => `${typeLabel} ` + s[0]);
+        const userData = userStats.map(s => s[1]);
 
-            let data = stats.map(o => o[2]);
-            let labels = stats.map(o => o[1]);
+        const postLabels = postStats.map(s => `${typeLabel} ` + s[0]);
+        const postData = postStats.map(s => s[1]);
 
-            const ctx = document.getElementById('myChart');
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                            label: '# Số lượng',
-                            data: data,
-                            borderWidth: 1
-                        }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+        new Chart(document.getElementById('userChart'), {
+            type: 'bar',
+            data: {
+                labels: userLabels,
+                datasets: [{
+                    label: 'Số người dùng',
+                    data: userData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
                 }
-            });
-        }
+            }
+        });
+
+        new Chart(document.getElementById('postChart'), {
+            type: 'bar',
+            data: {
+                labels: postLabels,
+                datasets: [{
+                    label: 'Số bài viết',
+                    data: postData,
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
     </script>
 </body>
 </html>

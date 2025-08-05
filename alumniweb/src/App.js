@@ -4,7 +4,7 @@ import Footer from "./components/layout/Footer";
 import Home from "./components/Home";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import PostDetail from "./components/PostDetail";
+import PostForm from "./components/PostForm";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -20,6 +20,7 @@ const App = () => {
     <MyUserContext.Provider value={[user, dispatch]}>
       <BrowserRouter>
         <Header />
+        
         <main>
           <Container className="form-container">
             <Routes>
@@ -30,6 +31,7 @@ const App = () => {
             </Routes>
           </Container>
         </main>
+
         <Footer />
       </BrowserRouter>
     </MyUserContext.Provider>

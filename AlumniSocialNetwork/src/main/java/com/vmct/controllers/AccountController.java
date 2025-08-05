@@ -10,7 +10,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +30,6 @@ public class AccountController {
 
     @GetMapping()
     public String listAccounts(Model model, @RequestParam Map<String, String> params) {
-
         // Phân trang hiển thị user theo role
         String role = params.get("role");
         int totalPages = this.userService.getTotalAccountPages(role);

@@ -9,7 +9,7 @@
 
     <div class="container mt-4">
         <h2>Danh sách thư mời</h2>
-        <a class="btn btn-success mb-3" th:href="@{/notification/form}">➕ Tạo thư mời mới</a>
+        <a class="btn btn-success mb-3" th:href="@{/notification/form}">Tạo thư mời mới</a>
 
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
@@ -24,13 +24,13 @@
             <tbody>
                 <tr th:each="n : ${notifications}">
                     <td th:text="${n.title}"></td>
-                    <td th:text="${#dates.format(n.eventDatetime, 'dd/MM/yyyy HH:mm')}"></td> <!-- Sửa ở đây -->
+                    <td th:text="${#dates.format(n.eventDatetime, 'dd/MM/yyyy HH:mm')}"></td> 
                     <td th:text="${n.eventLocation}"></td>
-                    <td th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}"></td> <!-- Giữ nguyên -->
+                    <td th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}"></td> 
                     <td>
-                        <a th:href="@{/notification/form(id=${n.id})}" class="btn btn-sm btn-primary">✏️ Sửa/Gửi</a>
+                        <a th:href="@{/notification/form(id=${n.id})}" class="btn btn-sm btn-primary">Sửa/Gửi</a>
                         <a th:href="@{/notification/delete(id=${n.id})}" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa?')">🗑️ Xoá</a>
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xoá</a>
                     </td>
                 </tr>
             </tbody>

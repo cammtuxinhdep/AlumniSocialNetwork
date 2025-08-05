@@ -10,7 +10,6 @@
     <main class="container mt-4">
         <h2 th:text="${post.id != null} ? 'Cập nhật bài viết' : 'Tạo bài viết mới'"></h2>
         
-        <!-- Form tạo hoặc cập nhật bài viết -->
         <form th:action="@{${post.id != null} ? '/post/' + ${post.id} : '/post'}"
               th:object="${post}" method="post">
             <div class="mb-3">
@@ -25,7 +24,6 @@
 
         <hr/>
 
-        <!-- Danh sách bài viết -->
         <h3>Danh sách bài viết</h3>
         <table class="table table-bordered table-hover">
             <thead class="table-dark">

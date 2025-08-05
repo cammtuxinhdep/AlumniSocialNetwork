@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public interface UserRepository {
     User getUserByUsername(String username);
+    List<User> getAllUsers();
     User getUserById(Long id);
     User addUser(User u);
     boolean authenticate(String username, String password);
@@ -23,7 +24,7 @@ public interface UserRepository {
     void setLockedAlumni(int id);
     User updateUser(User u);
     User getUserById(int id);
-    List<User> getAllUsers();
+    //List<User> getAllUsers();
     void setLockedLecturer(int id);
     List<User> getUncheckedLecturers();
 }
