@@ -9,7 +9,11 @@
 
     <main class="container mt-4">
         <h2>Cập nhật thông tin tài khoản</h2>
-        <form th:action="@{/accounts/account-update}" method="post" th:object="${account}" enctype="multipart/form-data">
+        <form th:action="@{'/accounts/account-update/' + ${account.id}}" method="post" th:object="${account}" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{password}" />
+            <input type="hidden" th:field="*{isLocked}" />
+            <input type="hidden" th:field="*{isChecked}" />
             <div class="mb-3">
                 <label for="username">Username:</label>
                 <input type="text" class="form-control" id="username" th:field="*{username}" required>

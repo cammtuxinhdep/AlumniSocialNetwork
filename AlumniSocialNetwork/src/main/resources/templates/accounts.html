@@ -55,6 +55,7 @@
                         </a>
                         <a th:unless="${a.userRole=='ROLE_ALUMNI'}" class="btn" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" 
                            th:text="${a.isLocked} ? 'Khóa' : 'Mở'" 
+                           th:href="@{'/accounts/lock/' + ${a.id}(role=${role}, page=${currentPage})}"
                            th:onclick="${!a.isChecked and a.isLocked} ? 'return confirm(\'Bạn muốn gia hạn thời gian đổi mật khẩu?\')' : 'return true'">
                         </a>
                     </td>

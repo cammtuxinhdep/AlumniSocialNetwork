@@ -1,6 +1,7 @@
 import cookie from 'react-cookies';
 
 const MyUserReducer = (current, action) => {
+    // current là đối tượng user
     switch (action.type) {
         case 'login':
             cookie.save('token', action.payload.token);

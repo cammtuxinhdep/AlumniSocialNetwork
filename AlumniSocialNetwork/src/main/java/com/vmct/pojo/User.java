@@ -250,6 +250,7 @@ public class User implements Serializable {
     public void setIsChecked(boolean isChecked) {
         this.isChecked = isChecked;
     }
+
     public Set<SurveyResponse> getSurveyResponseSet() {
         return surveyResponseSet;
     }

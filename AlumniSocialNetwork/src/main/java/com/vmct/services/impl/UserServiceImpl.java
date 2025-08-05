@@ -6,8 +6,10 @@ package com.vmct.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.vmct.dto.UserDTO;
 import com.vmct.pojo.User;
 import com.vmct.repositories.UserRepository;
+import com.vmct.services.EmailService;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,7 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.vmct.services.UserService;
-import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -41,14 +43,27 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private Cloudinary cloudinary;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public User getUserByUsername(String username) {
         return this.userRepo.getUserByUsername(username);
     }
+
+    @Override
+    public UserDTO getUserByUsernameDTO(String username) {
+        User u = this.userRepo.getUserByUsername(username);
+        UserDTO userDTO = new UserDTO(u);
+
+        return userDTO;
+    }
+
     @Override
     public User getUserById(Long id) {
         return this.userRepo.getUserById(id);
     }
+
     @Override
     public User register(Map<String, String> params, MultipartFile avatar) {
         User u = new User();
@@ -92,10 +107,11 @@ public class UserServiceImpl implements UserService {
     public boolean authenticate(String username, String password) {
         return this.userRepo.authenticate(username, password);
     }
-@Override
-public List<User> getAllUsers() {
-    return this.userRepo.getAllUsers();
-}
+
+    @Override
+    public List<User> getAllUsers() {
+        return this.userRepo.getAllUsers();
+    }
 
     @Override
     public User addLecturer(User u) {
@@ -104,6 +120,18 @@ public List<User> getAllUsers() {
         u.setPasswordChangeDeadline(new Date(System.currentTimeMillis() + 86400000));
         u.setUserRole("ROLE_LECTURER");
         u.setIsLocked(Boolean.FALSE);
+
+        String subject = "Nhắc nhở đổi mật khẩu tài khoản!";
+        String htmlContent = String.format(
+                "<p>Tài khoản của bạn đã được tạo thành công với tên đăng nhập %s và mật khẩu <strong>ou@123</strong></p>"
+                + "<p>Vui lòng đăng nhập và đổi mật khẩu trong vòng 24h, nếu sau %s bạn không đổi mật khẩu chúng tôi sẽ phải khóa tài khoản của bạn!</p>"
+                + "<p>Trân trọng,</p>"
+                + "<p><strong>Alumni Social Network</strong></p>",
+                "<strong>" + u.getUsername() + "</strong>",
+                "<strong>" + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(u.getPasswordChangeDeadline()) + "</strong>"
+        );
+
+        this.emailService.sendEmail(u.getEmail(), subject, htmlContent);
 
         return this.userRepo.addUser(u);
     }
@@ -154,7 +182,25 @@ public List<User> getAllUsers() {
                 System.err.println(ex.getMessage());
             }
         }
-        
+
         return this.userRepo.updateUser(u);
+    }
+
+    @Override
+    public User changePassword(String username, String password) {
+        User u = this.userRepo.getUserByUsername(username);
+        u.setPassword(this.passwordEncoder.encode(password));
+
+        if (u.getUserRole() == "ROLE_LECTURER" && !u.getIsChecked()) {
+            u.setIsChecked(true);
+            u.setPasswordChangeDeadline(null);
+        }
+
+        return this.userRepo.updateUser(u);
+    }
+
+    @Override
+    public void setLockedLecturer(int id) {
+        this.userRepo.setLockedLecturer(id);
     }
 }

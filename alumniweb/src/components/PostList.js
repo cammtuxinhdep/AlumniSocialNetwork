@@ -80,13 +80,13 @@ const PostList = () => {
 
       {posts.length === 0 && !loading && <Alert variant="info">Không có bài viết nào!</Alert>}
 
-      <Row>
+      {/* <Row>
         {posts.map((post) => (
           <Col key={post.id} xs={12} className="mb-3">
             <PostItem post={post} onPostUpdated={loadPosts} />
           </Col>
         ))}
-      </Row>
+      </Row> */}
 
       {loading && <MySpinner />}
 
