@@ -19,7 +19,6 @@ const Login = () => {
         "type": "password"
     }];
 
-
     const [user, setUser] = useState({});
     const [msg, setMsg] = useState();
     const nav = useNavigate();
@@ -82,8 +81,6 @@ const Login = () => {
                     </Form.Group>}
             </Form>
         </div>
-
     );
   };
-
-  export default Login;
+export default Login;
