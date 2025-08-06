@@ -25,7 +25,7 @@ const App = () => {
           <Container className="form-container">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/post/:postId" element={<PostDetail />} />
+              {/* <Route path="/post/:postId" element={<PostDetail />} /> */}
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
             </Routes>
