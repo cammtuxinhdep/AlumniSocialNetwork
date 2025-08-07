@@ -3,10 +3,11 @@ import cookie from 'react-cookies'
 const MyUserReducer = (current, action) => {
     switch (action.type) {
         case 'login':
-            return action.payload;
+            return action.payload.user;
+
         case 'logout':
+            cookie.remove('user');
             cookie.remove('token');
-             cookie.remove('user');
             return null;
     }
 
