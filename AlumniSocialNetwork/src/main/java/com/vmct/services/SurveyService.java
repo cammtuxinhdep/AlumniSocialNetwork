@@ -1,5 +1,7 @@
 package com.vmct.services;
 
+import com.vmct.dto.SurveyDetailDTO;
+import com.vmct.dto.SurveyListDTO;
 import com.vmct.pojo.Survey;
 import com.vmct.pojo.User;
 import java.util.List;
@@ -16,4 +18,9 @@ public interface SurveyService {
     Map<String, Integer> calculateResponseStats(Survey survey);
     int calculateResponseCount(Survey survey);
      boolean addResponse(Long surveyId, Long optionId,User user);
+     List<SurveyListDTO> getAllSurveysDTO(Map<String, String> params);
+List<SurveyListDTO> getSurveysByTitleDTO(String title);
+SurveyDetailDTO getSurveyDetailById(Long id);
+Map<String, Integer> getSurveyStatsById(Long id);
+
 }

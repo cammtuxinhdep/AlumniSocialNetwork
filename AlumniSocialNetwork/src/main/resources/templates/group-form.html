@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="${group.id == null} ? 'Tạo nhóm' : 'Chỉnh sửa nhóm'"></title>
+    <th:context th:replace="~{base :: resources}"></th:context>
+</head>
+<body>
+    <div th:replace="~{index :: header}"></div>
+
+    <div class="container mt-4">
+        <h2 th:text="${group.id == null} ? 'Tạo nhóm' : 'Chỉnh sửa nhóm'"></h2>
+
+        <form th:action="@{/group/save}" th:object="${group}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="form-group">
+                <label for="name">Tên nhóm:</label>
+                <input type="text" class="form-control" th:field="*{name}" required/>
+            </div>
+
+            <!-- Chọn thành viên (hiển thị theo nhóm) -->
+            <div class="form-group mt-3">
+                <label>Chọn thành viên:</label>
+                <div th:each="user : ${allUsers}">
+                    <input type="checkbox" name="memberIds"
+                           th:id="'user-' + ${user.id}"
+                           th:value="${user.id}"
+                           th:checked="${#lists.contains(groupUsers, user)}"/>
+                    <label th:for="'user-' + ${user.id}"
+                           th:text="${user.firstName + ' ' + user.lastName + ' (' + user.email + ')'}"></label><br/>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</body>
+</html>

@@ -15,13 +15,10 @@ const UsernameProfile = () => {
     const [posts, setPosts] = useState([]);
     const nav = useNavigate();
 
-    const avatar = useRef();
-    const cover = useRef();
-
     const currentUser = cookie.load('user');
 
     useEffect(() => {
-        if (username === currentUser?.username) {
+        if (username === currentUser.username) {
             nav("/profile");
         }
     }, []);
@@ -56,50 +53,6 @@ const UsernameProfile = () => {
             loadPosts(profileUser.id);
         }
     }, [profileUser]);
-
-    const changeAvatar = async () => {
-        if (avatar.current.files.length > 0) {
-            try {
-                setLoading(true);
-                const formData = new FormData();
-                formData.append("avatar", avatar.current.files[0]);
-
-                const res = await authApis().post(endpoints.changeAvatar, formData);
-                if (res.status === 200) {
-                    alert("Cập nhật avatar thành công!");
-                    cookie.save('user', JSON.stringify(res.data));
-                    nav(`/profile/${username}`);
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Lỗi khi cập nhật avatar!");
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
-
-    const changeCover = async () => {
-        if (cover.current.files.length > 0) {
-            try {
-                setLoading(true);
-                const formData = new FormData();
-                formData.append("cover", cover.current.files[0]);
-
-                const res = await authApis().post(endpoints.changeCover, formData);
-                if (res.status === 200) {
-                    alert("Cập nhật ảnh bìa thành công!");
-                    cookie.save('user', JSON.stringify(res.data));
-                    nav(`/profile/${username}`);
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Lỗi khi cập nhật ảnh bìa!");
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
 
     if (loading || !profileUser) return <MySpinner />;
 

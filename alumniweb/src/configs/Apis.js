@@ -19,6 +19,12 @@ export const endpoints = {
     reactionStats: (postId) => `secure/reaction/stats/${postId}`,
     userReaction: (postId) => `secure/reaction/user/post/${postId}`,
 
+    surveys: "secure/survey", 
+    surveyDetail: (id) => `secure/survey/${id}`, 
+    surveySearch: (title) => `secure/survey/search?title=${title}`, 
+    surveyStats: (id) => `secure/survey/stats/${id}`,
+    surveyVote: (id) => `secure/survey/${id}/vote`,
+
     login: 'login',
     register: 'register',
     profile: (username) => `secure/profile/${username}`,

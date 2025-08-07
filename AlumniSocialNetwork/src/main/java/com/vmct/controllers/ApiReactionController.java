@@ -25,17 +25,20 @@ public class ApiReactionController {
 
     @PostMapping
     public ResponseEntity<?> createOrUpdateReaction(@RequestBody Reaction reaction, Principal principal) {
-        if (principal == null)
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
 
         User currentUser = userService.getUserByUsername(principal.getName());
-        if (currentUser == null)
+        if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
-        reaction.setUserId(currentUser); 
+        reaction.setUserId(currentUser);
         boolean result = reactionService.saveOrUpdateReaction(reaction);
-        if (result)
+        if (result) {
             return ResponseEntity.ok(reaction);
+        }
         return ResponseEntity.badRequest().body("Invalid data or save failed");
     }
 
@@ -54,19 +57,22 @@ public class ApiReactionController {
         return ResponseEntity.ok(stats);
     }
 
- @GetMapping("/user/post/{postId}")
-public ResponseEntity<Reaction> getUserReaction(@PathVariable("postId") Long postId, Principal principal) {
-    if (principal == null)
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @GetMapping("/user/post/{postId}")
+    public ResponseEntity<Reaction> getUserReaction(@PathVariable("postId") Long postId, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-    User currentUser = userService.getUserByUsername(principal.getName());
-    if (currentUser == null || currentUser.getId() == null)
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // ✅ thêm kiểm tra null
+        User currentUser = userService.getUserByUsername(principal.getName());
+        if (currentUser == null || currentUser.getId() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
-    Reaction reaction = reactionService.getUserReaction(postId, currentUser.getId());
-    if (reaction != null)
-        return ResponseEntity.ok(reaction);
-    return ResponseEntity.notFound().build();
-}
+        Reaction reaction = reactionService.getUserReaction(postId, currentUser.getId());
+        if (reaction != null) {
+            return ResponseEntity.ok(reaction);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 }

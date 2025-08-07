@@ -19,7 +19,6 @@ public class SurveyOptionRepositoryImpl implements SurveyOptionRepository {
     private static final Logger logger = LoggerFactory.getLogger(SurveyOptionRepositoryImpl.class);
     private final SessionFactory sessionFactory;
 
-    // Constructor for manual dependency injection
     public SurveyOptionRepositoryImpl(LocalSessionFactoryBean factoryBean) {
         this.sessionFactory = factoryBean.getObject();
     }

@@ -213,6 +213,7 @@ public class UserRepositoryImpl implements UserRepository {
 //        Query<User> query = session.createQuery(cq);
 //        return query.getResultList();
 //    }
+
     @Override
     public void setLockedLecturer(int id) {
         Session s = this.factory.getObject().getCurrentSession();
