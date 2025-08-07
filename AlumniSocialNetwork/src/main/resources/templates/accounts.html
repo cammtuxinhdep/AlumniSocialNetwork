@@ -1,47 +1,89 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${group.id == null} ? 'Tạo nhóm' : 'Chỉnh sửa nhóm'">Quản lý nhóm</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <head>
+        <title>Quản lý tài khoản</title>
+    <th:context th:replace="base :: resources"></th:context>
 </head>
 <body>
-<div th:replace="~{index :: header}"></div>
+    <div th:replace="index :: header"></div>
 
-<div class="container mt-4">
-    <h2 th:text="${group.id == null} ? 'Tạo nhóm' : 'Chỉnh sửa nhóm'"></h2>
-
-    <form th:action="@{/group/save}" th:object="${group}" method="post">
-        <!-- Trường ẩn để lưu ID khi chỉnh sửa -->
-        <input type="hidden" th:field="*{id}"/>
-
-        <!-- Tên nhóm -->
-        <div class="form-group">
-            <label for="name">Tên nhóm:</label>
-            <input type="text" class="form-control" th:field="*{name}" required/>
+    <main class="container mt-4">
+        <div style="display: flex">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a style="color: black" class="nav-link" th:classappend="${role == 'ROLE_ALUMNI'} ? 'active'" th:href="@{/accounts(role='ROLE_ALUMNI')}">Cựu sinh viên</a>
+                </li>
+                <li class="nav-item">
+                    <a style="color: black" class="nav-link" th:classappend="${role == 'ROLE_LECTURER'} ? 'active'" th:href="@{/accounts(role='ROLE_LECTURER')}">Giảng viên</a>
+                </li>
+            </ul>
+            <form th:action="@{/accounts}" style="margin-left: auto; display: flex;">
+                <div class="form-floating">
+                    <input  style="padding: .3rem; margin-right: .5rem" type="text" id="kw" placeholder="Nhập tên cần tìm" name="kw">
+                    <label for="kw"></label>
+                </div>
+                <input type="hidden" name="role" th:value="${role}"/>
+                <div class="form-floating">
+                    <button type="submit" class="btn btn-info">Tìm kiếm</button>
+                </div>
+            </form>
         </div>
-
-        <!-- Chọn thành viên -->
-        <div class="form-group mt-3">
-            <label>Chọn thành viên:</label>
-            <div th:each="user : ${allUsers}">
-                <input type="checkbox"
-                       name="memberIds"
-                       th:value="${user.id}"
-                       th:checked="${group.groupMemberSet.?[userId.id == user.id].size() > 0}"
-                       th:id="'user-' + ${user.id}"/>
-                <label th:for="'user-' + ${user.id}"
-                       th:text="${user.firstName + ' ' + user.lastName + ' (' + user.email + ')'}"></label>
-                <br/>
-            </div>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th th:if="${role=='ROLE_ALUMNI'}">MSSV</th>
+                    <th th:unless="${role=='ROLE_ALUMNI'}">Tình trạng mật khẩu mặc định</th>
+                    <th>Họ và tên đệm</th>
+                    <th>Tên</th>
+                    <th>Tên tài khoản</th>
+                    <th>Tình trạng tài khoản</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="a : ${accounts}">
+                    <td th:if="${a.userRole=='ROLE_ALUMNI'}" th:text="${a.isChecked} ? ${a.studentId} : 'Chưa xác nhận'"></td>
+                    <td th:unless="${a.userRole=='ROLE_ALUMNI'}" th:text="${a.isChecked} ? 'Đã đổi' : 'Chưa đổi'"></td>
+                    <td th:text="${a.lastName}"></td>
+                    <td th:text="${a.firstName}"></td>
+                    <td th:text="${a.username}"></td>
+                    <td>
+                        <a th:if="${a.userRole=='ROLE_ALUMNI'}" class="btn" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" 
+                           th:text="${a.isLocked} ? 'Khóa' : 'Mở'" 
+                           th:href="@{'/accounts/lock/' + ${a.id}(role=${role}, page=${currentPage})}"
+                           th:onclick="${!a.isChecked and a.isLocked} ? 'return confirm(\'Bạn muốn xác nhận MSSV?\')' : 'return true'">
+                        </a>
+                        <a th:unless="${a.userRole=='ROLE_ALUMNI'}" class="btn" th:classappend="${a.isLocked} ? 'btn-success' : 'btn-warning'" 
+                           th:text="${a.isLocked} ? 'Khóa' : 'Mở'" 
+                           th:href="@{'/accounts/lock/' + ${a.id}(role=${role}, page=${currentPage})}"
+                           th:onclick="${!a.isChecked and a.isLocked} ? 'return confirm(\'Bạn muốn gia hạn thời gian đổi mật khẩu?\')' : 'return true'">
+                        </a>
+                    </td>
+                    <td>
+                        <a th:href="@{'/accounts/account-update/' + ${a.id}}" class="btn btn-sm btn-primary">Sửa</a>
+                        <a th:href="@{'/accounts/delete/' + ${a.id}(role=${role}, page=${currentPage})}" class="btn btn-sm btn-danger"
+                           th:onclick="return confirm('Bạn chắc chắn muốn xoá?')">Xoá</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div th:if="${role == 'ROLE_LECTURER'}" class="mb-2" style="direction: rtl">
+            <a th:href="@{/accounts/account-create}" class="btn btn-info">Thêm tài khoản</a>
         </div>
+        <ul class="pagination" th:if="${totalPages > 1 and (kw == null or kw.trim() == '')}" style="justify-content: end">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/accounts(page=${currentPage - 1}, role=${role})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/accounts(page=${i}, role=${role})}" th:text="${i}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/accounts(page=${currentPage}, role=${role})}">Next</a>
+            </li>
+        </ul>
+    </main>
 
-        <!-- Nút lưu / hủy -->
-        <div class="form-group mt-3">
-            <button type="submit" class="btn btn-success">Lưu</button>
-            <a th:href="@{/group}" class="btn btn-secondary">Hủy</a>
-        </div>
-    </form>
-</div>
+    <div th:replace="base :: footer"></div>
 </body>
 </html>

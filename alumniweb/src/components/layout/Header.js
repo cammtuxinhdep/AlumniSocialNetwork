@@ -1,9 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { MyUserContext } from "../../configs/Context";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const Header = () => {
     const [user, dispatch] = useContext(MyUserContext);
+    const [changePassword, setChangePassword] = useState(false);
 
     return (
         <>
@@ -20,15 +22,17 @@ const Header = () => {
                                 <Nav.Link href="/surveys">Khảo sát</Nav.Link>
                                 <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
-                                    <NavDropdown.Item href="/changePassword">Đổi mật khẩu</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => setChangePassword(true)}>Đổi mật khẩu</NavDropdown.Item>
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item href="/login" onClick={() => dispatch({"type": "logout"})}>Đăng xuất</NavDropdown.Item>
+                                    <NavDropdown.Item href="/login" onClick={() => dispatch({ "type": "logout" })}>Đăng xuất</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
                         </Navbar.Collapse>
                     }
                 </Container>
             </Navbar >
+
+            <ChangePasswordModal show={changePassword} handleClose={() => setChangePassword(false)} />
         </>
     );
 }
