@@ -17,6 +17,7 @@ const Header = () => {
                                 <Nav.Link href="/">Trang chủ</Nav.Link>
                                 <Nav.Link href="/posts">Đăng bài</Nav.Link>
                                 <Nav.Link href="/notifications">Thông báo</Nav.Link>
+                                <Nav.Link href="/surveys">Khảo sát</Nav.Link>
                                 <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
                                     <NavDropdown.Item href="/changePassword">Đổi mật khẩu</NavDropdown.Item>

@@ -133,3 +133,4 @@ public class UserGroup implements Serializable {
     }
     
 }
+

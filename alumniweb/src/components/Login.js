@@ -36,6 +36,7 @@ const Login = () => {
 
             console.info(res.data);
             cookie.save('token', res.data.token);
+            cookie.save('user', res.data.user); 
 
             let u = await authApis().get(endpoints['profile']);
             console.info(u.data);

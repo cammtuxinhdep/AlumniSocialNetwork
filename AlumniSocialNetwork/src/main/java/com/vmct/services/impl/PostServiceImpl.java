@@ -88,7 +88,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostSummaryDTO> getAllPostSummaries() {
         try {
-            Map<String, String> params = new HashMap<>(); 
+            Map<String, String> params = new HashMap<>();
             List<Post> posts = postRepo.getAllPosts(params);
 
             return posts.stream()
@@ -103,22 +103,24 @@ public class PostServiceImpl implements PostService {
             return List.of();
         }
     }
-@Override
+
+    @Override
     public List<PostSummaryDTO> getAllPostSummaries(Map<String, String> params) {
         try {
             List<Post> posts = postRepo.getAllPosts(params);
             return posts.stream()
                     .map(post -> new PostSummaryDTO(
-                            post,
-                            commentService.countByPostId(post.getId()),
-                            reactionService.getReactionStats(post.getId())
-                    ))
+                    post,
+                    commentService.countByPostId(post.getId()),
+                    reactionService.getReactionStats(post.getId())
+            ))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
+
     @Override
     public PostDTO getPostDTOById(Long id, User currentUser) {
         Post post = postRepo.getPostById(id);
@@ -128,12 +130,15 @@ public class PostServiceImpl implements PostService {
 
         Reaction reaction = reactionService.getUserReaction(post.getId(), currentUser.getId());
         String userReactionType = (reaction != null) ? reaction.getType() : null;
+        boolean isOwner = post.getUserId().getId().equals(currentUser.getId());
 
         return new PostDTO(
                 post,
-                commentService.getRootCommentsWithFirstLevelReplies(post.getId()), // ✅ CHỈ LẤY GỐC + 1 CẤP
+                commentService.getRootCommentsWithFirstLevelReplies(post.getId()),
                 reactionService.getReactionStats(post.getId()),
                 userReactionType,
-                commentService.countByPostId(post.getId())
+                commentService.countByPostId(post.getId()),
+                isOwner
         );
+    }
 }

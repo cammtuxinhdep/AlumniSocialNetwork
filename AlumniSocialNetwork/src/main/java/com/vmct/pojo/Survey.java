@@ -4,6 +4,7 @@
  */
 package com.vmct.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -56,7 +57,9 @@ public class Survey implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
+    @JsonIgnore
     private Set<SurveyResponse> surveyResponseSet;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
     private Set<SurveyOption> surveyOptionSet;
 

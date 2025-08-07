@@ -49,7 +49,6 @@ public class Post implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "content")
     private String content;

@@ -74,45 +74,46 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getAllPosts(Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Post> cq = cb.createQuery(Post.class);
-        Root<Post> root = cq.from(Post.class);
-        cq.select(root);
+public List<Post> getAllPosts(Map<String, String> params) {
+    Session session = this.factory.getObject().getCurrentSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<Post> cq = cb.createQuery(Post.class);
+    Root<Post> root = cq.from(Post.class);
+    cq.select(root);
 
-        List<Predicate> predicates = new ArrayList<>();
+    List<Predicate> predicates = new ArrayList<>();
 
-        if (params != null) {
-            String kw = params.get("kw");
-            if (kw != null && !kw.isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("title")), String.format("%%%s%%", kw.trim().toLowerCase())));
-            }
-
-            String userId = params.get("userId");
-            if (userId != null && !userId.isEmpty()) {
-                try {
-                    predicates.add(cb.equal(root.get("userId").get("id"), Long.parseLong(userId)));
-                } catch (NumberFormatException e) {
-                }
-            }
+    if (params != null) {
+        String kw = params.get("kw");
+        if (kw != null && !kw.trim().isEmpty()) {
+            // Sửa: tìm kiếm không phân biệt hoa thường
+            predicates.add(cb.like(cb.lower(root.get("content")), "%" + kw.trim().toLowerCase() + "%"));
         }
 
-        cq.where(predicates.toArray(Predicate[]::new));
-        cq.orderBy(cb.desc(root.get("createdAt")));
-
-        Query query = session.createQuery(cq);
-
-        if (params != null && params.containsKey("page")) {
+        String userId = params.get("userId");
+        if (userId != null && !userId.isEmpty()) {
             try {
-                int page = Integer.parseInt(params.get("page"));
-                int start = (page - 1) * PAGE_SIZE;
-                query.setMaxResults(PAGE_SIZE);
-                query.setFirstResult(start);
+                predicates.add(cb.equal(root.get("userId").get("id"), Long.parseLong(userId)));
             } catch (NumberFormatException e) {
             }
         }
-
-        return query.getResultList();
     }
+
+    cq.where(predicates.toArray(Predicate[]::new));
+    cq.orderBy(cb.desc(root.get("createdAt")));
+
+    Query<Post> query = session.createQuery(cq);
+
+    if (params != null && params.containsKey("page")) {
+        try {
+            int page = Integer.parseInt(params.get("page"));
+            int start = (page - 1) * PAGE_SIZE;
+            query.setMaxResults(PAGE_SIZE);
+            query.setFirstResult(start);
+        } catch (NumberFormatException e) {
+        }
+    }
+
+    return query.getResultList();
+}
 }

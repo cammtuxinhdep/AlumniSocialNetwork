@@ -105,7 +105,7 @@ public class User implements Serializable {
     @Column(name = "is_checked")
     private boolean isChecked;
 
-    @Transient // Đánh dấu đây là trường xử lí không liên kết vào DB
+    @Transient 
     private MultipartFile avatarFile;
 
     @Transient

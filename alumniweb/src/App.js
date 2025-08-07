@@ -13,6 +13,8 @@ import MyUserReducer from "./components/reducers/MyUserReducer";
 import cookie from 'react-cookies';
 import Profile from "./components/Profile";
 import PostList from "./components/PostList";
+import SurveyList from "./components/SurveyList";
+import SurveyDetail from "./components/SurveyDetail";
 
 const App = () => {
   const [user, dispatch] = useReducer(MyUserReducer, cookie.load('user') || null);
@@ -27,6 +29,8 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/posts" element={<PostList />} />
+              <Route path="/surveys" element={<SurveyList />} />
+              <Route path="/surveys/:id" element={<SurveyDetail />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />

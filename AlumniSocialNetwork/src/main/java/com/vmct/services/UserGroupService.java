@@ -7,5 +7,7 @@ public interface UserGroupService {
     List<UserGroup> getAllGroups();
     UserGroup getGroupById(Long id);
     List<User> getUsersByGroupIds(List<Long> groupIds);
+     void saveGroup(UserGroup group, List<Long> memberIds);
+    void deleteGroup(Long id);
 }
     

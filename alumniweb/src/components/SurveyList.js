@@ -1,122 +1,113 @@
-import { useState, useEffect, useContext } from "react";
-import { Alert, Button, Form, Col, Row } from "react-bootstrap";
+import { useEffect, useState, useContext, useRef } from "react";
+import { Button, Form, Alert } from "react-bootstrap";
 import { authApis, endpoints } from "../configs/Apis";
-import { MyUserContext } from "../configs/Context";
-import SurveyForm from "./SurveyForm";
 import SurveyItem from "./SurveyItem";
-import { useNavigate } from "react-router-dom";
-import { debounce } from "lodash";
 import MySpinner from "./layout/MySpinner";
+import { MyUserContext } from "../configs/Context";
+import cookie from 'react-cookies';
+import { useNavigate } from "react-router-dom";
 
 const SurveyList = () => {
-  const [userState] = useContext(MyUserContext);
-  const currentUser = userState?.currentUser;
-  const navigate = useNavigate();
+    const [surveys, setSurveys] = useState([]);
+    const [user] = useContext(MyUserContext);
+    const [page, setPage] = useState(1);
+    const [q, setQ] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const debounceTimer = useRef(null);
+    const navigate = useNavigate();
 
-  const [surveys, setSurveys] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [error, setError] = useState("");
+    const loadSurveys = async (search = q, pageNumber = page) => {
+        let url = `${endpoints.surveys}?page=${pageNumber}`;
+        if (search) url += `&kw=${search}`;
 
-  const debouncedSetQ = debounce((value) => setQ(value), 300);
+        setLoading(true);
+            const res = await authApis().get(url);
+            const data = res.data;
 
-  const loadSurveys = async () => {
-    if (!hasMore || loading) return;
+            if (!Array.isArray(data)) {
+                console.warn("API trả về dữ liệu không hợp lệ:", data);
+                setSurveys([]);
+                setHasMore(false);
+                return;
+            }
 
-    setLoading(true);
-    try {
-      const res = await authApis().get(q ? endpoints.surveySearch : endpoints.survey, {
-        params: q ? { title: q } : { page },
-      });
-      const data = Array.isArray(res.data) ? res.data : [];
+            if (data.length === 0) {
+                if (pageNumber === 1) setSurveys([]);
+                setHasMore(false);
+            } else {
+                if (pageNumber === 1)
+                    setSurveys(data);
+                else
+                    setSurveys(prev => [...prev, ...data]);
 
-      if (data.length === 0) {
-        if (page === 1) setSurveys([]);
-        setHasMore(false);
-      } else {
-        setSurveys((prev) => (page === 1 ? data : [...prev, ...data]));
-      }
-      setError("");
-    } catch (err) {
-      setError("Lỗi tải danh sách khảo sát!");
-      console.error("Lỗi tải khảo sát:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+                setHasMore(data.length >= 6);
+            }
+            setSurveys([]);
+            setHasMore(false);
+        
+            setLoading(false);
+        
+    };
+    useEffect(() => {
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
-  useEffect(() => {
-    setPage(1);
-    setHasMore(true);
-  }, [q]);
+        debounceTimer.current = setTimeout(() => {
+            setPage(1);           
+            loadSurveys(q, 1);    
+        }, 500);
 
-  useEffect(() => {
-    loadSurveys();
-  }, [page, q]);
+        return () => clearTimeout(debounceTimer.current);
+    }, [q]);
 
-  const handleSurveyCreated = (newSurvey) => {
-    if (!newSurvey || !newSurvey.id) return;
-    setSurveys((prev) => [newSurvey, ...prev]);
-  };
+    useEffect(() => {
+        if (page > 1) loadSurveys(q, page);
+    }, [page]);
 
-  const handleVote = () => {
-    setPage(1);
-    setHasMore(true);
-    loadSurveys();
-  };
+    useEffect(() => {
+        const token = cookie.load("token");
+        if (!token) navigate("/login");
+        else loadSurveys(q, 1); // tải ban đầu
+    }, []);
 
-  return (
-    <div className="container my-4">
-      {error && <Alert variant="danger">{error}</Alert>}
+    const loadMore = () => {
+        if (!hasMore || loading) return;
+        setPage(prev => prev + 1);
+    };
 
-      {currentUser?.id ? (
-        <SurveyForm onSurveyCreated={handleSurveyCreated} />
-      ) : (
-        <Button
-          variant="success"
-          className="mb-4"
-          onClick={() => navigate("/login")}
-        >
-          Đăng nhập để tạo khảo sát
-        </Button>
-      )}
+    return (
+        <>
+            <Form>
+                <Form.Group className="mb-3 mt-2">
+                    <Form.Control
+                        value={q}
+                        onChange={e => setQ(e.target.value)}
+                        type="text"
+                        placeholder="Tìm kiếm khảo sát..."
+                    />
+                </Form.Group>
+            </Form>
 
-      <Form className="mb-4">
-        <Form.Control
-          type="text"
-          placeholder="Tìm kiếm khảo sát..."
-          onChange={(e) => debouncedSetQ(e.target.value)}
-        />
-      </Form>
+            {surveys.length === 0 && !loading && (
+                <Alert variant="info">Không có khảo sát nào để hiển thị.</Alert>
+            )}
 
-      {surveys.length === 0 && !loading && (
-        <Alert variant="info">Không có khảo sát nào!</Alert>
-      )}
+            {surveys.map(s => (
+                <SurveyItem key={s.id} survey={s} onSurveyUpdate={() => {
+                    setPage(1);
+                    loadSurveys(q, 1);
+                }} />
+            ))}
 
-      <Row>
-        {surveys.map((survey) => (
-          <Col key={survey.id} xs={12} md={6} lg={4} className="mb-4">
-            <SurveyItem survey={survey} onVote={handleVote} />
-          </Col>
-        ))}
-      </Row>
+            {loading && <MySpinner />}
 
-      {loading && <MySpinner />}
-
-      {!loading && hasMore && (
-        <div className="text-center mb-4">
-          <Button
-            variant="outline-primary"
-            onClick={() => setPage((prev) => prev + 1)}
-          >
-            Xem thêm
-          </Button>
-        </div>
-      )}
-    </div>
-  );
+            {!loading && hasMore && surveys.length > 0 && (
+                <div className="text-center mt-2 mb-2">
+                    <Button variant="primary" onClick={loadMore}>Xem thêm...</Button>
+                </div>
+            )}
+        </>
+    );
 };
 
 export default SurveyList;

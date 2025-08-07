@@ -11,7 +11,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,25 +25,19 @@ public class ApiPostController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<PostSummaryDTO>> listPosts(
-            @RequestParam(name = "userId", required = false) Long userId,
-            @RequestParam(name = "page", required = false) Integer page,
-            Principal principal) {
-        User currentUser = userService.getUserByUsername(principal.getName());
-        if (currentUser == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        Map<String, String> params = new HashMap<>();
-        if (userId != null) {
-            params.put("userId", userId.toString());
-        }
-        if (page != null) {
-            params.put("page", page.toString());
-        }
-        List<PostSummaryDTO> posts = postService.getAllPostSummaries(params);
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+@GetMapping
+public ResponseEntity<List<PostSummaryDTO>> listPosts(
+        @RequestParam Map<String, String> params,
+        Principal principal) {
+    User currentUser = userService.getUserByUsername(principal.getName());
+    if (currentUser == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+    List<PostSummaryDTO> posts = postService.getAllPostSummaries(params);
+    return new ResponseEntity<>(posts, HttpStatus.OK);
+}
+
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostDTO> getPost(@PathVariable Long postId, Principal principal) {

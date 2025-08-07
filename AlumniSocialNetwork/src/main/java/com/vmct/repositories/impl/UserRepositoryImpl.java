@@ -199,16 +199,6 @@ public class UserRepositoryImpl implements UserRepository {
         return (User) q.getSingleResult();
     }
 
-//    @Override
-//    public List<User> getAllUsers() {
-//        Session session = this.factory.getObject().getCurrentSession();
-//        CriteriaBuilder cb = session.getCriteriaBuilder();
-//        CriteriaQuery<User> cq = cb.createQuery(User.class);
-//        Root<User> root = cq.from(User.class);
-//        cq.select(root);
-//        Query<User> query = session.createQuery(cq);
-//        return query.getResultList();
-//    }
 
     @Override
     public void setLockedLecturer(int id) {

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.hibernate.Hibernate;
 
 @Repository
 @Transactional
@@ -34,27 +35,32 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     }
 
     @Override
-    public Survey getSurveyById(Long id) {
-        try {
-            Session session = getCurrentSession();
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Survey> cq = cb.createQuery(Survey.class);
-            Root<Survey> root = cq.from(Survey.class);
-            cq.select(root).where(cb.equal(root.get("id"), id));
+public Survey getSurveyById(Long id) {
+    try {
+        Session session = getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Survey> cq = cb.createQuery(Survey.class);
+        Root<Survey> root = cq.from(Survey.class);
+        cq.select(root).where(cb.equal(root.get("id"), id));
 
-            Survey survey = session.createQuery(cq).uniqueResultOptional().orElse(null);
+        Survey survey = session.createQuery(cq).uniqueResultOptional().orElse(null);
 
-            if (survey != null) {
-                survey.getSurveyOptionSet().size(); // Trigger lazy-loading for options
-                survey.getSurveyResponseSet().size(); // Trigger lazy-loading for responses
+        if (survey != null) {
+            Hibernate.initialize(survey.getSurveyOptionSet());
+            Hibernate.initialize(survey.getSurveyResponseSet());
+
+            for (var option : survey.getSurveyOptionSet()) {
+                Hibernate.initialize(option.getSurveyResponseSet()); 
             }
-
-            return survey;
-        } catch (Exception e) {
-            logger.error("Error getting survey by ID {}", id, e);
-            return null;
         }
+
+        return survey;
+    } catch (Exception e) {
+        logger.error("Error getting survey by ID {}", id, e);
+        return null;
     }
+}
+
 
     @Override
     public boolean addOrUpdateSurvey(Survey survey) {

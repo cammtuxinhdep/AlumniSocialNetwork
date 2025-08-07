@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách nhóm</title>
+    <th:context th:replace="~{base :: resources}"></th:context>
+</head>
+<body>
+<div th:replace="~{index :: header}"></div>
+
+<div class="container mt-4">
+    <h2>Danh sách nhóm</h2>
+
+    <a th:href="@{/group/form}" class="btn btn-primary mb-3">+ Tạo nhóm</a>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Tên nhóm</th>
+            <th>Ngày tạo</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="group : ${groups}">
+            <td th:text="${group.name}"></td>
+            <td th:text="${#dates.format(group.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+            <td>
+                <a th:href="@{/group/form(id=${group.id})}" class="btn btn-sm btn-warning">Sửa</a>
+                <a th:href="@{/group/delete(id=${group.id})}" class="btn btn-sm btn-danger"
+                   onclick="return confirm('Bạn có chắc chắn muốn xóa nhóm này?')">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
