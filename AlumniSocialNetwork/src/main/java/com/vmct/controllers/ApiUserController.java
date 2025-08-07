@@ -4,10 +4,8 @@
  */
 package com.vmct.controllers;
 
-import com.vmct.dto.PostDTO;
+import com.vmct.dto.PostSummaryDTO;
 import com.vmct.dto.UserDTO;
-import com.vmct.filters.JwtFilter;
-import com.vmct.pojo.Post;
 import com.vmct.pojo.User;
 import com.vmct.services.PostService;
 import java.util.Map;
@@ -26,6 +24,7 @@ import com.vmct.utils.JwtUtils;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,5 +69,11 @@ public class ApiUserController {
     @CrossOrigin
     public ResponseEntity<UserDTO> getProfile(Principal principal) throws Exception {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsernameDTO(principal.getName()), HttpStatus.OK);
+    }
+    
+    @GetMapping("/secure/posts")
+    public ResponseEntity<List<PostSummaryDTO>> getUserPosts() {
+        User u = this.userDetailsService.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        return new ResponseEntity<>(this.postService.getUserPosts(u.getId()), HttpStatus.OK);
     }
 }
