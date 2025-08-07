@@ -119,9 +119,21 @@ public class PostServiceImpl implements PostService {
             return List.of();
         }
     }
-   @Override
-public PostDTO getPostDTOById(Long id, User currentUser) {
-    Post post = postRepo.getPostById(id);
-    if (post == null) {
-        return null;
+    @Override
+    public PostDTO getPostDTOById(Long id, User currentUser) {
+        Post post = postRepo.getPostById(id);
+        if (post == null) {
+            return null;
+        }
+
+        Reaction reaction = reactionService.getUserReaction(post.getId(), currentUser.getId());
+        String userReactionType = (reaction != null) ? reaction.getType() : null;
+
+        return new PostDTO(
+                post,
+                commentService.getRootCommentsWithFirstLevelReplies(post.getId()), // ✅ CHỈ LẤY GỐC + 1 CẤP
+                reactionService.getReactionStats(post.getId()),
+                userReactionType,
+                commentService.countByPostId(post.getId())
+        );
 }
