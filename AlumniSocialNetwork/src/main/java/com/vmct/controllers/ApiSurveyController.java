@@ -1,3 +1,4 @@
+
 package com.vmct.controllers;
 
 import com.vmct.pojo.Survey;
@@ -61,5 +62,5 @@ public class ApiSurveyController {
         boolean success = surveyService.addResponse(id, optionId, currentUser);
 
         return success ? ResponseEntity.ok().build() : ResponseEntity.internalServerError().build();
-    }
+}
 }

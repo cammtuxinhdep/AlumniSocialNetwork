@@ -4,10 +4,6 @@ import cookie from 'react-cookies';
 const BASE_URL = 'http://localhost:8080/AlumniSocialNetwork/api/';
 
 export const endpoints = {
-    login: 'login',
-    register: 'register',
-    
-
     posts: 'secure/post',
     postDetail: (id) => `secure/post/${id}`,
     lockComment: (id, lock) => `secure/post/${id}/lock-comments?lock=${lock}`,
@@ -24,8 +20,10 @@ export const endpoints = {
     reactionStats: (postId) => `secure/reaction/stats/${postId}`,
     userReaction: (postId) => `secure/reaction/user/post/${postId}`,
 
-    profile: 'secure/profile'
-};
+    login: 'login',
+    register: 'register',
+    profile: 'secure/profile',
+    userPosts: 'secure/posts'};
 
 export const authApis = () => axios.create({
     baseURL: BASE_URL,

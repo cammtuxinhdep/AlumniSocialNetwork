@@ -1,4 +1,5 @@
 package com.vmct.services.impl;
+
 import com.vmct.dto.PostDTO;
 import com.vmct.dto.PostSummaryDTO;
 import com.vmct.pojo.Post;
@@ -83,6 +84,7 @@ public class PostServiceImpl implements PostService {
             e.printStackTrace();
         }
     }
+
     @Override
     public List<PostSummaryDTO> getAllPostSummaries() {
         try {
@@ -91,10 +93,10 @@ public class PostServiceImpl implements PostService {
 
             return posts.stream()
                     .map(post -> new PostSummaryDTO(
-                            post,
-                            commentService.countByPostId(post.getId()),
-                            reactionService.getReactionStats(post.getId())
-                    ))
+                    post,
+                    commentService.countByPostId(post.getId()),
+                    reactionService.getReactionStats(post.getId())
+            ))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,19 +124,4 @@ public PostDTO getPostDTOById(Long id, User currentUser) {
     Post post = postRepo.getPostById(id);
     if (post == null) {
         return null;
-    }
-
-    Reaction reaction = reactionService.getUserReaction(post.getId(), currentUser.getId());
-    String userReactionType = (reaction != null) ? reaction.getType() : null;
-      boolean isOwner = post.getUserId().getId().equals(currentUser.getId());
-      
-    return new PostDTO(
-            post,
-            commentService.getRootCommentsWithFirstLevelReplies(post.getId()), 
-            reactionService.getReactionStats(post.getId()),
-            userReactionType,
-            commentService.countByPostId(post.getId()),
-            isOwner
-    );
-}
 }

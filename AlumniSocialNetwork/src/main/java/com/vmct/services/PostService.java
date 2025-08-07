@@ -25,4 +25,5 @@ public interface PostService {
     void deletePost(Long id);
 
     void lockComments(Long postId, boolean locked);
+    List<Post> getUserPosts(Long id);
 }
