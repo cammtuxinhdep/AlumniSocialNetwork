@@ -4,6 +4,7 @@
  */
 package com.vmct.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -61,10 +62,12 @@ public class Post implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
+    @JsonIgnore
     private Set<Reaction> reactionSet;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
     private Set<Comment> commentSet;
 
@@ -168,5 +171,5 @@ public class Post implements Serializable {
     public String toString() {
         return "com.vmct.pojo.Post[ id=" + id + " ]";
     }
-    
+
 }

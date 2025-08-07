@@ -135,7 +135,7 @@ public class ReactionRepositoryImpl implements ReactionRepository {
         Root<Reaction> root = cq.from(Reaction.class);
 
         Predicate postPredicate = cb.equal(root.get("postId").get("id"), postId);
-        Predicate userPredicate = cb.equal(root.get("user").get("id"), userId);
+        Predicate userPredicate = cb.equal(root.get("userId").get("id"), userId);
 
         cq.select(root)
           .where(cb.and(postPredicate, userPredicate));

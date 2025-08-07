@@ -3,15 +3,13 @@ package com.vmct.repositories.impl;
 import com.vmct.pojo.Post;
 import com.vmct.repositories.PostRepository;
 import jakarta.persistence.criteria.*;
+import java.util.ArrayList;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +19,8 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
-
-    private static final Logger logger = LoggerFactory.getLogger(PostRepositoryImpl.class);
+  private static final int PAGE_SIZE = 6;
+  
 
     @Override
     public Post getPostById(Long id) {
@@ -45,8 +43,7 @@ public class PostRepositoryImpl implements PostRepository {
                 session.merge(post);
             }
             return true;
-        } catch (Exception ex) {
-            logger.error("Failed to save or update Post", ex);
+        } catch (Exception ex) {         
             return false;
         }
     }
@@ -61,7 +58,6 @@ public class PostRepositoryImpl implements PostRepository {
             }
             return true;
         } catch (Exception ex) {
-            logger.error("Failed to delete Post with ID {}", id, ex);
             return false;
         }
     }
@@ -83,17 +79,40 @@ public class PostRepositoryImpl implements PostRepository {
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Post> cq = cb.createQuery(Post.class);
         Root<Post> root = cq.from(Post.class);
-        Predicate predicate = cb.conjunction();
+        cq.select(root);
 
-        // Example: lọc theo từ khoá tiêu đề
+        List<Predicate> predicates = new ArrayList<>();
+
         if (params != null) {
-            if (params.containsKey("kw")) {
-                String kw = "%" + params.get("kw").trim().toLowerCase() + "%";
-                predicate = cb.and(predicate, cb.like(cb.lower(root.get("title")), kw));
+            String kw = params.get("kw");
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("title")), String.format("%%%s%%", kw.trim().toLowerCase())));
+            }
+
+            String userId = params.get("userId");
+            if (userId != null && !userId.isEmpty()) {
+                try {
+                    predicates.add(cb.equal(root.get("userId").get("id"), Long.parseLong(userId)));
+                } catch (NumberFormatException e) {
+                }
             }
         }
 
-        cq.select(root).where(predicate).orderBy(cb.desc(root.get("createdAt")));
-        return session.createQuery(cq).getResultList();
+        cq.where(predicates.toArray(Predicate[]::new));
+        cq.orderBy(cb.desc(root.get("createdAt")));
+
+        Query query = session.createQuery(cq);
+
+        if (params != null && params.containsKey("page")) {
+            try {
+                int page = Integer.parseInt(params.get("page"));
+                int start = (page - 1) * PAGE_SIZE;
+                query.setMaxResults(PAGE_SIZE);
+                query.setFirstResult(start);
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        return query.getResultList();
     }
 }

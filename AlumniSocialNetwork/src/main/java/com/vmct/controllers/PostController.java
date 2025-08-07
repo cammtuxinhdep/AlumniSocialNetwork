@@ -18,7 +18,7 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public String listPosts(Model model) {
+    public String listPosts(Model model,HttpSession session) {
         model.addAttribute("post", new Post());
         model.addAttribute("posts", postService.getAllPostSummaries());
         return "post";
@@ -35,7 +35,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public String editPostForm(@PathVariable("id") Long id, Model model) {
+    public String editPostForm(@PathVariable("id") Long id, Model model){
         Post existingPost = postService.getPostById(id);
         if (existingPost == null) {
             return "redirect:/post";

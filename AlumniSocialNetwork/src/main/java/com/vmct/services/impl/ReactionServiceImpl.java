@@ -1,6 +1,5 @@
 package com.vmct.services.impl;
 
-import com.vmct.dto.ReactionStatsDTO;
 import com.vmct.pojo.Reaction;
 import com.vmct.repositories.ReactionRepository;
 import com.vmct.services.ReactionService;
@@ -25,15 +24,31 @@ public class ReactionServiceImpl implements ReactionService {
         return reactionRepo.getReactionById(reactionId);
     }
 
-    @Override
-    public boolean save(Reaction reaction) {
-        if (reaction == null || reaction.getPostId() == null || reaction.getPostId().getId() == null || 
-            reaction.getUserId() == null || reaction.getUserId().getId() == null || 
-            reaction.getType() == null || reaction.getType().isEmpty()) {
-            return false;
+@Override
+public boolean saveOrUpdateReaction(Reaction reaction) {
+    if (reaction == null || reaction.getPostId() == null || reaction.getPostId().getId() == null ||
+        reaction.getUserId() == null || reaction.getUserId().getId() == null ||
+        reaction.getType() == null || reaction.getType().isEmpty()) {
+        return false;
+    }
+
+    Reaction existing = reactionRepo.getUserReaction(
+        reaction.getPostId().getId(),
+        reaction.getUserId().getId()
+    );
+
+    if (existing != null) {
+        if (existing.getType().equals(reaction.getType())) {
+            return reactionRepo.deleteReaction(existing.getId());
+        } else {
+            existing.setType(reaction.getType());
+            return reactionRepo.saveOrUpdate(existing);
         }
+    } else {
         return reactionRepo.saveOrUpdate(reaction);
     }
+}
+
 
     @Override
     public boolean delete(Long reactionId) {

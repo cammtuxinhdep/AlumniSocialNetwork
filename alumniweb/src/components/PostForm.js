@@ -1,33 +1,43 @@
 import { useState } from "react";
 import { Button, Form, Modal, Alert } from "react-bootstrap";
-import { authApis } from "../configs/Apis";
+import { authApis, endpoints } from "../configs/Apis";
 
 const PostForm = ({ onPostCreated }) => {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
   const [error, setError] = useState("");
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setContent("");
+    setError("");
+  };
+
   const handleShow = () => setShow(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("content", content);
-    if (image) formData.append("image", image);
+
+    if (!content.trim()) {
+      setError("Nội dung bài viết không được để trống!");
+      return;
+    }
 
     try {
-      const res = await authApis().post("/post", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const res = await authApis().post(endpoints.posts, {
+        content: content.trim()
       });
-      onPostCreated(res.data);
-      setContent("");
-      setImage(null);
-      setError("");
+
+      onPostCreated(res.data); // Bài viết mới từ backend
       handleClose();
     } catch (err) {
-      setError("Lỗi khi đăng bài. Vui lòng thử lại!");
+      const errorMsg = err.response?.data || "Lỗi khi đăng bài. Vui lòng thử lại!";
+      setError(errorMsg);
+
+      if (err.response?.status === 401) {
+        window.location.href = "/login";
+      }
+
       console.error("Lỗi đăng bài:", err);
     }
   };
@@ -52,13 +62,6 @@ const PostForm = ({ onPostCreated }) => {
                 placeholder="Bạn đang nghĩ gì?"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
               />
             </Form.Group>
             <Button variant="primary" type="submit">

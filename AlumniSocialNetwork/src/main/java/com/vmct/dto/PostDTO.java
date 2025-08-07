@@ -22,12 +22,15 @@ public class PostDTO {
     private Map<String, Integer> reactionStats;
     private String currentUserReaction;
     private int commentCount;
+    private boolean isOwner;
+
 
     public PostDTO(Post post,
             List<CommentDTO> comments,
             Map<String, Integer> reactionStats,
             String currentUserReaction,
-            int commentCount) {
+            int commentCount,
+            boolean isOwner) {
         this.id = post.getId();
         this.content = post.getContent();
         this.isCommentLocked = post.getIsCommentLocked();
@@ -42,6 +45,7 @@ public class PostDTO {
         this.reactionStats = reactionStats;
         this.currentUserReaction = currentUserReaction;
         this.commentCount = commentCount;
+     this.isOwner=isOwner;
     }
 
     public Long getId() {

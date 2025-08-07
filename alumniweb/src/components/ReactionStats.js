@@ -1,16 +1,24 @@
-const ReactionStats = ({ reactions, emojis }) => {
-  return (
-    <div className="reaction-stats">
-      {reactions.map(({ reactionType, count }) => (
-        count > 0 && (
-          <div key={reactionType} className="reaction-item">
-            <span>{emojis[reactionType]}</span>
-            <span className="count">{count}</span>
-          </div>
-        )
-      ))}
-    </div>
-  );
+import React from "react";
+import { Badge } from "react-bootstrap";
+
+const emojiMap = {
+    LIKE: "👍",
+    HAHA: "😂",
+    HEART: "❤️",
+};
+
+const ReactionStats = ({ stats }) => {
+    return (
+        <div className="d-flex gap-2 align-items-center">
+            {Object.entries(stats).map(([type, count]) => (
+                count > 0 && (
+                    <Badge key={type} pill bg="light" text="dark">
+                        {emojiMap[type]} {count}
+                    </Badge>
+                )
+            ))}
+        </div>
+    );
 };
 
 export default ReactionStats;

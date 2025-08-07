@@ -6,9 +6,15 @@ package com.vmct.controllers;
 
 import com.vmct.dto.CommentDTO;
 import com.vmct.pojo.Comment;
+import com.vmct.pojo.Post;
+import com.vmct.pojo.User;
 import com.vmct.services.CommentService;
+import com.vmct.services.PostService;
+import com.vmct.services.UserService;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,12 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Thanh Nhat
  */
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api/secure/comment")
 @CrossOrigin
 public class ApiCommentController {
 
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentDTO>> getCommentsForPost(@PathVariable("postId") Long postId) {
@@ -52,39 +62,71 @@ public class ApiCommentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createComment(@RequestBody Comment comment) {
-        boolean saved = commentService.save(comment);
-        if (saved) {
-            return ResponseEntity.ok(new CommentDTO(comment));
+    public ResponseEntity<?> createComment(@RequestBody Comment comment, Principal principal) {
+        User currentUser = userService.getUserByUsername(principal.getName());
+
+        Post post = postService.getPostById(comment.getPostId().getId());
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bài viết không tồn tại");
         }
-        return ResponseEntity.badRequest().body("Failed to create comment");
+
+        if (Boolean.TRUE.equals(post.getIsCommentLocked())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bài viết đã bị khoá bình luận");
+        }
+
+        comment.setPostId(post);
+        comment.setUserId(currentUser);
+
+        boolean saved = commentService.save(comment);
+        return saved ? ResponseEntity.ok(new CommentDTO(comment))
+                : ResponseEntity.badRequest().body("Failed to create comment");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
+    public ResponseEntity<?> updateComment(@PathVariable("id") Long id,
+            @RequestBody Comment comment,
+            Principal principal) {
+        User currentUser = userService.getUserByUsername(principal.getName());
         Comment existing = commentService.findById(id);
+
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
-        comment.setId(id);
-        boolean updated = commentService.save(comment);
-        if (updated) {
-            return ResponseEntity.ok(new CommentDTO(comment));
+
+        if (!existing.getUserId().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Bạn không có quyền sửa bình luận này");
         }
-        return ResponseEntity.badRequest().body("Failed to update comment");
+
+        comment.setId(id);
+        comment.setUserId(currentUser);
+        comment.setPostId(existing.getPostId());
+
+        boolean updated = commentService.save(comment);
+        return updated
+                ? ResponseEntity.ok(new CommentDTO(comment))
+                : ResponseEntity.badRequest().body("Failed to update comment");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id, Principal principal) {
+        User currentUser = userService.getUserByUsername(principal.getName());
         Comment existing = commentService.findById(id);
+
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
 
-        boolean deleted = commentService.delete(id);
-        if (deleted) {
-            return ResponseEntity.ok().build();
+        boolean isOwner = existing.getUserId().getId().equals(currentUser.getId());
+        boolean isPostOwner = existing.getPostId().getUserId().getId().equals(currentUser.getId());
+
+        if (!isOwner && !isPostOwner) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền xoá bình luận này");
         }
-        return ResponseEntity.status(403).body("Not authorized to delete this comment");
+
+        boolean deleted = commentService.delete(id);
+        return deleted ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xoá thất bại");
     }
+
 }

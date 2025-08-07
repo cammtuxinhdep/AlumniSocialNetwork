@@ -71,9 +71,4 @@ public class ApiUserController {
     public ResponseEntity<UserDTO> getProfile(Principal principal) throws Exception {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsernameDTO(principal.getName()), HttpStatus.OK);
     }
-    
-    @GetMapping("/secure/posts")
-    public ResponseEntity<List<Post>> getUserPosts(Long id) throws Exception {
-        return new ResponseEntity<>(this.postService.getUserPosts(id), HttpStatus.OK);
-    }
 }
