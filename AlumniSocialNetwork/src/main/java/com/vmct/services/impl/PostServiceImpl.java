@@ -86,7 +86,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostSummaryDTO> getAllPostSummaries() {
         try {
-            Map<String, String> params = new HashMap<>(); // có thể truyền thêm "kw", "userId", "page", v.v.
+            Map<String, String> params = new HashMap<>(); 
             List<Post> posts = postRepo.getAllPosts(params);
 
             return posts.stream()
@@ -111,13 +111,15 @@ public PostDTO getPostDTOById(Long id, User currentUser) {
 
     Reaction reaction = reactionService.getUserReaction(post.getId(), currentUser.getId());
     String userReactionType = (reaction != null) ? reaction.getType() : null;
-
+      boolean isOwner = post.getUserId().getId().equals(currentUser.getId());
+      
     return new PostDTO(
             post,
-            commentService.getRootCommentsWithFirstLevelReplies(post.getId()), // ✅ CHỈ LẤY GỐC + 1 CẤP
+            commentService.getRootCommentsWithFirstLevelReplies(post.getId()), 
             reactionService.getReactionStats(post.getId()),
             userReactionType,
-            commentService.countByPostId(post.getId())
+            commentService.countByPostId(post.getId()),
+            isOwner
     );
 }
 }

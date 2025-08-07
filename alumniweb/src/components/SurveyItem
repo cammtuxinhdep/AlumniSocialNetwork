@@ -1,0 +1,171 @@
+import { useState, useEffect, useContext } from "react";
+import { Button, Card, Form, Image, Spinner } from "react-bootstrap";
+import { authApis, endpoints } from "../configs/Apis";
+import { MyUserContext } from "../configs/Context";
+import { formatTimeVi } from "../formatters/TimeFormatter";
+import { useNavigate } from "react-router-dom";
+
+const SurveyItem = ({ survey, onVote }) => {
+  const [userState] = useContext(MyUserContext);
+  const currentUser = userState?.currentUser;
+  const navigate = useNavigate();
+
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [hasVoted, setHasVoted] = useState(false);
+  const [error, setError] = useState("");
+
+  const loadStats = async () => {
+    try {
+      setLoading(true);
+      const res = await authApis().get(endpoints.surveyStats(survey.id));
+      setStats(res.data);
+    } catch (err) {
+      console.error("Lỗi tải thống kê:", err);
+      setError("Không thể tải thống kê!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVote = async () => {
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+
+    if (!selectedOption) {
+      setError("Vui lòng chọn một tùy chọn!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await authApis().post(endpoints.surveyVote(survey.id), {
+        optionId: selectedOption,
+      });
+      setHasVoted(true);
+      setError("");
+      onVote();
+      loadStats();
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setError("Bạn đã vote cho khảo sát này!");
+        setHasVoted(true);
+      } else {
+        setError(err.response?.data?.message || "Lỗi khi gửi vote!");
+        console.error("Lỗi khi gửi vote:", err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateChartData = () => {
+    if (!stats) return null;
+    return {
+      type: "bar",
+      data: {
+        labels: Object.keys(stats).filter((key) => key !== "total"),
+        datasets: [
+          {
+            label: "Số lượt vote",
+            data: Object.entries(stats)
+              .filter(([key]) => key !== "total")
+              .map(([, count]) => count),
+            backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56", "#4BC0C0"],
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Số lượt vote" },
+          },
+        },
+      },
+    };
+  };
+
+  useEffect(() => {
+    loadStats();
+  }, [survey.id]);
+
+  if (!survey?.id) return null;
+
+  return (
+    <Card className="mb-4 shadow-sm">
+      <Card.Body>
+        <div className="d-flex align-items-center mb-3">
+          <Image
+            src={survey.user?.avatar || "/default-avatar.png"}
+            roundedCircle
+            width={40}
+            height={40}
+            className="me-2"
+          />
+          <div>
+            <Card.Title className="mb-0">{survey.user?.fullName || "Người dùng"}</Card.Title>
+            <small className="text-muted">{formatTimeVi(survey.createdAt)}</small>
+          </div>
+        </div>
+
+        <Card.Text className="fs-5">{survey.title}</Card.Text>
+
+        {loading ? (
+          <div className="text-center">
+            <Spinner animation="border" />
+          </div>
+        ) : !hasVoted ? (
+          <Form>
+            {survey.surveyOptionSet.map((option) => (
+              <Form.Check
+                key={option.id}
+                type="radio"
+                label={option.optionText}
+                name={`survey-${survey.id}`}
+                value={option.id}
+                onChange={(e) => setSelectedOption(Number(e.target.value))}
+                disabled={loading}
+                className="mb-2"
+              />
+            ))}
+            <Button
+              variant="primary"
+              onClick={handleVote}
+              disabled={loading || !selectedOption}
+              className="mt-2"
+            >
+              Gửi
+            </Button>
+          </Form>
+        ) : (
+          <div>
+            <h6>Kết quả khảo sát:</h6>
+            {stats && (
+              <div>
+                {Object.entries(stats).map(([optionText, count]) => (
+                  optionText !== "total" && (
+                    <div key={optionText} className="mb-1">
+                      {optionText}: {count} ({((count / stats.total) * 100 || 0).toFixed(2)}%)
+                    </div>
+                  )
+                ))}
+                {generateChartData() && (
+                  ```chartjs
+                  {generateChartData()}
+                  ```
+                )}
+                <p className="mt-2">Tổng số lượt vote: {stats.total}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </Card.Body>
+    </Card>
+  );
+};
+
+export default SurveyItem;

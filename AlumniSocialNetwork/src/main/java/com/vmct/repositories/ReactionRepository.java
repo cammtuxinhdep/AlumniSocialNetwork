@@ -11,6 +11,6 @@ public interface ReactionRepository {
     int countByPostIdAndType(Long postId, String type);
     boolean deleteReaction(Long id);
     boolean saveOrUpdate(Reaction reaction);
-    Map<String, Integer> getReactionStats(Long postId); // dùng Map thay vì DTO nếu bạn xử lý đơn giản
+    Map<String, Integer> getReactionStats(Long postId);
     Reaction getUserReaction(Long postId, Long userId);
 }

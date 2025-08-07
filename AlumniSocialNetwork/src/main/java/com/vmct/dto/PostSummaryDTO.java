@@ -96,4 +96,6 @@ public class PostSummaryDTO {
     public void setReactionStats(Map<String, Integer> reactionStats) {
         this.reactionStats = reactionStats;
     }
+
+
 }

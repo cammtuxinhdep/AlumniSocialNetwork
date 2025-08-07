@@ -1,42 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.vmct.controllers;
 
-/**
- *
- * @author Thanh Nhat
- */
 import com.vmct.dto.PostDTO;
 import com.vmct.dto.PostSummaryDTO;
 import com.vmct.pojo.Post;
 import com.vmct.pojo.User;
 import com.vmct.services.PostService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.vmct.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/post")
+@RequestMapping("/api/secure/post")
 @CrossOrigin
 public class ApiPostController {
 
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping
-    public ResponseEntity<List<PostSummaryDTO>> listPosts() {
+    public ResponseEntity<List<PostSummaryDTO>> listPosts(Principal principal) {
+        User currentUser = userService.getUserByUsername(principal.getName());
         List<PostSummaryDTO> posts = postService.getAllPostSummaries();
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId, HttpServletRequest request) {
-        User currentUser = (User) request.getAttribute("currentUser");
+    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId, Principal principal) {
+        User currentUser = userService.getUserByUsername(principal.getName());
         PostDTO postDTO = postService.getPostDTOById(postId, currentUser);
         if (postDTO == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -45,8 +42,8 @@ public class ApiPostController {
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post, HttpServletRequest request) {
-        User currentUser = (User) request.getAttribute("currentUser");
+    public ResponseEntity<Post> createPost(@RequestBody Post post, Principal principal) {
+        User currentUser = userService.getUserByUsername(principal.getName());
         Post created = postService.createPost(post, currentUser);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
@@ -65,7 +62,18 @@ public class ApiPostController {
     }
 
     @PostMapping("/{postId}/lock-comments")
-    public ResponseEntity<Void> lockComments(@PathVariable Long postId, @RequestParam boolean lock) {
+    public ResponseEntity<Void> lockComments(
+        @PathVariable("postId") Long postId,
+        @RequestParam("lock") boolean lock,
+        Principal principal
+    ) {
+        User currentUser = userService.getUserByUsername(principal.getName());
+        Post post = postService.getPostById(postId);
+
+        if (post == null || !post.getUserId().getId().equals(currentUser.getId())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         postService.lockComments(postId, lock);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

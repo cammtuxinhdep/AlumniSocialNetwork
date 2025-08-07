@@ -4,6 +4,7 @@
  */
 package com.vmct.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -103,24 +104,30 @@ public class User implements Serializable {
     @NotNull
     @Column(name = "is_checked")
     private boolean isChecked;
-    
+
     @Transient // Đánh dấu đây là trường xử lí không liên kết vào DB
     private MultipartFile avatarFile;
-    
+
     @Transient
     private MultipartFile coverFile;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<SurveyResponse> surveyResponseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<Reaction> reactionSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<Post> postSet;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<NotificationRecipient> notificationRecipientSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<Comment> commentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<GroupMember> groupMemberSet;
 
     public User() {
@@ -351,5 +358,5 @@ public class User implements Serializable {
     public void setCoverFile(MultipartFile coverFile) {
         this.coverFile = coverFile;
     }
-    
+
 }

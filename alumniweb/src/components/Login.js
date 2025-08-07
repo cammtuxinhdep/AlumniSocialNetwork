@@ -40,8 +40,8 @@ const Login = () => {
             let u = await authApis().get(endpoints['profile']);
             console.info(u.data);
 
-            // Lưu thêm user để giữ phiên đăng nhập
-            cookie.save('user', JSON.stringify(u));
+            cookie.save('user', u.data);
+
 
             dispatch({
                 "type": "login",

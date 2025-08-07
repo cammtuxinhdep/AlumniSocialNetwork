@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface ReactionService {
     Reaction findById(Long reactionId);
-    boolean save(Reaction reaction);
+  boolean saveOrUpdateReaction(Reaction reaction);
     boolean delete(Long reactionId);
     List<Reaction> findByPostId(Long postId);
     int countByPostId(Long postId);
