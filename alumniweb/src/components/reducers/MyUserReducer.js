@@ -4,13 +4,11 @@ const MyUserReducer = (current, action) => {
     // current là đối tượng user
     switch (action.type) {
         case 'login':
-            cookie.save('token', action.payload.token);
-            cookie.save('user', action.payload.user);
             return action.payload.user;
 
         case 'logout':
-            cookie.remove('token');
             cookie.remove('user');
+            cookie.remove('token');
             return null;
 
         default:

@@ -4,9 +4,12 @@
  */
 package com.vmct.controllers;
 
+import com.vmct.dto.PostDTO;
 import com.vmct.dto.UserDTO;
 import com.vmct.filters.JwtFilter;
+import com.vmct.pojo.Post;
 import com.vmct.pojo.User;
+import com.vmct.services.PostService;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import com.vmct.services.UserService;
 import com.vmct.utils.JwtUtils;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +41,9 @@ public class ApiUserController {
 
     @Autowired
     private UserService userDetailsService;
+    
+    @Autowired
+    private PostService postService;
 
     @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> create(@RequestParam Map<String, String> info, @RequestParam(value = "avatar") MultipartFile avatar) {
@@ -63,5 +70,10 @@ public class ApiUserController {
     @CrossOrigin
     public ResponseEntity<UserDTO> getProfile(Principal principal) throws Exception {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsernameDTO(principal.getName()), HttpStatus.OK);
+    }
+    
+    @GetMapping("/secure/posts")
+    public ResponseEntity<List<Post>> getUserPosts(Long id) throws Exception {
+        return new ResponseEntity<>(this.postService.getUserPosts(id), HttpStatus.OK);
     }
 }

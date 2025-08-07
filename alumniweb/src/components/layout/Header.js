@@ -21,7 +21,7 @@ const Header = () => {
                                     <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
                                     <NavDropdown.Item href="/changePassword">Đổi mật khẩu</NavDropdown.Item>
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item href="/login" onclick={() => dispatch({"type": "logout"})}>Đăng xuất</NavDropdown.Item>
+                                    <NavDropdown.Item href="/login" onClick={() => dispatch({"type": "logout"})}>Đăng xuất</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
                         </Navbar.Collapse>

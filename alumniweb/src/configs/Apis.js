@@ -18,7 +18,8 @@ export const endpoints = {
 
     login: 'login',
     register: 'register',
-    profile: 'secure/profile'
+    profile: 'secure/profile',
+    userPosts: 'secure/posts'
 };
 
 export const authApis = () => axios.create({
