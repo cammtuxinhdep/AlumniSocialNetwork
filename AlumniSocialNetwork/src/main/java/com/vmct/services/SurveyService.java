@@ -1,6 +1,7 @@
 package com.vmct.services;
 
 import com.vmct.pojo.Survey;
+import com.vmct.pojo.User;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,5 @@ public interface SurveyService {
     boolean deleteOption(Long surveyId, Long optionId);
     Map<String, Integer> calculateResponseStats(Survey survey);
     int calculateResponseCount(Survey survey);
-     boolean addResponse(Long surveyId, Long optionId);
-//    boolean addResponse(Long surveyId, Long userId, Long optionId);
+     boolean addResponse(Long surveyId, Long optionId,User user);
 }

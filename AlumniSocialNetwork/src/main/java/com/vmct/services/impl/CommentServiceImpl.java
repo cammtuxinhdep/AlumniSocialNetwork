@@ -56,7 +56,6 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDTO> getRootCommentsWithFirstLevelReplies(Long postId) {
         List<Comment> allComments = commentRepository.findByPostId(postId);
 
-        // Tách root và các replies
         Map<Long, List<Comment>> repliesByParentId = new HashMap<>();
         List<Comment> rootComments = new ArrayList<>();
 
@@ -69,7 +68,6 @@ public class CommentServiceImpl implements CommentService {
             }
         }
 
-        // Duyệt root comment và gắn replies cấp 1
         return rootComments.stream()
                 .map(root -> {
                     CommentDTO rootDTO = new CommentDTO(root);
