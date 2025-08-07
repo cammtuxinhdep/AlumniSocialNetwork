@@ -76,6 +76,10 @@ public class UserRepositoryImpl implements UserRepository {
         if (u == null) {
             return false;
         }
+        Date now = new Date();
+        if ("ROLE_LECTURER".equals(u.getUserRole()) && !u.getIsChecked() && now.after(u.getPasswordChangeDeadline()) && !u.getIsLocked()) {
+            u.setIsLocked(Boolean.TRUE);
+        }
 
         return this.passwordEncoder.matches(password, u.getPassword());
     }
@@ -153,10 +157,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAllUsers() {
-       Session s =this.factory.getObject().getCurrentSession();
-       Query q=s.createNamedQuery("User.findAll",User.class);
-       return q.getResultList();
-}
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("User.findAll", User.class);
+        return q.getResultList();
+    }
 
     public void setLockedAlumni(int id) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -209,7 +213,6 @@ public class UserRepositoryImpl implements UserRepository {
 //        Query<User> query = session.createQuery(cq);
 //        return query.getResultList();
 //    }
-
     @Override
     public void setLockedLecturer(int id) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -233,26 +236,5 @@ public class UserRepositoryImpl implements UserRepository {
         u.setIsLocked(!u.getIsLocked());
 
         s.merge(u);
-    }
-
-    @Override
-    public List<User> getUncheckedLecturers() {
-        Session s = this.factory.getObject().getCurrentSession();
-
-        CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root root = query.from(User.class);
-
-        List<Predicate> predicates = new ArrayList<>();
-
-        predicates.add(builder.equal(root.get("userRole"), "ROLE_LECTURER"));
-        predicates.add(builder.equal(root.get("isChecked"), false));
-        predicates.add(builder.equal(root.get("isLocked"), false));
-
-        query.where(predicates.toArray(Predicate[]::new));
-
-        Query q = s.createQuery(query);
-        
-        return q.getResultList();
     }
 }

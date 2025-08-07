@@ -11,7 +11,9 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/secure/post")
@@ -25,15 +27,31 @@ public class ApiPostController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<PostSummaryDTO>> listPosts(Principal principal) {
+    public ResponseEntity<List<PostSummaryDTO>> listPosts(
+            @RequestParam(name = "userId", required = false) Long userId,
+            @RequestParam(name = "page", required = false) Integer page,
+            Principal principal) {
         User currentUser = userService.getUserByUsername(principal.getName());
-        List<PostSummaryDTO> posts = postService.getAllPostSummaries();
+        if (currentUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Map<String, String> params = new HashMap<>();
+        if (userId != null) {
+            params.put("userId", userId.toString());
+        }
+        if (page != null) {
+            params.put("page", page.toString());
+        }
+        List<PostSummaryDTO> posts = postService.getAllPostSummaries(params);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostDTO> getPost(@PathVariable Long postId, Principal principal) {
         User currentUser = userService.getUserByUsername(principal.getName());
+        if (currentUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         PostDTO postDTO = postService.getPostDTOById(postId, currentUser);
         if (postDTO == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -44,7 +62,13 @@ public class ApiPostController {
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody Post post, Principal principal) {
         User currentUser = userService.getUserByUsername(principal.getName());
+        if (currentUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Post created = postService.createPost(post, currentUser);
+        if (created == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
@@ -63,17 +87,17 @@ public class ApiPostController {
 
     @PostMapping("/{postId}/lock-comments")
     public ResponseEntity<Void> lockComments(
-        @PathVariable("postId") Long postId,
-        @RequestParam("lock") boolean lock,
-        Principal principal
-    ) {
+            @PathVariable("postId") Long postId,
+            @RequestParam(name = "lock") boolean lock,
+            Principal principal) {
         User currentUser = userService.getUserByUsername(principal.getName());
+        if (currentUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Post post = postService.getPostById(postId);
-
         if (post == null || !post.getUserId().getId().equals(currentUser.getId())) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
         postService.lockComments(postId, lock);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

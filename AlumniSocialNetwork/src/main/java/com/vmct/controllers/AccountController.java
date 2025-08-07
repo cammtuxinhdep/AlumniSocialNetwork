@@ -74,7 +74,7 @@ public class AccountController {
     public String setLocked(@PathVariable(value = "id") int id,
             @RequestParam Map<String, String> params) {
         String role = params.get("role");
-        if (role == "ROLE_ALUMNI") {
+        if ("ROLE_ALUMNI".equals(role)) {
             this.userService.setLockedAlumni(id);
         } else {
             this.userService.setLockedLecturer(id);

@@ -7,10 +7,12 @@ import com.vmct.pojo.Post;
 import com.vmct.pojo.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PostService {
 
     List<PostSummaryDTO> getAllPostSummaries();
+    List<PostSummaryDTO> getAllPostSummaries(Map<String, String> params);
 
     Post createPost(Post post, User creator);
 
@@ -23,5 +25,4 @@ public interface PostService {
     void deletePost(Long id);
 
     void lockComments(Long postId, boolean locked);
-    List<PostSummaryDTO> getUserPosts(Long id);
 }

@@ -13,6 +13,7 @@ import MyUserReducer from "./components/reducers/MyUserReducer";
 import cookie from 'react-cookies';
 import Profile from "./components/Profile";
 import PostList from "./components/PostList";
+import UsernameProfile from "./components/UsernameProfile";
 
 const App = () => {
   const [user, dispatch] = useReducer(MyUserReducer, cookie.load('user') || null);
@@ -21,7 +22,7 @@ const App = () => {
     <MyUserContext.Provider value={[user, dispatch]}>
       <BrowserRouter>
         <Header />
-        
+
         <main>
           <Container className="form-container">
             <Routes>
@@ -30,6 +31,7 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:username" element={<UsernameProfile />} />
             </Routes>
           </Container>
         </main>

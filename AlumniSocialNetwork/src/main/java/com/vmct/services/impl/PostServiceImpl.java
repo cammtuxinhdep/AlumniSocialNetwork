@@ -105,6 +105,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostSummaryDTO> getAllPostSummaries(Map<String, String> params) {
+        try {
+            List<Post> posts = postRepo.getAllPosts(params);
+            return posts.stream()
+                    .map(post -> new PostSummaryDTO(
+                    post,
+                    commentService.countByPostId(post.getId()),
+                    reactionService.getReactionStats(post.getId())
+            ))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+    @Override
     public PostDTO getPostDTOById(Long id, User currentUser) {
         Post post = postRepo.getPostById(id);
         if (post == null) {
@@ -123,17 +140,5 @@ public class PostServiceImpl implements PostService {
                 commentService.countByPostId(post.getId()),
                 isOwner
         );
-    }
-
-    @Override
-    public List<PostSummaryDTO> getUserPosts(Long id) {
-        List<Post> userPosts = this.postRepo.getPostByUserId(id);
-        return userPosts.stream()
-                .map(post -> new PostSummaryDTO(
-                post,
-                commentService.countByPostId(post.getId()),
-                reactionService.getReactionStats(post.getId())
-        ))
-                .collect(Collectors.toList());
     }
 }

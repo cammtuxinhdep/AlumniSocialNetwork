@@ -187,20 +187,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changePassword(String username, String password) {
+    public void changePassword(String username, String oldPassword, String newPassword) {
         User u = this.userRepo.getUserByUsername(username);
-        u.setPassword(this.passwordEncoder.encode(password));
 
-        if (u.getUserRole() == "ROLE_LECTURER" && !u.getIsChecked()) {
+        if (!this.passwordEncoder.matches(oldPassword, u.getPassword())) {
+            throw new RuntimeException("Mật khẩu cũ bạn nhập không đúng!");
+        }
+
+        u.setPassword(this.passwordEncoder.encode(newPassword));
+
+        if ("ROLE_LECTURER".equals(u.getUserRole()) && !u.getIsChecked()) {
             u.setIsChecked(true);
             u.setPasswordChangeDeadline(null);
         }
 
-        return this.userRepo.updateUser(u);
+        this.userRepo.updateUser(u);
     }
 
     @Override
     public void setLockedLecturer(int id) {
         this.userRepo.setLockedLecturer(id);
+    }
+
+    @Override
+    public void updateAvatar(String username, MultipartFile avatar) {
+        User u = this.userRepo.getUserByUsername(username);
+        try {
+            Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+            u.setAvatar(res.get("secure_url").toString());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        this.userRepo.updateUser(u);
+    }
+
+    @Override
+    public void updateCover(String username, MultipartFile cover) {
+        User u = this.userRepo.getUserByUsername(username);
+        try {
+            Map res = cloudinary.uploader().upload(cover.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+            u.setCover(res.get("secure_url").toString());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        this.userRepo.updateUser(u);
     }
 }

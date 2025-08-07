@@ -26,5 +26,4 @@ public interface UserRepository {
     User getUserById(int id);
     //List<User> getAllUsers();
     void setLockedLecturer(int id);
-    List<User> getUncheckedLecturers();
 }

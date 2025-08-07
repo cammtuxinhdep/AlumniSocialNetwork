@@ -5,6 +5,7 @@ import { formatTimeVi } from "../formatters/TimeFormatter";
 import { MyUserContext } from "../configs/Context";
 import CommentList from "./CommentList";
 import ReactionStats from "./ReactionStats";
+import { Link } from "react-router-dom";
 
 const PostItem = ({ post: initialPost }) => {
     const [user] = useContext(MyUserContext);
@@ -17,23 +18,23 @@ const PostItem = ({ post: initialPost }) => {
         try {
             const res = await authApis().get(endpoints.reactionStats(post.id));
             setReactions(res.data);
-        } catch {}
+        } catch { }
     };
 
     const loadUserReaction = async () => {
         try {
             const res = await authApis().get(endpoints.userReaction(post.id));
             setUserReaction(res.data?.type);
-        } catch {}
+        } catch { }
     };
 
     const toggleLockComment = async () => {
-    try {
-        const newLockState = !post.isCommentLocked;
-        await authApis().post(endpoints.lockComment(post.id, newLockState));
-        setPost({ ...post, isCommentLocked: newLockState });
-    } catch {}
-};
+        try {
+            const newLockState = !post.isCommentLocked;
+            await authApis().post(endpoints.lockComment(post.id, newLockState));
+            setPost({ ...post, isCommentLocked: newLockState });
+        } catch { }
+    };
 
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const PostItem = ({ post: initialPost }) => {
             });
             await loadReactions();
             await loadUserReaction();
-        } catch {}
+        } catch { }
     };
 
     const isOwner = user && post?.user?.id === user.id;
@@ -73,7 +74,11 @@ const PostItem = ({ post: initialPost }) => {
                         <Image src={post.user.avatar} roundedCircle width={40} height={40} />
                     </Col>
                     <Col>
-                        <strong>{post.user.lastName} {post.user.firstName}</strong><br />
+                        <strong>
+                            <Link to={`/profile/${post.user.username}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                {post.user.lastName} {post.user.firstName}
+                            </Link>
+                        </strong><br />
                         <small className="text-muted">{formatTimeVi(post.createdAt)}</small>
                     </Col>
                 </Row>
@@ -92,32 +97,32 @@ const PostItem = ({ post: initialPost }) => {
                     </OverlayTrigger>
 
                     <Button
-                    variant="light"
-                    onClick={() => setShowComment(!showComment)}
-                    disabled={post.isCommentLocked}
-                    title={post.isCommentLocked ? "Bình luận đã bị khóa" : "Bình luận"}
-                >
-                    Bình luận {post.isCommentLocked && "🔒"}
-                </Button>
-
-                {isOwner && (
-                    <Button
-                        variant={post.isCommentLocked ? "danger" : "outline-secondary"}
-                        onClick={toggleLockComment}
-                        title={post.isCommentLocked ? "Mở khóa bình luận" : "Khóa bình luận"}
+                        variant="light"
+                        onClick={() => setShowComment(!showComment)}
+                        disabled={post.isCommentLocked}
+                        title={post.isCommentLocked ? "Bình luận đã bị khóa" : "Bình luận"}
                     >
-                        {post.isCommentLocked ? "🔓 Mở khóa bình luận" : "🔒 Khóa bình luận"}
+                        Bình luận {post.isCommentLocked && "🔒"}
                     </Button>
-)}
+
+                    {isOwner && (
+                        <Button
+                            variant={post.isCommentLocked ? "danger" : "outline-secondary"}
+                            onClick={toggleLockComment}
+                            title={post.isCommentLocked ? "Mở khóa bình luận" : "Khóa bình luận"}
+                        >
+                            {post.isCommentLocked ? "🔓 Mở khóa bình luận" : "🔒 Khóa bình luận"}
+                        </Button>
+                    )}
 
                 </div>
 
                 {showComment && (
-                            post.isCommentLocked ? (
-                                <p className="text-danger mt-2">🚫 Chủ bài viết đã khóa bình luận.</p>
-                            ) : (
-                                <CommentList postId={post.id} isLocked={false} isOwner={isOwner} />
-                            )
+                    post.isCommentLocked ? (
+                        <p className="text-danger mt-2">🚫 Chủ bài viết đã khóa bình luận.</p>
+                    ) : (
+                        <CommentList postId={post.id} isLocked={false} isOwner={isOwner} />
+                    )
                 )}
 
             </Card.Body>
