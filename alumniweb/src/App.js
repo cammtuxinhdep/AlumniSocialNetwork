@@ -13,6 +13,7 @@ import MyUserReducer from "./components/reducers/MyUserReducer";
 import cookie from 'react-cookies';
 import Profile from "./components/Profile";
 import PostList from "./components/PostList";
+import PostDetail from "./components/PostDetail";
 import UsernameProfile from "./components/UsernameProfile";
 import SurveyList from "./components/SurveyList";
 import SurveyDetail from "./components/SurveyDetail";
@@ -36,6 +37,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/posts" element={<PostList />} />
+              <Route path="/posts/:id" element={<PostDetail />} />
               <Route path="/surveys" element={<SurveyList />} />
               <Route path="/surveys/:id" element={<SurveyDetail />} />
               <Route path="/register" element={<Register />} />

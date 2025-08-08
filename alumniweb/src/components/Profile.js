@@ -3,7 +3,7 @@ import { Button, Card } from "react-bootstrap";
 import cookie from 'react-cookies';
 import { authApis, endpoints } from "../configs/Apis";
 import MySpinner from "./layout/MySpinner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { formatTimeVi } from "../formatters/TimeFormatter";
 
 const Profile = () => {
@@ -11,13 +11,14 @@ const Profile = () => {
     const [loading, setLoading] = useState(false);
     const user = cookie.load('user');
     const nav = useNavigate();
+    const [posts, setPosts] = useState([]);
+
 
     const avatar = useRef();
     const cover = useRef();
 
     const changeAvatar = async (event) => {
         event.preventDefault();
-
         if (avatar.current.files.length > 0) {
             try {
                 setLoading(true);
@@ -37,8 +38,7 @@ const Profile = () => {
             } finally {
                 setLoading(false);
             }
-        } else
-            return;
+        }
     };
 
     const changeCover = async (event) => {
@@ -57,26 +57,19 @@ const Profile = () => {
                     cookie.save('user', JSON.stringify(res.data));
                     nav("/profile");
                 }
-                nav("/profile");
             } catch (err) {
                 console.error(err);
                 alert("Lỗi khi cập nhật ảnh bìa!");
             } finally {
                 setLoading(false);
             }
-        } else
-            return;
+        }
     };
 
-
-    const [posts, setPosts] = useState(null);
-
     const loadPosts = async () => {
-        let url = `${endpoints['posts']}?userId=${user.id}`;
         try {
             setLoading(true);
-            let res = await authApis().get(url);
-            console.info(res.data);
+            let res = await authApis().get(`${endpoints['posts']}?userId=${user.id}`);
             setPosts(res.data);
         } catch (ex) {
             console.error(ex);
@@ -90,17 +83,10 @@ const Profile = () => {
     }, [user.id]);
 
     return (
-        <div style={{
-            backgroundColor: "#f0f4fb", color: "#0a1c3f", fontFamily: "Arial, sans-serif", minHeight: "100vh",
-            border: "1px solid #d0d7e2", borderRadius: "12px", overflow: "hidden"
-        }}>
-
+        <div style={{ backgroundColor: "#f0f4fb", color: "#0a1c3f", fontFamily: "Arial, sans-serif", minHeight: "100vh", border: "1px solid #d0d7e2", borderRadius: "12px", overflow: "hidden" }}>
             <div style={{ height: "300px", position: "relative", backgroundColor: user.cover ? "transparent" : "#cfe2f3" }}>
                 {user.cover && <img src={user.cover} alt="Ảnh bìa" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
-                <label style={{
-                    position: "absolute", bottom: "20px", right: "20px", fontWeight: "bold", backgroundColor: "lightblue", padding: "6px 12px",
-                    borderRadius: "8px", cursor: "pointer", border: "1px solid #000000"
-                }}>
+                <label style={{ position: "absolute", bottom: "20px", right: "20px", fontWeight: "bold", backgroundColor: "lightblue", padding: "6px 12px", borderRadius: "8px", cursor: "pointer", border: "1px solid #000000" }}>
                     📷 {user.cover ? "Thay đổi ảnh bìa" : "Thêm ảnh bìa"}
                     <input type="file" accept="image/*" ref={cover} style={{ display: "none" }} onChange={changeCover} />
                 </label>
@@ -108,13 +94,8 @@ const Profile = () => {
 
             <div style={{ display: "flex", alignItems: "center", padding: "0 20px", marginTop: "-60px" }}>
                 <div style={{ position: "relative", width: "10rem", height: "10rem" }}>
-                    <img src={user.avatar || defaultAvatar} alt="Avatar"
-                        style={{ width: "100%", height: "100%", borderRadius: "50%", border: "5px solid white", objectFit: "cover" }} />
-
-                    <label style={{
-                        position: "absolute", bottom: "5px", right: "5px", backgroundColor: "lightblue", borderRadius: "50%", padding: "6px",
-                        border: "1px solid white", cursor: "pointer"
-                    }}>
+                    <img src={user.avatar || defaultAvatar} alt="Avatar" style={{ width: "100%", height: "100%", borderRadius: "50%", border: "5px solid white", objectFit: "cover" }} />
+                    <label style={{ position: "absolute", bottom: "5px", right: "5px", backgroundColor: "lightblue", borderRadius: "50%", padding: "6px", border: "1px solid white", cursor: "pointer" }}>
                         📷
                         <input type="file" accept="image/*" ref={avatar} style={{ display: "none" }} onChange={changeAvatar} />
                     </label>
@@ -122,8 +103,7 @@ const Profile = () => {
 
                 <div style={{ marginLeft: "20px" }}>
                     <h2 style={{ marginTop: "70px", fontSize: "24px", color: "#000000" }}>{user.lastName} {user.firstName}</h2>
-                    <p style={{ color: "#000000" }}>{user.userRole === 'ROLE_ALUMNI' ? 'Cựu sinh viên' :
-                        user.userRole === 'ROLE_LECTURER' ? 'Giảng viên' : user.userRole}</p>
+                    <p style={{ color: "#000000" }}>{user.userRole === 'ROLE_ALUMNI' ? 'Cựu sinh viên' : user.userRole === 'ROLE_LECTURER' ? 'Giảng viên' : user.userRole}</p>
                 </div>
             </div>
 
@@ -139,7 +119,7 @@ const Profile = () => {
 
                 {loading ? <MySpinner /> : (
                     <div style={{ flex: "2", display: "flex", flexDirection: "column", gap: "20px" }}>
-                        {posts && posts.length > 0 ? posts.map(post => (
+                        {posts.length > 0 ? posts.map(post => (
                             <Card key={post.id} style={{ backgroundColor: "#ffffff", border: "1px solid #d0d7e2", borderRadius: "12px" }}>
                                 <Card.Body>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -147,7 +127,7 @@ const Profile = () => {
                                             🕒 {formatTimeVi(post.createdAt)}
                                         </div>
                                         <div style={{ display: "flex", gap: "8px" }}>
-                                            <Button variant="outline-dark" size="sm">Xem chi tiết</Button>
+                                            <Link to={`/posts/${post.id}`} className="btn btn-outline-primary btn-sm">Xem chi tiết</Link>
                                         </div>
                                     </div>
 
@@ -157,9 +137,7 @@ const Profile = () => {
                                         <span>👍 {post.reactionStats?.LIKE || 0}</span>
                                         <span>😂 {post.reactionStats?.HAHA || 0}</span>
                                         <span>❤️ {post.reactionStats?.HEART || 0}</span>
-                                        <span>💬 {post.commentCount || 0} bình luận{" - "}
-                                            {post.isCommentLocked ? "Bài viết bị khóa bình luận" : "Bình luận mở"}
-                                        </span>
+                                        <span>💬 {post.commentCount || 0} bình luận - {post.isCommentLocked ? "Bị khóa" : "Mở"}</span>
                                     </div>
                                 </Card.Body>
                             </Card>
@@ -167,7 +145,7 @@ const Profile = () => {
                     </div>
                 )}
             </div>
-        </div >
+        </div>
     );
 };
 
