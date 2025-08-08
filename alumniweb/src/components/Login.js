@@ -37,7 +37,8 @@ const Login = () => {
 
             if (res.status === 200) {
                 cookie.save('token', res.data.token);
-                let u = await authApis().get(endpoints['profile']);
+
+                let u = await authApis().get(endpoints.profile());
 
                 if (u.data.isLocked === false) {
                     cookie.save('user', u.data);

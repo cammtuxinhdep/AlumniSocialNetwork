@@ -15,7 +15,9 @@ const Profile = () => {
     const avatar = useRef();
     const cover = useRef();
 
-    const changeAvatar = async () => {
+    const changeAvatar = async (event) => {
+        event.preventDefault();
+
         if (avatar.current.files.length > 0) {
             try {
                 setLoading(true);
@@ -39,7 +41,9 @@ const Profile = () => {
             return;
     };
 
-    const changeCover = async () => {
+    const changeCover = async (event) => {
+        event.preventDefault();
+
         if (cover.current.files.length > 0) {
             try {
                 setLoading(true);
@@ -84,11 +88,6 @@ const Profile = () => {
     useEffect(() => {
         loadPosts();
     }, [user.id]);
-
-    if (!user) {
-        window.location.href = "/login";
-        return null;
-    }
 
     return (
         <div style={{
