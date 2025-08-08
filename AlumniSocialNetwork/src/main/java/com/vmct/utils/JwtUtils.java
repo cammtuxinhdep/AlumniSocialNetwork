@@ -19,18 +19,16 @@ import java.util.Date;
  * @author HP
  */
 public class JwtUtils {
-    // SECRET nên được lưu bằng biến môi trường,
-    private static final String SECRET = "12345678901234567890123456789012"; // 32 ký tự (AES key)
-    private static final long EXPIRATION_MS = 86400000; // 1 ngày
+    private static final String SECRET = "12345678901234567890123456789012";
+    private static final long EXPIRATION_MS = 86400000;
 
-    // Tạo một JWT cho người dùng dựa trên username
     public static String generateToken(String username) throws Exception {
         JWSSigner signer = new MACSigner(SECRET);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
-                .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_MS)) // Ngày hết hạn = hiện tại + 1
-                .issueTime(new Date()) // Thời gian cấp token
+                .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .issueTime(new Date())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(
@@ -38,20 +36,19 @@ public class JwtUtils {
                 claimsSet
         );
 
-        signedJWT.sign(signer); // Kí token bằng khóa bí mật
+        signedJWT.sign(signer);
 
         return signedJWT.serialize();
     }
 
-    // Xác thực token và lấy username từ token nếu hợp lệ
     public static String validateTokenAndGetUsername(String token) throws Exception {
-        SignedJWT signedJWT = SignedJWT.parse(token); // Phân tích token lấy đối tượng signedJWT
-        JWSVerifier verifier = new MACVerifier(SECRET); // Tạo verifier với khóa bí mật => kiểm tra chữ kí
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        JWSVerifier verifier = new MACVerifier(SECRET);
 
         if (signedJWT.verify(verifier)) {
             Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
             if (expiration.after(new Date())) {
-                return signedJWT.getJWTClaimsSet().getSubject(); // Token hợp lệ chưa hết hạn trả về username
+                return signedJWT.getJWTClaimsSet().getSubject();
             }
         }
         return null;

@@ -43,7 +43,9 @@ public interface UserService extends UserDetailsService {
 
     User getUserById(int id);
 
-    User changePassword(String username, String password);
+    void changePassword(String username, String oldPassword, String newPassword);
 
     void setLockedLecturer(int id);
+    void updateAvatar(String username, MultipartFile avatar);
+    void updateCover(String username, MultipartFile cover);
 }

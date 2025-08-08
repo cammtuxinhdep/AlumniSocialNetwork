@@ -30,15 +30,15 @@ public class JwtFilter implements Filter {
         if (httpRequest.getRequestURI().startsWith(String.format("%s/api/secure", httpRequest.getContextPath())) == true) {
 
             String header = httpRequest.getHeader("Authorization");
-            // Lấy header Authorization từ http và đảm bảo bắt đầu bằng Bearer
+            
             if (header == null || !header.startsWith("Bearer ")) {
                 ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
                 return;
             } else {
-                String token = header.substring(7); // Token hợp lệ thì lược bỏ phần Bearer
+                String token = header.substring(7);
                 try {
-                    String username = JwtUtils.validateTokenAndGetUsername(token); // Lấy username từ token
-                    if (username != null) { // Nếu username hợp lệ tạo đối tượng để xác thực và phân quyền
+                    String username = JwtUtils.validateTokenAndGetUsername(token);
+                    if (username != null) {
                         httpRequest.setAttribute("username", username);
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, null);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -47,7 +47,7 @@ public class JwtFilter implements Filter {
                         return;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace(); // Nên xử lí lỗi sâu hơn để tránh rò rỉ thông tin bảo mật
+                    e.printStackTrace();
                 }
             }
 

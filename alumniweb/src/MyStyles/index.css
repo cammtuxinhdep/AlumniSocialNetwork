@@ -22,7 +22,8 @@ header {
 main {
     flex: 1 0 auto;
     padding-top: 30px;
-    min-height: calc(100vh - 60px);
+    min-height: calc(75vh - 60px);
+    margin-bottom: 2rem;
 }
 
 footer {
@@ -30,10 +31,4 @@ footer {
     z-index: 10;
     flex-shrink: 0;
     width: 100%;
-}
-
-Container {
-    position: relative;
-    z-index: 1;
-    margin: 0 auto;
 }

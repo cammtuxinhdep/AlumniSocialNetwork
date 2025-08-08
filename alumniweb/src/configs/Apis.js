@@ -15,7 +15,6 @@ export const endpoints = {
     deleteComment: (id) => `secure/comment/${id}`,
     updateComment: (id) => `secure/comment/${id}`,
 
-
     reactions: 'secure/reaction',
     reactionStats: (postId) => `secure/reaction/stats/${postId}`,
     userReaction: (postId) => `secure/reaction/user/post/${postId}`,
@@ -28,13 +27,16 @@ export const endpoints = {
 
     login: 'login',
     register: 'register',
-    profile: 'secure/profile',};
+    profile: (username) => `secure/profile/${username}`,
+    changePassword: 'secure/password',
+    changeAvatar: 'secure/avatar',
+    changeCover: 'secure/cover',
+};
 
 export const authApis = () => axios.create({
     baseURL: BASE_URL,
     headers: {
         'Authorization': `Bearer ${cookie.load('token')}`,
-        'Content-Type': 'application/json'
     }
 });
 
