@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { MyUserContext } from "../../configs/Context";
 import ChangePasswordModal from "./ChangePasswordModal";
+import { Link } from "react-router-dom";
 
 const Header = () => {
     const [user, dispatch] = useContext(MyUserContext);
@@ -11,18 +12,19 @@ const Header = () => {
         <>
             <Navbar expand="sm" className="p-3" style={{ backgroundColor: "#add8e678" }}>
                 <Container>
-                    <Navbar.Brand href="/">ALUMNI SOCIAL NETWORK</Navbar.Brand>
+                    <Link to="/" style={{ color: "black", textDecoration: 'none', fontSize: "20px" }}>ALUMNI SOCIAL NETWORK</Link>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     {user !== null &&
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
-                                <Nav.Link href="/">Trang chủ</Nav.Link>
-                                <Nav.Link href="/surveys">Khảo sát</Nav.Link>
+                                <Link to="/" className="nav-link">Trang chủ</Link>
+                                <Link to="/chat" className="nav-link">Chat</Link>
+
                                 <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
-                                    <NavDropdown.Item href="/profile">Trang cá nhân</NavDropdown.Item>
+                                    <Link to="/profile" className="dropdown-item">Trang cá nhân</Link>
                                     <NavDropdown.Item onClick={() => setChangePassword(true)}>Đổi mật khẩu</NavDropdown.Item>
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item href="/login" onClick={() => dispatch({ "type": "logout" })}>Đăng xuất</NavDropdown.Item>
+                                    <Link to="/login" className="dropdown-item" onClick={() => dispatch({ "type": "logout" })}>Đăng xuất</Link>
                                 </NavDropdown>
                             </Nav>
                         </Navbar.Collapse>

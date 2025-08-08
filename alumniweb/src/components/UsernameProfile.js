@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import cookie from 'react-cookies';
 import { authApis, endpoints } from "../configs/Apis";
 import MySpinner from "./layout/MySpinner";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTimeVi } from "../formatters/TimeFormatter";
+import ChatBox from "../components/ChatBox";
 
 const UsernameProfile = () => {
     const defaultAvatar = "https://res.cloudinary.com/dlnru7sj1/image/upload/v1753591841/wu5x3zqqgl7vgt4jgkxm.png";
@@ -13,6 +14,7 @@ const UsernameProfile = () => {
     const [loading, setLoading] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
     const [posts, setPosts] = useState([]);
+    const [showChat, setShowChat] = useState(false);
     const nav = useNavigate();
 
     const currentUser = cookie.load('user');
@@ -64,14 +66,12 @@ const UsernameProfile = () => {
 
             <div style={{ height: "300px", position: "relative", backgroundColor: profileUser.cover ? "transparent" : "#cfe2f3" }}>
                 {profileUser.cover && <img src={profileUser.cover} alt="Ảnh bìa" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
-                {profileUser.username !== currentUser?.username && null}
             </div>
 
             <div style={{ display: "flex", alignItems: "center", padding: "0 20px", marginTop: "-60px" }}>
                 <div style={{ position: "relative", width: "10rem", height: "10rem" }}>
                     <img src={profileUser.avatar || defaultAvatar} alt="Avatar"
                         style={{ width: "100%", height: "100%", borderRadius: "50%", border: "5px solid white", objectFit: "cover" }} />
-                    {profileUser.username !== currentUser?.username && null}
                 </div>
 
                 <div style={{ marginLeft: "20px", flex: 1 }}>
@@ -82,7 +82,7 @@ const UsernameProfile = () => {
 
                         {profileUser.id !== currentUser?.id && (
                             <Button variant="primary" style={{ marginTop: "70px" }}
-                                onClick={() => nav(`/chat/${profileUser.id}`)}>💬 Nhắn tin
+                                onClick={() => setShowChat(!showChat)}>💬 Nhắn tin
                             </Button>
                         )}
                     </div>
@@ -92,6 +92,12 @@ const UsernameProfile = () => {
                             profileUser.userRole === 'ROLE_LECTURER' ? 'Giảng viên' :
                                 profileUser.userRole}
                     </p>
+
+                    {showChat && (
+                        <div style={{ marginTop: "20px" }}>
+                            <ChatBox receiverId={profileUser.id} />
+                        </div>
+                    )}
                 </div>
             </div>
 

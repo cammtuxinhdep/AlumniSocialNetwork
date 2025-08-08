@@ -11,13 +11,14 @@ const Profile = () => {
     const [loading, setLoading] = useState(false);
     const user = cookie.load('user');
     const nav = useNavigate();
+    const [posts, setPosts] = useState([]);
+
 
     const avatar = useRef();
     const cover = useRef();
 
-    const [posts, setPosts] = useState([]);
-
-    const changeAvatar = async () => {
+    const changeAvatar = async (event) => {
+        event.preventDefault();
         if (avatar.current.files.length > 0) {
             try {
                 setLoading(true);
@@ -40,7 +41,9 @@ const Profile = () => {
         }
     };
 
-    const changeCover = async () => {
+    const changeCover = async (event) => {
+        event.preventDefault();
+
         if (cover.current.files.length > 0) {
             try {
                 setLoading(true);
@@ -78,11 +81,6 @@ const Profile = () => {
     useEffect(() => {
         loadPosts();
     }, [user.id]);
-
-    if (!user) {
-        window.location.href = "/login";
-        return null;
-    }
 
     return (
         <div style={{ backgroundColor: "#f0f4fb", color: "#0a1c3f", fontFamily: "Arial, sans-serif", minHeight: "100vh", border: "1px solid #d0d7e2", borderRadius: "12px", overflow: "hidden" }}>
