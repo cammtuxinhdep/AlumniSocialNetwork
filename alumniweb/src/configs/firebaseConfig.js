@@ -3,13 +3,13 @@ import { getAnalytics } from "firebase/analytics";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDf9p8Dfy0UVoUHQxm2lvWnjhITahTe90U",
-  authDomain: "alumnisocialnetwork-e7a93.firebaseapp.com",
-  projectId: "alumnisocialnetwork-e7a93",
-  storageBucket: "alumnisocialnetwork-e7a93.firebasestorage.app",
-  messagingSenderId: "651917155207",
-  appId: "1:651917155207:web:6510f7301ebf712eb41122",
-  measurementId: "G-JCP5STKFGV"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);

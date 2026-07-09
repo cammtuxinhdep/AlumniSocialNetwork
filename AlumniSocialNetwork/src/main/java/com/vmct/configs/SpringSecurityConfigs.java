@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -31,12 +33,22 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Configuration
 @EnableWebSecurity
 @EnableTransactionManagement
+@PropertySource("classpath:databases.properties")
 @ComponentScan(basePackages = {
     "com.vmct.controllers",
     "com.vmct.repositories",
     "com.vmct.services"
 })
 public class SpringSecurityConfigs {
+
+    @Value("${cloudinary.cloud_name}")
+    private String cloudName;
+
+    @Value("${cloudinary.api_key}")
+    private String apiKey;
+
+    @Value("${cloudinary.api_secret}")
+    private String apiSecret;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -69,9 +81,9 @@ public class SpringSecurityConfigs {
     @Bean
     public Cloudinary cloudinary() {
         Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dlnru7sj1",
-                "api_key", "443123929874918",
-                "api_secret", "vuLdl_T1Ho7zi4fHZePrHUbF8gw",
+                "cloud_name", this.cloudName,
+                "api_key", this.apiKey,
+                "api_secret", this.apiSecret,
                 "secure", true));
         return cloudinary;
     }

@@ -40,10 +40,10 @@ public class ApiUserController {
     private UserService userDetailsService;
 
     @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@RequestParam Map<String, String> info, @RequestParam(value = "avatar") MultipartFile avatar) {
+    public ResponseEntity<UserDTO> create(@RequestParam Map<String, String> info, @RequestParam(value = "avatar") MultipartFile avatar) {
         User u = this.userDetailsService.register(info, avatar);
 
-        return new ResponseEntity<>(u, HttpStatus.CREATED);
+        return new ResponseEntity<>(new UserDTO(u), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -68,17 +68,12 @@ public class ApiUserController {
 
     @PostMapping("/secure/password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> data) {
-        try {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            String oldPassword = data.get("oldPassword");
-            String newPassword = data.get("newPassword");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String oldPassword = data.get("oldPassword");
+        String newPassword = data.get("newPassword");
 
-            this.userDetailsService.changePassword(username, oldPassword, newPassword);
-            return ResponseEntity.ok(Collections.singletonMap("message", "Password changed successfully"));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("message", ex.getMessage()));
-        }
+        this.userDetailsService.changePassword(username, oldPassword, newPassword);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Password changed successfully"));
     }
 
     @PostMapping("/secure/avatar")

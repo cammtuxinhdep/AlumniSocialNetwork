@@ -1,0 +1,12 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "chats": {
+      "$chatId": {
+        ".read": "auth != null && ($chatId.startsWith(auth.uid + '_') || $chatId.endsWith('_' + auth.uid))",
+        ".write": "auth != null && ($chatId.startsWith(auth.uid + '_') || $chatId.endsWith('_' + auth.uid))"
+      }
+    }
+  }
+}

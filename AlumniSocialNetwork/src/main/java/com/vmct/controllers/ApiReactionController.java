@@ -2,6 +2,7 @@ package com.vmct.controllers;
 
 import com.vmct.pojo.Reaction;
 import com.vmct.pojo.User;
+import com.vmct.dto.ReactionDTO;
 import com.vmct.services.ReactionService;
 import com.vmct.services.UserService;
 
@@ -37,7 +38,7 @@ public class ApiReactionController {
         reaction.setUserId(currentUser);
         boolean result = reactionService.saveOrUpdateReaction(reaction);
         if (result) {
-            return ResponseEntity.ok(reaction);
+            return ResponseEntity.ok(new ReactionDTO(reaction));
         }
         return ResponseEntity.badRequest().body("Invalid data or save failed");
     }
@@ -58,7 +59,7 @@ public class ApiReactionController {
     }
 
     @GetMapping("/user/post/{postId}")
-    public ResponseEntity<Reaction> getUserReaction(@PathVariable("postId") Long postId, Principal principal) {
+    public ResponseEntity<ReactionDTO> getUserReaction(@PathVariable("postId") Long postId, Principal principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -70,7 +71,7 @@ public class ApiReactionController {
 
         Reaction reaction = reactionService.getUserReaction(postId, currentUser.getId());
         if (reaction != null) {
-            return ResponseEntity.ok(reaction);
+            return ResponseEntity.ok(new ReactionDTO(reaction));
         }
         return ResponseEntity.notFound().build();
     }

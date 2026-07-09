@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
@@ -41,14 +41,21 @@ public class HibernateConfigs {
 
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName(
                 env.getProperty("hibernate.connection.driverClass"));
-        dataSource.setUrl(env.getProperty("hibernate.connection.url"));
+        dataSource.setJdbcUrl(env.getProperty("hibernate.connection.url"));
         dataSource.setUsername(
                 env.getProperty("hibernate.connection.username"));
         dataSource.setPassword(
                 env.getProperty("hibernate.connection.password"));
+        
+        // Connection Pool Configurations
+        dataSource.setMaximumPoolSize(10);
+        dataSource.setMinimumIdle(5);
+        dataSource.setIdleTimeout(300000);
+        dataSource.setConnectionTimeout(20000);
+        
         return dataSource;
     }
 

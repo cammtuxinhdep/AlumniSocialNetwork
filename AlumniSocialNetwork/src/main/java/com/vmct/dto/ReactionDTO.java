@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 
 public class ReactionDTO {
 
+    private Long id;
+
     @NotNull
     @Size(min = 1, max = 5)
     private String type;
@@ -14,6 +16,24 @@ public class ReactionDTO {
 
     @NotNull
     private Long userId;
+
+    public ReactionDTO() {
+    }
+
+    public ReactionDTO(com.vmct.pojo.Reaction reaction) {
+        this.id = reaction.getId();
+        this.type = reaction.getType();
+        this.postId = reaction.getPostId() != null ? reaction.getPostId().getId() : null;
+        this.userId = reaction.getUserId() != null ? reaction.getUserId().getId() : null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;

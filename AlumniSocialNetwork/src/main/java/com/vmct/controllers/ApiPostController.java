@@ -54,7 +54,7 @@ public class ApiPostController {
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post, Principal principal) {
+    public ResponseEntity<PostDTO> createPost(@RequestBody Post post, Principal principal) {
         User currentUser = userService.getUserByUsername(principal.getName());
         if (currentUser == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -65,7 +65,16 @@ public class ApiPostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        PostDTO postDTO = new PostDTO(
+                created,
+                java.util.Collections.emptyList(),
+                java.util.Collections.emptyMap(),
+                null,
+                0,
+                true
+        );
+
+        return new ResponseEntity<>(postDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{postId}")
