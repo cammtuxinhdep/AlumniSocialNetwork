@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookie from 'react-cookies';
 
-const BASE_URL = 'http://localhost:8080/AlumniSocialNetwork/api/';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/AlumniSocialNetwork/api/';
 
 export const endpoints = {
     posts: 'secure/post',
